@@ -8,9 +8,10 @@ roll_type = Enum('propietario', 'inquilino', 'admin', name="roll_type_enum")
 if TYPE_CHECKING:
     from .contracts import Contract
     from . apartments import Apartment
+    from .assoc_tenants_apartments_contracts import  AssocTenantApartmentContract
 
-class Owner(db.Model):
-    __tablename__= "owners"
+class User(db.Model):
+    __tablename__= "users"
     id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str] = mapped_column(String(120), nullable=False)
     last_name: Mapped[str] = mapped_column(String(120), nullable=False)
@@ -21,8 +22,11 @@ class Owner(db.Model):
     account_number: Mapped[str] = mapped_column(String(24), nullable=False)
     roll: Mapped[str] = mapped_column(roll_type, nullable=False)
     apartment: Mapped[List["Apartmen"]] = relationship(
-        back_populates="owner"
+        back_populates="user"
     )
     contrat: Mapped[List["Contract"]] = relationship(
-        back_populates="owner"
+        back_populates="user"
+    )
+    asociation:Mapped[List["AssocTenantApartmentContract"]] = relationship(
+        back_populates="user"
     )
