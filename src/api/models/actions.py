@@ -1,6 +1,10 @@
 from sqlalchemy import Integer, String, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import db
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .issues import Issue
 
 class Action(db.Model):
     __tablename__ = 'actions'
@@ -15,4 +19,4 @@ class Action(db.Model):
     bill_amount: Mapped[int] = mapped_column(Integer, nullable=False)
     bill_image: Mapped[str] = mapped_column(String(50), nullable=False)
 
-    issue = relationship('Issue', back_populates='actions')
+    issue: Mapped ['Issue'] = relationship('Issue', back_populates='actions')

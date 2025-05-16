@@ -1,6 +1,11 @@
 from sqlalchemy import Integer, String, Date, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import db
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .apartments import Apartment
+    from .actions import Action
 
 class Issue(db.Model):
     __tablename__ = 'issues'
@@ -15,6 +20,5 @@ class Issue(db.Model):
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     apartment_id: Mapped[int] = mapped_column(ForeignKey('apartments.id'), nullable=False)
 
-    # Relaciones
-    apartment = relationship('Apartment', back_populates='issues')
-    actions = relationship('Action', back_populates='issue')
+    apartment: Mapped['Apartment'] = relationship('Apartment', back_populates='issues')
+    actions: Mapped['Action'] = relationship('Action', back_populates='issue')
