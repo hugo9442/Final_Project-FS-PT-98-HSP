@@ -30,3 +30,25 @@ class User(db.Model):
     asociation:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="user"
     )
+
+    def serialize(self):
+        return{
+            "id":self.id,
+            "first_name": self.first_name, 
+            "last_name": self.last_name,
+            "email": self.email,
+            "password": self.password,
+            "phone": self.phone,
+            "national_id": self.national_id,
+            "account_number": self.account_number,
+            "roll": self.roll
+    
+
+        }
+    
+    def serialize_with_relations(self):
+        data = self.serialize()
+        data['apartment'] = [apartment.serialize() for apartment in self.apartment],
+        data['contract'] = [contract.serialize() for contract in self.contract],
+        data['asociation'] = [asociation.serialize() for asociation in self.asociation],
+        return data 

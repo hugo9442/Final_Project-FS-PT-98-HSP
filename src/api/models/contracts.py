@@ -22,3 +22,21 @@ class Contract(db.Model):
         back_populates="contract"
     )
    
+    def serialize(self):
+        return{
+            "id":self.id,
+            "start_date": self.start_date, 
+            "end_day": self.end_day,
+            "document": self.document,
+            "user_id": self.user_id
+    
+
+        }
+    
+    def serialize_with_relations(self):
+        data = self.serialize()
+        data['user'] = [user.serialize() for user in self.user],
+        data['asociation']=[asociation.serialize() for asociation in self.contracts],
+        return data 
+      
+           
