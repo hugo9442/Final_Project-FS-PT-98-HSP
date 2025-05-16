@@ -14,3 +14,5 @@ class AssocTenantApartmentContract(db.Model):
     user = relationship('Tenant', back_populates='association')
     apartment = relationship('Apartment', back_populates='association')
     contract = relationship('Contract', back_populates='association')
+
+    

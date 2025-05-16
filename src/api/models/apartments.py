@@ -26,3 +26,25 @@ class Apartment(db.Model):
     user: Mapped['User'] = relationship('User', back_populates='apartment')
     issues: Mapped['Issue'] = relationship('Issue', back_populates='apartment')
     association: Mapped[List["AssocTenantApartmentContract"]] = relationship('AssocTenantApartmentContract', back_populates='apartment')
+
+
+    def serialize(self):
+        return {
+            "apartment_id": self.id,
+            "address": self.address,
+            "number": self.number,
+            "stairs": self.stairs,
+            "floor": self.floor,
+            "door": self.door,
+            "postal_code": self.postal_code,
+            "city": self.city,
+            "parking_slot": self.parking_slot,
+            "is_rent": self.is_rent,
+            "owner_id": self.user_id,
+        }
+    
+    def serialize_with_relations(self):
+        data = self.serialize()
+        data['user'] = self.user.serialize()
+        data['issues'] = self.issues.serialize() if self.issues else {}
+        return data

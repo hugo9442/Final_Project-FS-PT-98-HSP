@@ -20,3 +20,21 @@ class Action(db.Model):
     bill_image: Mapped[str] = mapped_column(String(50), nullable=False)
 
     issue: Mapped ['Issue'] = relationship('Issue', back_populates='actions')
+
+    def serialize(self):
+        return {
+            "action_id": self.action_id,
+            "issue_id": self.id,
+            "status": self.status,
+            "action_name": self.action_name,
+            "start_date": self.start_date,
+            "description": self.description,
+            "contractor": self.contractor,
+            "bill_amount": self.bill_amount,
+            "bill_image": self.end_date
+        }
+    
+    def serialize_with_relations(self):
+        data = self.serialize()
+        data['issue'] = self.issue.serialize()
+        return data

@@ -22,3 +22,22 @@ class Issue(db.Model):
 
     apartment: Mapped['Apartment'] = relationship('Apartment', back_populates='issues')
     actions: Mapped['Action'] = relationship('Action', back_populates='issue')
+
+    def serialize(self):
+        return {
+            "issue_id": self.id,
+            "priority": self.priority,
+            "title": self.title,
+            "type": self.type,
+            "status": self.status,
+            "description": self.description,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "apartment_id": self.apartment_id
+        }
+    
+    def serialize_with_relations(self):
+        data = self.serialize()
+        data['apartment'] = self.apartment.serialize()
+        data['action'] = self.actions.serialize() if self.actions else {}
+        return data
