@@ -1,6 +1,12 @@
 from sqlalchemy import Integer, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import db
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .users import User
+    from .apartments import Apartment
+    from .contracts import Contract
 
 class AssocTenantApartmentContract(db.Model):
     __tablename__ = 'assoc_tenants_apartments_contracts'
@@ -11,8 +17,8 @@ class AssocTenantApartmentContract(db.Model):
     contract_id: Mapped[int] = mapped_column(ForeignKey('contracts.id'), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    user = relationship('Tenant', back_populates='association')
-    apartment = relationship('Apartment', back_populates='association')
-    contract = relationship('Contract', back_populates='association')
+    user: Mapped['User'] = relationship('User', back_populates='association')
+    apartment: Mapped['Apartment'] = relationship('Apartment', back_populates='association')
+    contract: Mapped['Contract'] = relationship('Contract', back_populates='association')
 
     
