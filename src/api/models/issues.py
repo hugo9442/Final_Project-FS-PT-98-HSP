@@ -1,6 +1,8 @@
-from sqlalchemy import Integer, String, Date, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import db
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Integer, String, ForeignKey, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import List, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -16,12 +18,14 @@ class Issue(db.Model):
     type: Mapped[str] = mapped_column(String(50), nullable=False)
     status: Mapped[str] = mapped_column(String(50), nullable=False)
     description: Mapped[str] = mapped_column(String(250), nullable=False)
-    start_date: Mapped[Date] = mapped_column(Date, nullable=False)
-    end_date: Mapped[Date] = mapped_column(Date, nullable=False)
+    start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     apartment_id: Mapped[int] = mapped_column(ForeignKey('apartments.id'), nullable=False)
-
-    apartment: Mapped['Apartment'] = relationship('Apartment', back_populates='issues')
-    actions: Mapped['Action'] = relationship('Action', back_populates='issue')
+    apartment: Mapped['Apartment'] = relationship(
+         back_populates='issues')
+    actions: Mapped['Action'] = relationship(
+         back_populates='issue'
+         )
 
     def serialize(self):
         return {

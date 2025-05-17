@@ -1,4 +1,5 @@
 from .database import db
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Boolean, Integer, Enum
 from typing import List, TYPE_CHECKING
@@ -21,13 +22,13 @@ class User(db.Model):
     national_id: Mapped[str] = mapped_column(String(12), nullable=False)
     account_number: Mapped[str] = mapped_column(String(24), nullable=False)
     roll: Mapped[str] = mapped_column(roll_type, nullable=False)
-    apartment: Mapped[List["Apartmen"]] = relationship(
+    apartment: Mapped[List["Apartment"]] = relationship(
         back_populates="user"
     )
     contrat: Mapped[List["Contract"]] = relationship(
         back_populates="user"
     )
-    asociation:Mapped[List["AssocTenantApartmentContract"]] = relationship(
+    association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="user"
     )
 

@@ -17,8 +17,14 @@ class AssocTenantApartmentContract(db.Model):
     contract_id: Mapped[int] = mapped_column(ForeignKey('contracts.id'), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    user: Mapped['User'] = relationship('User', back_populates='association')
-    apartment: Mapped['Apartment'] = relationship('Apartment', back_populates='association')
-    contract: Mapped['Contract'] = relationship('Contract', back_populates='association')
+    user: Mapped['User'] = relationship(
+        back_populates='association'
+    )
+    apartment: Mapped['Apartment'] = relationship(
+        back_populates='association'
+    )
+    contract: Mapped['Contract'] = relationship(
+        back_populates='association'
+    )
 
     
