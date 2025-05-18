@@ -18,7 +18,7 @@ class Contract(db.Model):
     document: Mapped[str] = mapped_column(String(255), nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     user: Mapped['User'] = relationship(
-        back_populates="contract"
+        back_populates='contrat'
     )    
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="contract"
