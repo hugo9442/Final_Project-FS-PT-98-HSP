@@ -1,6 +1,8 @@
 import React, { useEffect } from "react"
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
+import viviendaUrl from "../assets/img/vivienda2.jpg"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import Navbar from "../components/Navbar.jsx"
+import Card from "../components/Card.jsx"
 
 export const Home = () => {
 
@@ -33,20 +35,46 @@ export const Home = () => {
 	}, [])
 
 	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}; 
+  <div className="mt-5">
+    <h1 className="text-center display-4">Gestión Inmuebles</h1>
+    <p className="text-center lead">
+
+      <img
+        src={viviendaUrl}
+        className="img-fluid mb-3 mt-3"
+        alt="Rigo Baby"
+      />
+	  
+    </p>
+
+    <div className="container my-5">
+      <div className="row justify-content-center">
+        <div className="col-md-4 d-flex justify-content-center mb-4">
+          <Card
+            image="https://via.placeholder.com/300x200"
+            text="Propiedad 1"
+            alt="Propiedad 1"
+          />
+        </div>
+        <div className="col-md-4 d-flex justify-content-center mb-4">
+          <Card
+            image="https://via.placeholder.com/300x200"
+            text="Propiedad 2"
+            alt="Propiedad 2"
+          />
+        </div>
+        <div className="col-md-4 d-flex justify-content-center mb-4">
+          <Card
+            image="https://via.placeholder.com/300x200"
+            text="Propiedad 3"
+            alt="Propiedad 3"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+};
+
+
