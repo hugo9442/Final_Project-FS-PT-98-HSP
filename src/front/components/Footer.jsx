@@ -11,7 +11,7 @@ export const Footer = () => (
           target="_blank"
           rel="noopener noreferrer"
         >
-          MDBootstrap.com
+          Trabajo Final Hugo - Pablo - Stiven
         </a>
       </div>
 	</footer>
