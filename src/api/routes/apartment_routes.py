@@ -1,22 +1,30 @@
 from flask import request, jsonify, Blueprint
-from api.models import db, User, Apartment
-from api.utils import generate_sitemap, APIException
+from api.models import db, Apartment
 from flask_cors import CORS
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required
 
-apartments_api = Blueprint('apartments_api', __name__)
+apartments_api = Blueprint('apartments_api', __name__, url_prefix='/apartments')
+
+CORS(apartments_api)
 
 
-CORS(api)
-
-bcrypt = Bcrypt()
-
-@apartments_api.route('/apartment', methods=['POST'])
+@apartments_api.route('/create', methods=['POST'])
+@jwt_required()
 def create_apartment():
     body = request.get_json()
     if not body:
         return jsonify({"msg": "No data provided"}), 400
+    
+    new_apartment = Apartment(
+        address=body.get("address"),
+        number=body.get("number"),
+        stairs=body.get("stairs"),
+        floor=body.get("floor"),
+        door=body.get("door"),
+        postal_code=body.get("postal_code"),
+        city=body.get("city"),
+        owner_id=body.get("owner_id")
+    )
 
     try:
         new_apartment = Apartment(**body)
@@ -27,7 +35,8 @@ def create_apartment():
         db.session.rollback()
         return jsonify({"msg": str(e)}), 500
     
-@apartments_api.route('/apartment/<int:id>', methods=['GET'])
+@apartments_api.route('/<int:id>', methods=['GET'])
+@jwt_required()
 def get_apartment(id):
     try:
         apartment = Apartment.query.get(id)
@@ -37,7 +46,8 @@ def get_apartment(id):
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     
-@apartments_api.route('/apartments', methods=['GET'])
+@apartments_api.route('/', methods=['GET'])
+@jwt_required()
 def get_apartments():
     try:
         apartments = Apartment.query.all()
@@ -45,7 +55,8 @@ def get_apartments():
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     
-@apartments_api.route('/apartment/<int:id>', methods=['PUT'])
+@apartments_api.route('/<int:id>', methods=['PUT'])
+@jwt_required()
 def update_apartment(id):
     body = request.get_json()
     if not body:
@@ -56,13 +67,28 @@ def update_apartment(id):
     if not apartment:
         return jsonify({"msg": "Apartment not found"}), 404
     
-
     try:
         for key, value in body.items():
             if hasattr(apartment, key):
                 setattr(apartment, key, value)
         db.session.commit()
         return jsonify(apartment.serialize()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"msg": str(e)}), 500
+    
+@apartments_api.route('/<int:id>', methods=['DELETE'])
+@jwt_required()
+def delete_apartment(id):
+    apartment = Apartment.query.get(id)
+
+    if not apartment:
+        return jsonify({"msg": "Apartment not found"}), 404
+
+    try:
+        db.session.delete(apartment)
+        db.session.commit()
+        return jsonify({"msg": "Apartment deleted"}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": str(e)}), 500

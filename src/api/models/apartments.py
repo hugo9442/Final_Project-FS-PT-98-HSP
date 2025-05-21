@@ -21,9 +21,9 @@ class Apartment(db.Model):
     city: Mapped[str] = mapped_column(String(50), nullable=False)
     parking_slot: Mapped[str] = mapped_column(String(50), nullable=False)
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    user: Mapped['User'] = relationship(
-        back_populates='apartment'
+    owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    owner: Mapped['User'] = relationship(
+        back_populates='apartments'
     )
     issues: Mapped[List['Issue']] = relationship(
         back_populates='apartment'

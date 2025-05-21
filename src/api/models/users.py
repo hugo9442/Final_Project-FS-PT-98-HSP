@@ -22,18 +22,18 @@ class User(db.Model):
     national_id: Mapped[str] = mapped_column(String(12), nullable=False)
     account_number: Mapped[str] = mapped_column(String(24), nullable=False)
     roll: Mapped[str] = mapped_column(roll_type, nullable=False)
-    apartment: Mapped[List["Apartment"]] = relationship(
-        back_populates="user"
+    apartments: Mapped[List["Apartment"]] = relationship(
+        back_populates="owner"
     )
-    contrat: Mapped[List["Contract"]] = relationship(
-        back_populates="user"
+    contracts: Mapped[List["Contract"]] = relationship(
+        back_populates="owner"
     )
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
-        back_populates="user"
+        back_populates="tenant"
     )
 
     def serialize(self):
-        return{
+        return {
             "id":self.id,
             "first_name": self.first_name, 
             "last_name": self.last_name,
@@ -43,8 +43,6 @@ class User(db.Model):
             "national_id": self.national_id,
             "account_number": self.account_number,
             "roll": self.roll
-    
-
         }
     
     def serialize_with_relations(self):

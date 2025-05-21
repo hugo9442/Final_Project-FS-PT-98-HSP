@@ -1,29 +1,31 @@
 from flask import request, jsonify, Blueprint
-from api.models import db, User
-from api.utils import generate_sitemap, APIException
+from api.models import db, User, Apartment, Contract
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-api = Blueprint('api', __name__)
+users_api = Blueprint('users_api', __name__, url_prefix='/users')
 
-CORS(api)
+CORS(users_api)
 
 bcrypt = Bcrypt()
 
-@api.route('/user', methods=["GET"])
+@users_api.route('/', methods=["GET"])
+@jwt_required()
 def get_all_users():
     users = User.query.all()
     return jsonify([user.serialize() for user in users]), 200
 
-@api.route('/user/<int:user_id>', methods=["GET"])
+@users_api.route('/<int:user_id>', methods=["GET"])
+@jwt_required()
 def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
     return jsonify(user.serialize_with_relations()), 200
 
-@api.route('/user/<int:user_id>', methods=["PUT"])
+@users_api.route('/<int:user_id>', methods=["PUT"])
+@jwt_required()
 def update_user(user_id):
     user = User.query.get(user_id)
 
@@ -52,7 +54,8 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
 
-@api.route('/user/create', methods=["POST"])
+@users_api.route('/create', methods=["POST"])
+@jwt_required()
 def create_user():
     data_request = request.get_json()
 
@@ -94,7 +97,8 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
     
-@api.route('/user/<int:user_id>', methods=["DELETE"])
+@users_api.route('/<int:user_id>', methods=["DELETE"])
+@jwt_required()
 def delete_user(user_id):
     user = User.query.get(user_id)
 
@@ -109,3 +113,29 @@ def delete_user(user_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
+
+
+@users_api.route('/<int:user_id>/apartments', methods=["GET"])
+@jwt_required()
+def get_user_apartments(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    apartments = user.apartments
+    if not apartments:
+        return jsonify({"error": "No hay apartamentos para este usuario"}), 404
+
+    return jsonify([apartment.serialize() for apartment in apartments]), 200
+
+@users_api.route('/<int:user_id>/contracts', methods=["GET"])
+@jwt_required()   
+def get_user_contracts(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    contracts = user.contracts
+    if not contracts:
+        return jsonify({"error": "No hay contratos para este usuario"}), 404
+    return jsonify([contract.serialize() for contract in contracts]), 200
