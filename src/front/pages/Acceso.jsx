@@ -1,7 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import ImgEdificio from "../assets/img/ImgEdificio.jpg";
 
 const LoginSection = () => {
+    const navigate = useNavigate();
     return (
         <section className="vh-100" style={{ backgroundColor: "#ebf5fb" }}>
             <div className="container py-5 h-100">
@@ -60,6 +62,15 @@ const LoginSection = () => {
                                                     type="button"
                                                 >
                                                     Acceder
+                                                </button>
+
+                                                <button
+                                                    className="btn btn-dark btn-lg btn-block"
+                                                    style={{ margin: 5 }}
+                                                    type="button"
+                                                    onClick={() => navigate("/PropietarioIndex")}
+                                                >
+                                                   Prueba Propietario
                                                 </button>
                                             </div>
 

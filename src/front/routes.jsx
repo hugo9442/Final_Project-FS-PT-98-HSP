@@ -8,6 +8,9 @@ import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import Acceso from "./pages/Acceso";
+import PropietarioIndex from "./pages/PropietarioIndex";
+
+
 
 
 export const router = createBrowserRouter(
@@ -17,6 +20,7 @@ export const router = createBrowserRouter(
       <Route index element={<Home />} />  {/* Página raíz */}
       <Route path="demo" element={<Demo />} />
       <Route path="single/:theId" element={<Single />} />
+      <Route path="propietarioindex" element={<PropietarioIndex />} />
     </Route>
   ),
   {
