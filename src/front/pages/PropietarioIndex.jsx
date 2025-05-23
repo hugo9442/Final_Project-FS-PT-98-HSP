@@ -149,63 +149,69 @@ const PropietarioIndex = () => {
   };
 
   return (
-    <div className="container mt-3">
-      <div className="row">
-        {/* Menú lateral izquierdo */}
-        <div className="col-md-3">
-          <div className="btn-group-vertical w-100 gap-2" role="group">
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption(null)}>Principal</button>
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("contrato")}>Registrar Contrato</button>
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("viviendas")}>Viviendas</button>
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("incidencias")}>Incidencias</button>
-          </div>
+  <div className="container-fluid mt-3 px-3">
+    <div className="row">
+      {/* Menú lateral izquierdo */}
+      <div className="col-md-3">
+        <div className="btn-group-vertical w-100 gap-2" role="group">
+          <button className="btn btn-outline-primary" onClick={() => setActiveOption("contrato")}>Registrar Contrato</button>
+          <button className="btn btn-outline-primary" onClick={() => setActiveOption("viviendas")}>Viviendas</button>
+          <button className="btn btn-outline-primary" onClick={() => setActiveOption("incidencias")}>Incidencias</button>
+        </div>
+      </div>
+
+      {/* Contenido principal + cards */}
+      <div className="col-md-9">
+        <div className="p-2 border rounded bg-light">
+          {/* Contenido dinámico */}
+          {renderContent()}
         </div>
 
-        {/* Contenido principal + cards */}
-        <div className="col-md-9">
-          <div className="p-2 border rounded bg-light">
-            {/* Contenido dinámico */}
-            {renderContent()}
-          </div>
-
-          {/* ✅ Cards fuera del carrusel, pero solo en vista principal */}
-          {activeOption === null && (
-            <div className="row mt-4">
-              <div className="col-md-4 mb-3">
-                <div className="card h-100">
-                  <img src="src/front/assets/img/familia.webp" className="card-img-top" alt="Inquilinos" />
-                  <div className="card-body">
-                    <h5 className="card-title">Inquilinos</h5>
-                    <p className="card-text">Gestión completa de tus inquilinos.</p>
-                  </div>
+        {/* Cards fuera del carrusel, solo si estamos en "Principal" */}
+        {activeOption === null && (
+          <div className="row mt-4">
+            <div className="col-md-4 mb-3">
+              <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                  <h1 className="display-4">{totalViviendas}</h1>
+                  <p className="lead mb-0">Total de Inquilinos</p>
                 </div>
-              </div>
-
-              <div className="col-md-4 mb-3">
-                <div className="card h-100">
-                  <img src="src/front/assets/img/viviendasm.webp" className="card-img-top" alt="Viviendas" />
-                  <div className="card-body">
-                    <h5 className="card-title">Viviendas</h5>
-                    <p className="card-text">Consulta y edición de viviendas.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-3">
-                <div className="card h-100">
-                  <img src="src/front/assets/img/incidencia.webp" className="card-img-top" alt="Incidencias" />
-                  <div className="card-body">
-                    <h5 className="card-title">Incidencias</h5>
-                    <p className="card-text">Revisión de problemas y reportes.</p>
-                  </div>
+                <div className="card-body">
+                  <p className="card-text">Gestión completa de tus inquilinos.</p>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+
+            <div className="col-md-4 mb-3">
+              <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                  <h1 className="display-4">{totalContratos}</h1>
+                  <p className="lead mb-0">Total de Contratos Activos</p>
+                </div>
+                <div className="card-body">
+                  <p className="card-text">Consulta y edición de viviendas.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-4 mb-3">
+              <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                  <h1 className="display-4">{totalIncidencias}</h1>
+                  <p className="lead mb-0">Total de Incidencias Abiertas</p>
+                </div>
+                <div className="card-body">
+                  <p className="card-text">Revisión de problemas y reportes.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
-  );
+  </div>
+);
+
 
 };
 
