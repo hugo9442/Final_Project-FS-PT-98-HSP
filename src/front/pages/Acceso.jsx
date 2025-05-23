@@ -70,7 +70,7 @@ const LoginSection = () => {
                                                     type="button"
                                                     onClick={() => navigate("/PropietarioIndex")}
                                                 >
-                                                   Prueba Propietario
+                                                    Prueba Propietario
                                                 </button>
                                             </div>
 
@@ -79,7 +79,7 @@ const LoginSection = () => {
                                             </a>
                                             <p className="mb-5 pb-lg-2" style={{ color: "#393f81" }}>
                                                 No tienes cuenta?{" "}
-                                                <a href="#!" style={{ color: "#393f81" }}>
+                                                <a href="/#!" style={{ color: "#393f81" }}>
                                                     Registrate aquí
                                                 </a>
                                             </p>

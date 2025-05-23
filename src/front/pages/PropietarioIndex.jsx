@@ -1,54 +1,212 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-const ButtonGroupDropdown = () => {
+const PropietarioIndex = () => {
+  const [activeOption, setActiveOption] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [totalViviendas, setTotalViviendas] = useState(0);
+  const [totalContratos, setTotalContratos] = useState(0);
+  const [totalIncidencias, setTotalIncidencias] = useState(0);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch("/api/viviendas/count");
+        const data = await res.json();
+        setTotalViviendas(data.total);
+      } catch (error) {
+        console.error("Error al cargar total de viviendas", error);
+        setTotalViviendas(10);
+      }
+
+      try {
+        const res = await fetch("/api/contratos/count");
+        const data = await res.json();
+        setTotalContratos(data.total);
+      } catch (error) {
+        console.error("Error al cargar total de contratos", error);
+        setTotalContratos(1);
+      }
+
+      try {
+        const res = await fetch("/api/incidencias/count");
+        const data = await res.json();
+        setTotalIncidencias(data.total);
+      } catch (error) {
+        console.error("Error al cargar total de incidencias", error);
+        setTotalIncidencias(7);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleFileChange = (event) => setSelectedFile(event.target.files[0]);
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    if (selectedFile) {
+      alert(`Archivo seleccionado: ${selectedFile.name}`);
+    } else {
+      alert("Por favor, selecciona un archivo PDF.");
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeOption) {
+      case "contrato":
+        return (
+          <div>
+            <h5>Aquí puedes registrar un nuevo contrato.</h5>
+            <form onSubmit={handleFormSubmit}>
+              <div className="mb-3">
+                <label htmlFor="pdfUpload" className="form-label">
+                  Sube tu contrato en PDF
+                </label>
+                <input
+                  type="file"
+                  className="form-control"
+                  id="pdfUpload"
+                  accept="application/pdf"
+                  onChange={handleFileChange}
+                />
+              </div>
+              <button type="submit" className="btn btn-success">
+                Guardar Contrato
+              </button>
+            </form>
+          </div>
+        );
+      case "apartamentos":
+        return <p>Listado y gestión de apartamentos.</p>;
+      case "contactos":
+        return <p>Gestión de contactos y clientes.</p>;
+      case "incidencias":
+        return <p>Historial y reporte de incidencias.</p>;
+      case "perfil":
+        return <p>Información de perfil del usuario.</p>;
+      case "salir":
+        navigate("/acceso");
+        return null;
+      default:
+        return (
+          <div className="text-center">
+            <h2>Bienvenido, propietario</h2>
+            <p>Gestiona tu inmueble desde este panel.</p>
+
+            <button className="btn btn-primary btn-lg">Registra Inquilino</button>
+            <button className="btn btn-primary btn-lg m-3">Registra Vivienda</button>
+            <button className="btn btn-primary btn-lg">Registra Incidencia</button>
+
+            {/* Carrusel */}
+            <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5" data-bs-ride="carousel">
+              <div className="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+              </div>
+              <div className="carousel-inner">
+                <div className="carousel-item active" data-bs-interval="5000">
+                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
+                    <div className="text-center">
+                      <h1 className="display-4">{totalViviendas}</h1>
+                      <p className="lead">Total de Viviendas Registradas</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="carousel-item" data-bs-interval="5000">
+                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
+                    <div className="text-center">
+                      <h1 className="display-4">{totalContratos}</h1>
+                      <p className="lead">Total de Contratos Activos</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="carousel-item" data-bs-interval="5000">
+                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
+                    <div className="text-center">
+                      <h1 className="display-4">{totalIncidencias}</h1>
+                      <p className="lead">Total de Incidencias Abiertas</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span className="visually-hidden">Anterior</span>
+              </button>
+              <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                <span className="visually-hidden">Siguiente</span>
+              </button>
+            </div>
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="btn-group" role="group" aria-label="Button group with nested dropdown">
+    <div className="container mt-3">
+      <div className="row">
+        {/* Menú lateral izquierdo */}
+        <div className="col-md-3">
+          <div className="btn-group-vertical w-100 gap-2" role="group">
+            <button className="btn btn-outline-primary" onClick={() => setActiveOption(null)}>Principal</button>
+            <button className="btn btn-outline-primary" onClick={() => setActiveOption("contrato")}>Registrar Contrato</button>
+            <button className="btn btn-outline-primary" onClick={() => setActiveOption("viviendas")}>Viviendas</button>
+            <button className="btn btn-outline-primary" onClick={() => setActiveOption("incidencias")}>Incidencias</button>
+          </div>
+        </div>
 
-      <div className="btn-group" role="group">
-        <button
-          type="button"
-          className="btn btn-primary dropdown-toggle m-3"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        >
-          Dropdown
-        </button>
+        {/* Contenido principal + cards */}
+        <div className="col-md-9">
+          <div className="p-2 border rounded bg-light">
+            {/* Contenido dinámico */}
+            {renderContent()}
+          </div>
 
-        <ul className="dropdown-menu">
-          <li>
-            <a className="dropdown-item" href="#">
-              Registrar Contrato
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Apartamentos
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Contactos
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Incidencias
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Perfil
-            </a>
-          </li>
-          <li>
-            <a className="dropdown-item" href="#">
-              Salir
-            </a>
-          </li>
-        </ul>
+          {/* ✅ Cards fuera del carrusel, pero solo en vista principal */}
+          {activeOption === null && (
+            <div className="row mt-4">
+              <div className="col-md-4 mb-3">
+                <div className="card h-100">
+                  <img src="src/front/assets/img/familia.webp" className="card-img-top" alt="Inquilinos" />
+                  <div className="card-body">
+                    <h5 className="card-title">Inquilinos</h5>
+                    <p className="card-text">Gestión completa de tus inquilinos.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4 mb-3">
+                <div className="card h-100">
+                  <img src="src/front/assets/img/viviendasm.webp" className="card-img-top" alt="Viviendas" />
+                  <div className="card-body">
+                    <h5 className="card-title">Viviendas</h5>
+                    <p className="card-text">Consulta y edición de viviendas.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4 mb-3">
+                <div className="card h-100">
+                  <img src="src/front/assets/img/incidencia.webp" className="card-img-top" alt="Incidencias" />
+                  <div className="card-body">
+                    <h5 className="card-title">Incidencias</h5>
+                    <p className="card-text">Revisión de problemas y reportes.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
+
 };
 
-export default ButtonGroupDropdown;
+export default PropietarioIndex;
