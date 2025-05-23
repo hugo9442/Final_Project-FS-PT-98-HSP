@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
 """from .models import db """
-from api.routes import api
+from api.routes import apartments_api, users_api, contracts_api, issues_api, actions_api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
@@ -38,8 +38,12 @@ setup_admin(app)
 # add the admin
 setup_commands(app)
 
-# Add all endpoints form the API with a "api" prefix
-app.register_blueprint(api, url_prefix='/api')
+
+app.register_blueprint(users_api)
+app.register_blueprint(apartments_api)
+app.register_blueprint(contracts_api)
+app.register_blueprint(issues_api)
+app.register_blueprint(actions_api)
 
 # Handle/serialize errors like a JSON object
 

@@ -7,7 +7,6 @@ apartments_api = Blueprint('apartments_api', __name__, url_prefix='/apartments')
 
 CORS(apartments_api)
 
-
 @apartments_api.route('/create', methods=['POST'])
 @jwt_required()
 def create_apartment():

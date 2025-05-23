@@ -4,7 +4,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, Boolean, Integer, Enum
 from typing import List, TYPE_CHECKING
 
-roll_type = Enum('propietario', 'inquilino', 'admin', name="roll_type_enum")
+roll_type = Enum('owner', 'tenant', 'admin', name="roll_type_enum")
 
 if TYPE_CHECKING:
     from .contracts import Contract

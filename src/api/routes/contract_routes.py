@@ -1,17 +1,20 @@
 from flask import request, jsonify, Blueprint
 from api.models import db, Contract
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required
 
 contracts_api = Blueprint('contracts_api', __name__, url_prefix='/contracts')
 
 CORS(contracts_api)
 
 @contracts_api.route('/', methods=["GET"])
+@jwt_required()
 def get_all_contracts():
     contracts = Contract.query.all()
     return jsonify([contract.serialize() for contract in contracts]), 200
 
 @contracts_api.route('/<int:contract_id>', methods=["GET"])
+@jwt_required()
 def get_contract(contract_id):
     contract = Contract.query.get(contract_id)
     if not contract:
@@ -19,6 +22,7 @@ def get_contract(contract_id):
     return jsonify(contract.serialize()), 200
 
 @contracts_api.route('/<int:contract_id>', methods=["PUT"])
+@jwt_required()
 def update_contract(contract_id):
     contract = Contract.query.get(contract_id)
 
@@ -40,6 +44,7 @@ def update_contract(contract_id):
         return jsonify({"error": "Error in the server"}), 500
     
 @contracts_api.route('/create', methods=["POST"])
+@jwt_required()
 def create_contract():
     data_request = request.get_json()
 
@@ -56,6 +61,23 @@ def create_contract():
         db.session.add(new_contract)
         db.session.commit()
         return jsonify({"msg": "Contract created", "contract": new_contract.serialize()}), 201
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": "Error in the server"}), 500
+
+@contracts_api.route('/<int:contract_id>', methods=["DELETE"])
+@jwt_required()
+def delete_contract(contract_id):
+    contract = Contract.query.get(contract_id)
+
+    if not contract:
+        return jsonify({"error": "Contract not found"}), 404
+
+    try:
+        db.session.delete(contract)
+        db.session.commit()
+        return jsonify({"msg": "Contract deleted"}), 200
     except Exception as e:
         print(e)
         db.session.rollback()
