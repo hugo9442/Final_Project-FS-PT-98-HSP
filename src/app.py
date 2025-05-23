@@ -38,7 +38,6 @@ setup_admin(app)
 # add the admin
 setup_commands(app)
 
-
 app.register_blueprint(users_api)
 app.register_blueprint(apartments_api)
 app.register_blueprint(contracts_api)
