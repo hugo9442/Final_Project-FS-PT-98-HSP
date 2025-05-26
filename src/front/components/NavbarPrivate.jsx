@@ -12,16 +12,16 @@ const Navbar = () => {
 		>
 
 			<Link to="/" className="ms-5">
-			<img
-				src="src/front/assets/img/LogoTrabajoFinal.png"
-				alt="Logo"
-				className="navbar-brand"
-				style={{ width: "70px", height: "70px" }}
-			/>
+				<img
+					src="src/front/assets/img/LogoTrabajoFinal.png"
+					alt="Logo"
+					className="navbar-brand"
+					style={{ width: "70px", height: "70px" }}
+				/>
 			</Link>
-			
+
 			<div className="d-flex gap-3">
-				<Link to="/" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Principal</Link>
+				<Link to="/Acceso" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Principal</Link>
 				<Link to="/contacto" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Perfil de Usuario</Link>
 				<Link to="/" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Soporte Tecnico</Link>
 				<Link to="/Acceso" className="btn btn-light btn-sm w-100 me-5" style={{ minWidth: "120px" }}>Salir</Link>
