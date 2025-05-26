@@ -2,7 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
 import MenuLateral from "../components/MenuLateral";
+
+
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { contracts } from "../fecht_contract.js";
+import { apartments } from "../fecht_apartment.js";
+import { users } from "../fecht_user.js";
 
 
 const PropietarioIndex = () => {
@@ -12,12 +19,16 @@ const PropietarioIndex = () => {
   const [totalContratos, setTotalContratos] = useState(0);
   const [totalIncidencias, setTotalIncidencias] = useState(0);
 
+  const { store, dispatch } = useGlobalReducer();
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+
         const res = await fetch("/api/viviendas/count");
+
         const data = await res.json();
         setTotalViviendas(data.total);
       } catch (error) {
@@ -26,7 +37,9 @@ const PropietarioIndex = () => {
       }
 
       try {
+
         const res = await fetch("/api/contratos/count");
+
         const data = await res.json();
         setTotalContratos(data.total);
       } catch (error) {
@@ -35,7 +48,9 @@ const PropietarioIndex = () => {
       }
 
       try {
+
         const res = await fetch("/api/incidencias/count");
+
         const data = await res.json();
         setTotalIncidencias(data.total);
       } catch (error) {
@@ -57,13 +72,155 @@ const PropietarioIndex = () => {
     }
   };
 
+   const handleCreateTenant = async () => {
+        try {
+          const data = await users.createtenant(store.firstname,store.lastname,store.email,store.password,store.phone,store.national_id,store.aacc);
+          console.log(data);
+          console.log(data.error)
+         if ((typeof data.token === "string" && data.token.length > 0)) {
+          await dispatch({ type: "addToken", value: data.token });
+          await dispatch({ type: "add_user", value: data.user });
+          handleNavigate()
+        }
+         if (data.error==="El email ya está registrado"){
+           swal({
+            title: "ERROR",
+            text: `${data.error}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          });
+        }
+        if (data.error==="Email o contraseña inválidos"){
+          swal({
+            title: "ERROR",
+            text: `${data.error}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          });
+        }
+         else {
+          swal({
+            title: "ERROR",
+            text: `${data.msg}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          });
+        }
+  
+        } catch (error) {}
+      };
+   const handleCreatecontract = async () => {
+   
+      try {
+        const data = await contracts.create_contract(store.contract_start_date,store.contract_end_date,store.contract,store.todos[0].id, store.token);
+        console.log(data);
+        console.log(data.error)
+       if (data.message==="El contrato ha sido registrado satisfactoriamente") {
+          swal({
+            title: "CONTRATO",
+            text: "El contrato ha sido registrado satisfactoriamente",
+            icon: "success",
+            buttons: true,
+        });
+      }
+       else {
+        swal({
+          title: "ERROR",
+          text: `${data.error}`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
+      }
+
+      } catch (error) {
+        console.log(error)
+            return error
+      }
+    };
+    const handleCreatapartment = async () => {
+   
+      try {
+        const data = await apartments.create_apartment(store.address,store.postal_code,store.city,store.parking_slot, store.is_rent, store.todos[0].id, store.token);
+        console.log(data);
+        console.log(data.error)
+       if (data.msg==="La vivienda se ha registrado con exito") {
+          swal({
+          title: "VIVIENDA",
+          text: `${data.msg}`,
+          icon: "success",
+          buttons: true,
+        });
+      }
+       else {
+        swal({
+          title: "ERROR",
+          text: `${data.error}`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
+      }
+
+      } catch (error) {
+        console.log(error)
+            return error
+      }
+    };
+    const Ccontract = async()=>{
+      await
+      handleCreatecontract();
+    };
+     const Capratment = async()=>{
+      await
+      handleCreatapartment();
+    };
+    const Ctenant = async()=>{
+      if (store.email !== "" && store.password !== ""){
+       await
+      handleCreateTenant(); 
+      }
+    
+    };
+  
+console.log(store)
+
   const renderContent = () => {
     switch (activeOption) {
       case "contrato":
         return (
           <div>
             <h5>Aquí puedes registrar un nuevo contrato.</h5>
-            <form onSubmit={handleFormSubmit}>
+
+            
+            <div className="mb-3">
+                <label htmlFor="start_day" className="form-label">
+                  Fecha de inicio
+                </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  id="start_day"
+                   onChange={(e) =>
+                  dispatch({ type: "addstart_date", value: e.target.value })}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="start_day" className="form-label">
+                  Fecha de Fin
+                </label>
+                <input
+                  type="date"
+                  className="form-control"
+                  id="end_day"
+                   onChange={(e) =>
+                  dispatch({ type: "addend_date", value: e.target.value })}
+                />
+              </div>
+
               <div className="mb-3">
                 <label htmlFor="pdfUpload" className="form-label">
                   Sube tu contrato en PDF
@@ -73,21 +230,201 @@ const PropietarioIndex = () => {
                   className="form-control"
                   id="pdfUpload"
                   accept="application/pdf"
-                  onChange={handleFileChange}
+
+                  onChange={(e)=>dispatch({type:"addcontract", value:e.target.files[0]})}
                 />
               </div>
-              <button type="submit" className="btn btn-success">
+              <button  className="btn btn-success" onClick={Ccontract}>
                 Guardar Contrato
               </button>
-            </form>
+          
           </div>
         );
-      case "apartamentos":
-        return <p>Listado y gestión de apartamentos.</p>;
+       
+      case "viviendas":
+        return  (
+          <div>
+            <h5>Aquí puedes registrar una nueva vivienda.</h5>
+            
+            <div className="mb-3">
+                <label htmlFor="address" className="form-label">
+                  Direccion
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="address"
+                   onChange={(e) =>
+                  dispatch({ type: "address", value: e.target.value })}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="postal_code" className="form-label">
+                  Codigo Postal
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="postal_code"
+                   onChange={(e) =>
+                  dispatch({ type: "postal_code", value: e.target.value })}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="city" className="form-label">
+                  Ciudad
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="city"
+                  onChange={(e)=>dispatch({type:"city", value:e.target.value})}
+                />
+              </div>
+               <div className="mb-3">
+                <label htmlFor="parking_slot" className="form-label">
+                  Cochera
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="parking_slot"
+                  onChange={(e)=>dispatch({type:"parking_slot", value:e.target.value})}
+                />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="is_rent" className="form-label">
+                  Esta Arrendado
+                </label>
+                <input
+                  type="checkbox"
+                  className="form-control"
+                  id="is_rent"
+                  checked={store.is_rent}
+                  onChange={(e)=>dispatch({type:"is_rent", value: e.target.checked })}
+                />
+              </div>
+              <button  className="btn btn-success" onClick={Capratment}>
+                Añadir vivienda
+              </button>
+          
+          </div>
+        );
       case "contactos":
         return <p>Gestión de contactos y clientes.</p>;
-      case "incidencias":
-        return <p>Historial y reporte de incidencias.</p>;
+      case "inquilinos":
+        return(  <div>
+            <h5>Aquí puedes registrar un nuevo Inquilino.</h5>
+            
+            <div className="mb-3">
+                <label htmlFor="first_name" className="form-label">
+                  Nombre
+                </label>
+                <input
+                            type="text"
+                            id="first_name"
+                            className="form-control"
+                            value={store.lastname}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "addLastname",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="last_name" className="form-label">
+                  Apellidos
+                </label>
+                 <input
+                            type="email"
+                            id="last_name"
+                            className="form-control"
+                            value={store.email}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "addEmail",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="city" className="form-label">
+                  Password
+                </label>
+                 <input
+                            type="password"
+                            id="Password"
+                            className="form-control form-control-lg"
+                            value={store.password}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "addPassword",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+              </div>
+               <div className="mb-3">
+                <label htmlFor="parking_slot" className="form-label">
+                  Phone
+                </label>
+                 <input
+                            type="text"
+                            id="phone"
+                            className="form-control form-control-lg"
+                            value={store.Phone}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "addPhone",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="is_rent" className="form-label">
+                 DNI
+                </label>
+                 <input
+                            type="text"
+                            id="DNI"
+                            className="form-control"
+                            value={store.National_Id}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "addNid",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+              </div>
+              <div className="mb-3">
+                <label htmlFor="is_rent" className="form-label">
+                Cuenta Corriente
+                </label>
+                <input
+                            type="text"
+                            id="aacc"
+                            className="form-control form-control-lg"
+                            value={store.aacc}
+                            onChange={(e) =>
+                              dispatch({
+                                type: "addAacc",
+                                value: e.target.value,
+                              })
+                            }
+                          />
+              </div>
+              <button  className="btn btn-success" onClick={Ctenant}>
+                Añadir vivienda
+              </button>
+          
+          </div>
+        );
+
       case "perfil":
         return <p>Información de perfil del usuario.</p>;
       case "salir":
@@ -151,6 +488,7 @@ const PropietarioIndex = () => {
   };
 
   return (
+
     <div className="container-fluid mt-3 px-3">
       <div className="row">
         {/* Menú lateral izquierdo */}
@@ -213,3 +551,4 @@ const PropietarioIndex = () => {
 };
 
 export default PropietarioIndex;
+

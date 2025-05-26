@@ -45,4 +45,22 @@ export const router = createBrowserRouter(
       v7_relativeSplatPath: true
     }
   }
+
+import LoginSection from "./pages/Acceso"
+import { PrivateRoutes } from "./pages/Privateroute";
+import PropietarioIndex from "./pages/PropietarioIndex";
+
+export const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
+      <Route path="/" element={<Home />} />
+       <Route path="/propietarioindex" element={<PropietarioIndex />} />
+      <Route path="/acceso" element={<LoginSection />} />
+      <Route element={<PrivateRoutes />}>
+        <Route path="/single/:theId" element={<Single />} />
+        <Route path="/demo" element={<Demo />} />
+      </Route>
+    </Route>
+  )
+
 );

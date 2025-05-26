@@ -4,7 +4,9 @@ import { useAuth } from "../context/AuthContext";
 const Navbar = () => {
 
 	return (
+
     <nav className="navbar shadow sticky-top" data-bs-theme="dark" style={{
+
 			backgroundColor: "rgba(138, 223, 251, 0.8)",
 			boxShadow: "0 3px 25px rgba(0, 0, 0, 0.3)",
 			borderRadius: "13px"

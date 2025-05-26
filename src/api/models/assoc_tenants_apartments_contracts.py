@@ -12,12 +12,12 @@ class AssocTenantApartmentContract(db.Model):
     __tablename__ = 'assoc_tenants_apartments_contracts'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
+    tenant_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     apartment_id: Mapped[int] = mapped_column(ForeignKey('apartments.id'), nullable=False)
     contract_id: Mapped[int] = mapped_column(ForeignKey('contracts.id'), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
-    user: Mapped['User'] = relationship(
+    tenant: Mapped['User'] = relationship(
         back_populates='association'
     )
     apartment: Mapped['Apartment'] = relationship(

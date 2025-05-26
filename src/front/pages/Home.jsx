@@ -5,6 +5,7 @@ import Card from "../components/Card.jsx"
 
 export const Home = () => {
 
+
   const { dispatch } = useGlobalReducer()
 
   const loadMessage = async () => {
@@ -76,7 +77,7 @@ export const Home = () => {
       </div>
     </div>
   );
-
 };
+
 
 

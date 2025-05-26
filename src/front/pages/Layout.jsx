@@ -4,6 +4,8 @@ import NavbarPrivate from "../components/NavbarPrivate";
 import NavbarSecondary from "../components/NavbarSecondary";
 import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
+import { Outlet } from "react-router-dom/dist";
+
 
 export const Layout = () => {
     const location = useLocation();
