@@ -2,10 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+
+import MenuLateral from "../components/MenuLateral";
+
+
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { contracts } from "../fecht_contract.js";
 import { apartments } from "../fecht_apartment.js";
 import { users } from "../fecht_user.js";
+
 
 const PropietarioIndex = () => {
   const [activeOption, setActiveOption] = useState(null);
@@ -13,13 +18,17 @@ const PropietarioIndex = () => {
   const [totalViviendas, setTotalViviendas] = useState(0);
   const [totalContratos, setTotalContratos] = useState(0);
   const [totalIncidencias, setTotalIncidencias] = useState(0);
+
   const { store, dispatch } = useGlobalReducer();
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-       // const res = await fetch("/api/viviendas/count");
+
+        const res = await fetch("/api/viviendas/count");
+
         const data = await res.json();
         setTotalViviendas(data.total);
       } catch (error) {
@@ -28,7 +37,9 @@ const PropietarioIndex = () => {
       }
 
       try {
-        //const res = await fetch("/api/contratos/count");
+
+        const res = await fetch("/api/contratos/count");
+
         const data = await res.json();
         setTotalContratos(data.total);
       } catch (error) {
@@ -37,7 +48,9 @@ const PropietarioIndex = () => {
       }
 
       try {
-        //const res = await fetch("/api/incidencias/count");
+
+        const res = await fetch("/api/incidencias/count");
+
         const data = await res.json();
         setTotalIncidencias(data.total);
       } catch (error) {
@@ -58,6 +71,7 @@ const PropietarioIndex = () => {
       alert("Por favor, selecciona un archivo PDF.");
     }
   };
+
    const handleCreateTenant = async () => {
         try {
           const data = await users.createtenant(store.firstname,store.lastname,store.email,store.password,store.phone,store.national_id,store.aacc);
@@ -173,12 +187,14 @@ const PropietarioIndex = () => {
     };
   
 console.log(store)
+
   const renderContent = () => {
     switch (activeOption) {
       case "contrato":
         return (
           <div>
             <h5>Aquí puedes registrar un nuevo contrato.</h5>
+
             
             <div className="mb-3">
                 <label htmlFor="start_day" className="form-label">
@@ -204,6 +220,7 @@ console.log(store)
                   dispatch({ type: "addend_date", value: e.target.value })}
                 />
               </div>
+
               <div className="mb-3">
                 <label htmlFor="pdfUpload" className="form-label">
                   Sube tu contrato en PDF
@@ -213,6 +230,7 @@ console.log(store)
                   className="form-control"
                   id="pdfUpload"
                   accept="application/pdf"
+
                   onChange={(e)=>dispatch({type:"addcontract", value:e.target.files[0]})}
                 />
               </div>
@@ -406,6 +424,7 @@ console.log(store)
           
           </div>
         );
+
       case "perfil":
         return <p>Información de perfil del usuario.</p>;
       case "salir":
@@ -469,70 +488,67 @@ console.log(store)
   };
 
   return (
-  <div className="container-fluid mt-3 px-3">
-    <div className="row">
-      {/* Menú lateral izquierdo */}
-      <div className="col-md-3">
-        <div className="btn-group-vertical w-100 gap-2" role="group">
-          <button className="btn btn-outline-primary" onClick={() => setActiveOption("contrato")}>Registrar Contrato</button>
-          <button className="btn btn-outline-primary" onClick={() => setActiveOption("viviendas")}>Viviendas</button>
-          <button className="btn btn-outline-primary" onClick={() => setActiveOption("inquilinos")}>Inquilinos</button>
-        </div>
-      </div>
 
-      {/* Contenido principal + cards */}
-      <div className="col-md-9">
-        <div className="p-2 border rounded bg-light">
-          {/* Contenido dinámico */}
-          {renderContent()}
-        </div>
+    <div className="container-fluid mt-3 px-3">
+      <div className="row">
+        {/* Menú lateral izquierdo */}
+       <MenuLateral setActiveOption={setActiveOption} />
 
-        {/* Cards fuera del carrusel, solo si estamos en "Principal" */}
-        {activeOption === null && (
-          <div className="row mt-4">
-            <div className="col-md-4 mb-3">
-              <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                  <h1 className="display-4">{totalViviendas}</h1>
-                  <p className="lead mb-0">Total de Inquilinos</p>
-                </div>
-                <div className="card-body">
-                  <p className="card-text">Gestión completa de tus inquilinos.</p>
-                </div>
-              </div>
-            </div>
 
-            <div className="col-md-4 mb-3">
-              <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                  <h1 className="display-4">{totalContratos}</h1>
-                  <p className="lead mb-0">Total de Contratos Activos</p>
-                </div>
-                <div className="card-body">
-                  <p className="card-text">Consulta y edición de viviendas.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="col-md-4 mb-3">
-              <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                  <h1 className="display-4">{totalIncidencias}</h1>
-                  <p className="lead mb-0">Total de Incidencias Abiertas</p>
-                </div>
-                <div className="card-body">
-                  <p className="card-text">Revisión de problemas y reportes.</p>
-                </div>
-              </div>
-            </div>
+        {/* Contenido principal + cards */}
+        <div className="col-md-9">
+          <div className="p-2 border rounded bg-light">
+            {/* Contenido dinámico */}
+            {renderContent()}
           </div>
-        )}
+
+          {/* Cards fuera del carrusel, solo si estamos en "Principal" */}
+          {activeOption === null && (
+            <div className="row mt-4">
+              <div className="col-md-4 mb-3">
+                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                    <h1 className="display-4">{totalViviendas}</h1>
+                    <p className="lead mb-0">Total de Inquilinos</p>
+                  </div>
+                  <div className="card-body">
+                    <p className="card-text">Gestión completa de tus inquilinos.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4 mb-3">
+                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                    <h1 className="display-4">{totalContratos}</h1>
+                    <p className="lead mb-0">Total de Contratos Activos</p>
+                  </div>
+                  <div className="card-body">
+                    <p className="card-text">Consulta y edición de viviendas.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="col-md-4 mb-3">
+                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                    <h1 className="display-4">{totalIncidencias}</h1>
+                    <p className="lead mb-0">Total de Incidencias Abiertas</p>
+                  </div>
+                  <div className="card-body">
+                    <p className="card-text">Revisión de problemas y reportes.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 
 
 };
 
 export default PropietarioIndex;
+

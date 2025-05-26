@@ -22,6 +22,7 @@ ALLOWED_EXTENSIONS = {'pdf'}  # Solo permitir PDFs
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+
 # from models import Person
 
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
