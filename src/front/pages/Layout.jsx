@@ -3,14 +3,13 @@ import Navbar from "../components/Navbar";
 import NavbarPrivate from "../components/NavbarPrivate";
 import NavbarSecondary from "../components/NavbarSecondary";
 import Footer from "../components/Footer";
-
 import ScrollToTop from "../components/ScrollToTop";
 
 export const Layout = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    const privateRoutes = ["/PropietarioIndex", "/admin"];
+    const privateRoutes = ["/PropietarioIndex", "/admin", "/InquilinoIndex", "/Contrato", "/Viviendas", "/Inquilinos", "/Incidencias"];
     const secondaryRoutes = ["/InquilinoIndex"];
     const publicRoutes = ["/acceso", "/Form"];
 

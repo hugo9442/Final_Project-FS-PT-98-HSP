@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import MenuLateral from "../components/MenuLateral";
+
 
 const PropietarioIndex = () => {
   const [activeOption, setActiveOption] = useState(null);
@@ -152,14 +154,8 @@ const PropietarioIndex = () => {
     <div className="container-fluid mt-3 px-3">
       <div className="row">
         {/* Menú lateral izquierdo */}
-        <div className="col-md-3">
-          <div className="btn-group-vertical w-100 gap-2" role="group">
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("contrato")}>Contrato</button>
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("viviendas")}>Viviendas</button>
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("incidencias")}>Inquilinos</button>
-            <button className="btn btn-outline-primary" onClick={() => setActiveOption("incidencias")}>Incidencias</button>
-          </div>
-        </div>
+       <MenuLateral setActiveOption={setActiveOption} />
+
 
         {/* Contenido principal + cards */}
         <div className="col-md-9">

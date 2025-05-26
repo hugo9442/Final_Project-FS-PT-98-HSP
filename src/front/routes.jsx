@@ -12,6 +12,11 @@ import Contact from "./pages/Contact";
 import Servicios from "./pages/Servicios";
 import PropietarioIndex from "./pages/PropietarioIndex";
 import InquilinoIndex from "./pages/InquilinoIndex";
+import Contrato from "./pages/Contrato";
+import Incidencias from "./pages/Incidencias";
+import Inquilinos from "./pages/Inquilinos";
+import Viviendas from "./pages/Viviendas";
+
 
 
 
@@ -27,6 +32,10 @@ export const router = createBrowserRouter(
       <Route path="single/:theId" element={<Single />} />
       <Route path="propietarioindex" element={<PropietarioIndex />} />
       <Route path="InquilinoIndex" element={<InquilinoIndex />} />
+      <Route path="/Contrato" element={<Contrato />} />
+      <Route path="/Incidencias" element={<Incidencias />} />
+      <Route path="/Inquilinos" element={<Inquilinos />} />
+      <Route path="/Viviendas" element={<Viviendas />} />
     </Route>
   ),
   {

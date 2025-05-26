@@ -11,21 +11,30 @@ const Navbar = () => {
 		}}
 		>
 
-			<Link to="/" className="ms-5">
+			<a href="/PropietarioIndex" className="ms-5">
 				<img
 					src="src/front/assets/img/LogoTrabajoFinal.png"
 					alt="Logo"
 					className="navbar-brand"
 					style={{ width: "70px", height: "70px" }}
 				/>
-			</Link>
+			</a>
 
 			<div className="d-flex gap-3">
-				<Link to="/Acceso" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Principal</Link>
-				<Link to="/contacto" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Perfil de Usuario</Link>
-				<Link to="/" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>Soporte Tecnico</Link>
-				<Link to="/Acceso" className="btn btn-light btn-sm w-100 me-5" style={{ minWidth: "120px" }}>Salir</Link>
+				<a href="/PropietarioIndex" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
+					Principal
+				</a>
+				<Link to="/Contact" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
+					Contacto
+				</Link>
+				<Link to="/Servicios" className="btn btn-light btn-sm w-100" style={{ minWidth: "150px" }}>
+					Perfil de Usuario
+				</Link>
+				<Link to="/" className="btn btn-light btn-sm w-100 me-5" style={{ minWidth: "120px" }}>
+					Salir
+				</Link>
 			</div>
+
 		</nav>
 	);
 };
