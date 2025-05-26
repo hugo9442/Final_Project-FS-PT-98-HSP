@@ -1,11 +1,19 @@
   
-  const Url = "https://literate-spoon-x5vj4v74wq65299rj-3001.app.github.dev/api/user"
+  const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/user"
 
   export const users = {
 
-    createuser: async (email, pass) => {
+    createuser: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
         let user = {
-            "email": `${email}`, "password": `${pass}`, "is_active":true
+             "first_name":`${firstname}`,
+             "last_name":`${lastname}`,
+             "email": `${email}`, 
+             "password": `${pass}`,
+             "phone_number":`${phone}`,
+             "national_id":`${national_id}`,
+             "account_number":`${aacc}`,
+             "role":"PROPIETARIO"
+           
         };
         console.log(user)
         try {
@@ -17,6 +25,37 @@
                 body: JSON.stringify(user)
             })
             const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
+        let user = {
+             "first_name":`${firstname}`,
+             "last_name":`${lastname}`,
+             "email": `${email}`, 
+             "password": `${pass}`,
+             "phone_number":`${phone}`,
+             "national_id":`${national_id}`,
+             "account_number":`${aacc}`,
+             "role":"INQUILINO"
+           
+        };
+        console.log(user)
+        try {
+            const request = await fetch(`${Url}/create`, {
+                method: "POST",
+                headers: {
+                    "content-Type": "application/json"
+                },
+                body: JSON.stringify(user)
+            })
+            const response = await request.json();
+            console.log(response)
             return response
         } catch (error) {
             console.log(error)

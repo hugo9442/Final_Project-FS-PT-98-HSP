@@ -14,11 +14,11 @@ class Contract(db.Model):
     __tablename__="contracts"
     id: Mapped[int] = mapped_column(primary_key=True)
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    end_day:Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     document: Mapped[str] = mapped_column(String(255), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
-    user: Mapped['User'] = relationship(
-        back_populates='contrat'
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
+    owner: Mapped['User'] = relationship(
+        back_populates='contract'
     )    
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="contract"
@@ -28,10 +28,9 @@ class Contract(db.Model):
         return{
             "id":self.id,
             "start_date": self.start_date, 
-            "end_day": self.end_day,
+            "end_date": self.end_date,
             "document": self.document,
-            "user_id": self.user_id
-    
+            "owner_id": self.owner_id
 
         }
     

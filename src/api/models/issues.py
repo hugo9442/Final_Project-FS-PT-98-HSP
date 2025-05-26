@@ -14,9 +14,9 @@ class Issue(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     priority: Mapped[int] = mapped_column(Integer, nullable=False)
-    title: Mapped[str] = mapped_column(String(50), nullable=False)
-    type: Mapped[str] = mapped_column(String(50), nullable=False)
-    status: Mapped[str] = mapped_column(String(50), nullable=False)
+    title: Mapped[str] = mapped_column(String(250), nullable=False)
+    type: Mapped[str] = mapped_column(String(250), nullable=False)
+    status: Mapped[str] = mapped_column(String(250), nullable=False)
     description: Mapped[str] = mapped_column(String(250), nullable=False)
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)

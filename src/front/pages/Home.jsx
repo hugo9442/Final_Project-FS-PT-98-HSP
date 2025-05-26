@@ -1,134 +1,54 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from "react"
+import viviendaUrl from "../assets/img/vivienda2.jpg"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { users } from "../fecht_user.js";
-import swal from "sweetalert";
-import { Await, json, useNavigate } from "react-router-dom";
-import storeReducer from "../store.js";
-import { PrivateRoutes } from "./privateroute.jsx";
+import Card from "../components/Card.jsx"
+
 export const Home = () => {
-  const { store, dispatch } = useGlobalReducer();
-  const history = useNavigate();
-  const handleNavigate = () => history("/demo");
 
-  const handleCreatuser = async () => {
-    try {
-      const data = await users.createuser(store.email, store.password);
-
-      console.log(data);
-    } catch (error) {}
-  };
-
-  const handleLogingUser = async () => {
-    try {
-      const data = await users.loginguser(store.email, store.password);
-      console.log(data);
-       if(data.token) {
-        await
-        dispatch({ type: "addToken", value: data.token });
-        await
-         dispatch({ type: "add_user", value: data.user });
-       }   
-        
-       else {
-        swal({
-          title: "ERROR",
-          text: `${data.msg}`,
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        });
-      }
-      return data
-    } catch (error) {}
-  };
  
-  const handleprivate = async () => {
-    console.log('store',store)
-    try {
-      const data = await users.privateareauser(store.token);
-      if (data.confirmation) {
-        dispatch({ type: "add_user", value: data.user });
 
-        swal({
-          title: "Ya estás en tu area PRIVADA",
-          text: `${data.user.email}`,
-          icon: "success",
-          buttons: true,
-          dangerMode: true,
-        });
-      } else {
-        swal({
-          title: "ERROR",
-          text: `${data.msg}`,
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        });
-      }
-    } catch (error) {}
-  };
-
-  const createContact = async () => {
-    if (store.email !== "" && store.password !== "") {
-      await handleCreatuser();
-    }
-  };
-  const logingUser = async () => {
-    if (store.email !== "" && store.password !== "") {
-      const dataLogin= await handleLogingUser();
-      handleNavigate()
-      //checkToken()
-      
-     
-    // if (dataLogin.validToken) {
-    //    await handleprivate();
-    //  }
-    }
-   
-  };
-
-  console.log(store.todos)
   return (
-    <div className="text-center mt-5">
-      <h1 className="title">Wellcome</h1>
-      <div className="log mt-5">
-        <label className="form-label">Enter Email</label>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Enter Email"
-          value={store.email}
-          onChange={(e) =>
-            dispatch({ type: "addEmail", value: e.target.value })
-          }
+    <div className="mt-5">
+      <h1 className="text-center display-4">Gestión Inmuebles</h1>
+      <p className="text-center lead">
+
+        <img
+          src={viviendaUrl}
+          className="img-fluid mb-3 mt-3"
+          alt="imagen vivienda"
         />
-        <label className="form-label">Enter Password</label>
-        <input
-          type="text"
-          className="form-control"
-          placeholder="Enter Password"
-          value={store.password}
-          onChange={(e) =>
-            dispatch({ type: "addPassword", value: e.target.value })
-          }
-        />
-        <button
-          type="button"
-          id="formButton"
-          className="btn btn-primary mt-5"
-          onClick={createContact}
-        >
-          Register
-        </button>
-        <button
-          type="button"
-          id="formButton"
-          className="btn btn-primary mt-5"
-          onClick={logingUser}
-        >
-          Login
-        </button>
+
+      </p>
+
+      <div className="container my-5">
+        <div className="row justify-content-center">
+          <div className="col-md-4 d-flex justify-content-center mb-4">
+            <Card
+              image="src/front/assets/img/vivienda2.jpg"
+              text="Arrendador : "
+              text2="Control total desde casa: visualiza y gestiona incidencias reportadas por inquilinos sin desplazarte. Soluciones rápidas, cómodas y centralizadas."
+              alt="Propiedad 1"
+            />
+          </div>
+          <div className="col-md-4 d-flex justify-content-center mb-4">
+            <Card
+              image="src/front/assets/img/vivienda2.jpg"
+              text="Arrendatario"
+              text2="Reporta fácilmente incidencias desde cualquier lugar. Olvídate de llamadas: tu arrendador recibe y gestiona todo online, rápido y sin complicaciones."
+              alt="Propiedad 2"
+            />
+          </div>
+          <div className="col-md-4 d-flex justify-content-center mb-4">
+            <Card
+              image="src/front/assets/img/vivienda2.jpg"
+              text="Servicios"
+              text2="Digitaliza la gestión de tu vivienda: seguimiento de incidencias, comunicación ágil y soluciones eficientes para propietarios e inquilinos, todo en un solo lugar."
+              alt="Propiedad 3"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
+
 };
