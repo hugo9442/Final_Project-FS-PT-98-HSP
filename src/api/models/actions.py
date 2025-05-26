@@ -13,13 +13,13 @@ class Action(db.Model):
     __tablename__ = 'actions'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    status: Mapped[str] = mapped_column(String(50), nullable=False)
-    action_name: Mapped[str] = mapped_column(String(250), nullable=False)
+    status: Mapped[str] = mapped_column(String(255), nullable=False)
+    action_name: Mapped[str] = mapped_column(String(255), nullable=False)
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     description: Mapped[str] = mapped_column(String(350), nullable=False)
-    contractor: Mapped[str] = mapped_column(String(150), nullable=False)
+    contractor: Mapped[str] = mapped_column(String(255), nullable=False)
     bill_amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    bill_image: Mapped[str] = mapped_column(String(50), nullable=False)
+    bill_image: Mapped[str] = mapped_column(String(255), nullable=False)
     issue_id: Mapped[int] = mapped_column(ForeignKey('issues.id'), nullable=False)
     issue: Mapped ['Issue'] = relationship(
          back_populates='actions'
@@ -35,7 +35,7 @@ class Action(db.Model):
             "description": self.description,
             "contractor": self.contractor,
             "bill_amount": self.bill_amount,
-            "bill_image": self.end_date
+            "bill_image": self.bill_image
         }
     
     def serialize_with_relations(self):

@@ -1,10 +1,22 @@
 from .database import db
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Boolean, Integer, Enum
+from sqlalchemy import String, Enum
 from typing import List, TYPE_CHECKING
+from enum import Enum as PyEnum
 
-roll_type = Enum('propietario', 'inquilino', 'admin', name="roll_type_enum")
+class Role(PyEnum):
+    PROPIETARIO = 'propietario'
+    INQUILINO = 'inquilino'
+    ADMIN = 'admin'
+
+role_type = Enum(
+    Role, 
+    name="role_type_enum",
+    create_type=True, 
+    validate_strings=True
+)
+
 
 if TYPE_CHECKING:
     from .contracts import Contract
@@ -14,22 +26,22 @@ if TYPE_CHECKING:
 class User(db.Model):
     __tablename__= "users"
     id: Mapped[int] = mapped_column(primary_key=True)
-    first_name: Mapped[str] = mapped_column(String(120), nullable=False)
-    last_name: Mapped[str] = mapped_column(String(120), nullable=False)
-    email: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
-    password: Mapped[str] = mapped_column(String(50),nullable=False)
-    phone: Mapped[int] = mapped_column(nullable=False)
-    national_id: Mapped[str] = mapped_column(String(12), nullable=False)
-    account_number: Mapped[str] = mapped_column(String(24), nullable=False)
-    roll: Mapped[str] = mapped_column(roll_type, nullable=False)
+    first_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    last_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(255),nullable=False)
+    phone: Mapped[str] = mapped_column(nullable=False)
+    national_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    account_number: Mapped[str] = mapped_column(String(255), nullable=False)
+    role: Mapped[Role] = mapped_column(role_type, nullable=False)
     apartment: Mapped[List["Apartment"]] = relationship(
-        back_populates="user"
+        back_populates="owner"
     )
-    contrat: Mapped[List["Contract"]] = relationship(
-        back_populates="user"
+    contract: Mapped[List["Contract"]] = relationship(
+        back_populates="owner"
     )
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
-        back_populates="user"
+        back_populates="tenant"
     )
 
     def serialize(self):
@@ -38,11 +50,10 @@ class User(db.Model):
             "first_name": self.first_name, 
             "last_name": self.last_name,
             "email": self.email,
-            "password": self.password,
             "phone": self.phone,
             "national_id": self.national_id,
             "account_number": self.account_number,
-            "roll": self.roll
+            "role": self.role.value
     
 
         }
