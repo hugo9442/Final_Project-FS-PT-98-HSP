@@ -50,6 +50,7 @@ def update_contract(contract_id):
 @contracts_api.route('/download/<filename>',methods=['GET'])
 @jwt_required()  
 def download_file(filename):
+    
     if not filename or '.' not in filename:
         return({"msg":"Nombre de archivo inválido"})
     

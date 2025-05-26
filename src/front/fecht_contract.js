@@ -26,5 +26,19 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/con
         console.error("Error subiendo PDF:", error);
         return { error: "Error al subir el contrato" };
     }
-}
+},
+getcontract: async () => {
+        try {
+            const request = await fetch(`${Url}/`, {
+                method: "GET"
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    }
  }

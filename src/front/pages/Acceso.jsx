@@ -86,6 +86,7 @@ const LoginSection = () => {
     if (store.email !== "" && store.password !== "") {
       await
       handleCreatuser();
+      
      // handleNavigate();
     }
   };

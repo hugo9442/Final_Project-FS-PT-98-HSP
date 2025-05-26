@@ -5,6 +5,7 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { contracts } from "../fecht_contract.js";
 import { apartments } from "../fecht_apartment.js";
+import { users } from "../fecht_user.js";
 
 const PropietarioIndex = () => {
   const [activeOption, setActiveOption] = useState(null);
@@ -57,6 +58,46 @@ const PropietarioIndex = () => {
       alert("Por favor, selecciona un archivo PDF.");
     }
   };
+   const handleCreateTenant = async () => {
+        try {
+          const data = await users.createtenant(store.firstname,store.lastname,store.email,store.password,store.phone,store.national_id,store.aacc);
+          console.log(data);
+          console.log(data.error)
+         if ((typeof data.token === "string" && data.token.length > 0)) {
+          await dispatch({ type: "addToken", value: data.token });
+          await dispatch({ type: "add_user", value: data.user });
+          handleNavigate()
+        }
+         if (data.error==="El email ya está registrado"){
+           swal({
+            title: "ERROR",
+            text: `${data.error}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          });
+        }
+        if (data.error==="Email o contraseña inválidos"){
+          swal({
+            title: "ERROR",
+            text: `${data.error}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          });
+        }
+         else {
+          swal({
+            title: "ERROR",
+            text: `${data.msg}`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+          });
+        }
+  
+        } catch (error) {}
+      };
    const handleCreatecontract = async () => {
    
       try {
@@ -116,10 +157,19 @@ const PropietarioIndex = () => {
       }
     };
     const Ccontract = async()=>{
+      await
       handleCreatecontract();
     };
      const Capratment = async()=>{
+      await
       handleCreatapartment();
+    };
+    const Ctenant = async()=>{
+      if (store.email !== "" && store.password !== ""){
+       await
+      handleCreateTenant(); 
+      }
+    
     };
   
 console.log(store)
@@ -350,7 +400,7 @@ console.log(store)
                             }
                           />
               </div>
-              <button  className="btn btn-success" onClick={Capratment}>
+              <button  className="btn btn-success" onClick={Ctenant}>
                 Añadir vivienda
               </button>
           

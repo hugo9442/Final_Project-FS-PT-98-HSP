@@ -21,6 +21,7 @@ export const initialStore = () => {
     visibility2: "",
     validToken: false,
     todos: [],
+    tenant:[]
   };
 };
 
@@ -143,6 +144,14 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         todos: [...store.todos, action.value],
+      };
+       case "add_tenant":
+      const tenantExists = store.tenant.some((u) => u.id === action.value.id);
+      if (tenantExists) return store; 
+
+      return {
+        ...store,
+        tenant: [...store.tenant, action.value],
       };
     default:
       throw Error("Unknown action.");
