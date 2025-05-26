@@ -72,6 +72,15 @@ const LoginSection = () => {
                                                 >
                                                     Prueba Propietario
                                                 </button>
+
+                                                <button
+                                                    className="btn btn-dark btn-lg btn-block"
+                                                    style={{ margin: 5 }}
+                                                    type="button"
+                                                    onClick={() => navigate("/InquilinoIndex")}
+                                                >
+                                                    Prueba Inquilino
+                                                </button>
                                             </div>
 
                                             <a className="small text-muted" href="#!">
