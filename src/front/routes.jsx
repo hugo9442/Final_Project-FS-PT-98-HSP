@@ -16,51 +16,32 @@ import Contrato from "./pages/Contrato";
 import Incidencias from "./pages/Incidencias";
 import Inquilinos from "./pages/Inquilinos";
 import Viviendas from "./pages/Viviendas";
-
-
-
-
+import { PrivateRoutes } from "./pages/Privateroute";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
-      <Route path="/contact" element={<Contact />} />
       <Route path="/acceso" element={<Acceso />} />
-      <Route path="/servicios" element={<Servicios />} />
-      <Route index element={<Home />} />  {/* Página raíz */}
-      <Route path="demo" element={<Demo />} />
-      <Route path="single/:theId" element={<Single />} />
-      <Route path="propietarioindex" element={<PropietarioIndex />} />
-      <Route path="InquilinoIndex" element={<InquilinoIndex />} />
-      <Route path="/Contrato" element={<Contrato />} />
-      <Route path="/Incidencias" element={<Incidencias />} />
-      <Route path="/Inquilinos" element={<Inquilinos />} />
-      <Route path="/Viviendas" element={<Viviendas />} />
+      <Route index element={<Home />} /> {/* Página raíz */}
+      <Route element={<PrivateRoutes />}>
+        <Route path="/servicios" element={<Servicios />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="demo" element={<Demo />} />
+        <Route path="single/:theId" element={<Single />} />
+        <Route path="propietarioindex" element={<PropietarioIndex />} />
+        <Route path="InquilinoIndex" element={<InquilinoIndex />} />
+        <Route path="/Contrato" element={<Contrato />} />
+        <Route path="/Incidencias" element={<Incidencias />} />
+        <Route path="/Inquilinos" element={<Inquilinos />} />
+        <Route path="/Viviendas" element={<Viviendas />} />
+      </Route>
     </Route>
   ),
   {
     // ⚙️ Activamos flags de futura compatibilidad con React Router v7
     future: {
       v7_startTransition: true,
-      v7_relativeSplatPath: true
-    }
+      v7_relativeSplatPath: true,
+    },
   }
-
-import LoginSection from "./pages/Acceso"
-import { PrivateRoutes } from "./pages/Privateroute";
-import PropietarioIndex from "./pages/PropietarioIndex";
-
-export const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
-      <Route path="/" element={<Home />} />
-       <Route path="/propietarioindex" element={<PropietarioIndex />} />
-      <Route path="/acceso" element={<LoginSection />} />
-      <Route element={<PrivateRoutes />}>
-        <Route path="/single/:theId" element={<Single />} />
-        <Route path="/demo" element={<Demo />} />
-      </Route>
-    </Route>
-  )
-
 );
