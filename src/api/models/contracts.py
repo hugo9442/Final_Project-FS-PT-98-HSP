@@ -13,12 +13,12 @@ if TYPE_CHECKING:
 class Contract(db.Model):
     __tablename__="contracts"
     id: Mapped[int] = mapped_column(primary_key=True)
-    start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    start_date: Mapped[DateTime] = mapped_column(DateTime, nullable=False)
+    end_date:Mapped[DateTime] = mapped_column(DateTime, nullable=False)
     document: Mapped[str] = mapped_column(String(255), nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"), nullable=True)
     owner: Mapped['User'] = relationship(
-        back_populates='contract'
+        back_populates='contracts'
     )    
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="contract"
@@ -32,12 +32,13 @@ class Contract(db.Model):
             "document": self.document,
             "owner_id": self.owner_id
 
+
         }
     
     def serialize_with_relations(self):
         data = self.serialize()
-        data['user'] = [user.serialize() for user in self.user],
-        data['asociation']=[asociation.serialize() for asociation in self.contracts],
+        data['owner'] = [owner.serialize() for owner in self.owner],
+        data['association']=[association.serialize() for association in self.contracts],
         return data 
       
            
