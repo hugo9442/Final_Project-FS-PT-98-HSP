@@ -21,6 +21,7 @@ import { PrivateRoutes } from "./pages/Privateroute";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
+
       <Route path="/acceso" element={<Acceso />} />
       <Route index element={<Home />} /> {/* Página raíz */}
       <Route element={<PrivateRoutes />}>
@@ -34,6 +35,7 @@ export const router = createBrowserRouter(
         <Route path="/Incidencias" element={<Incidencias />} />
         <Route path="/Inquilinos" element={<Inquilinos />} />
         <Route path="/Viviendas" element={<Viviendas />} />
+
       </Route>
     </Route>
   ),

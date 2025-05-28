@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+from pathlib import Path
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -14,6 +15,11 @@ from flask_jwt_extended import JWTManager
 from datetime import timedelta
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
+from dotenv import load_dotenv
+
+env_path = Path(__file__).resolve().parent.parent / '.env'  # Sube dos niveles desde src/
+load_dotenv(env_path)
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
@@ -47,9 +53,10 @@ if os.getenv('CODESPACES'):
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
     
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # Límite de 16MB
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 app.config["JWT_SECRET_KEY"] =os.getenv("SECRET_KEY") 
+
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 jwt=JWTManager(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
