@@ -32,10 +32,17 @@
 		"@types/react": "^18.2.18",
 		"@types/react-dom": "^18.2.7",
 		"@vitejs/plugin-react": "^4.0.4",
+
+		"autoprefixer": "^10.4.21",
+
 		"eslint": "^8.46.0",
 		"eslint-plugin-react": "^7.33.1",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"eslint-plugin-react-refresh": "^0.4.3",
+
+		"postcss": "^8.5.3",
+		"tailwindcss": "^4.1.7",
+
 		"vite": "^4.4.8"
 	},
 	"babel": {
@@ -55,10 +62,14 @@
 	},
 	"dependencies": {
 		"bootstrap": "^5.3.6",
+
+		"chart.js": "^4.4.9",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",
+		"react-chartjs-2": "^5.3.0",
 		"react-dom": "^18.2.0",
 		"react-router-dom": "^6.18.0",
 		"sweetalert": "^2.1.2"
+
 	}
 }

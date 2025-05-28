@@ -1,3 +1,4 @@
+
 const Card = ({ image, text, text2, alt = "imagen" }) => {
   return (
     <div className="card mx-auto mb-5" style={{ width: "18rem" }}>
@@ -15,4 +16,6 @@ const Card = ({ image, text, text2, alt = "imagen" }) => {
   );
 };
 
+
 export default Card;
+
