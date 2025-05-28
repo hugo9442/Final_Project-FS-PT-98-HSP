@@ -87,7 +87,7 @@
     },
     privateareauser: async (token) => {
         try {
-            const request = await fetch("https://literate-spoon-x5vj4v74wq65299rj-3001.app.github.dev/api/private", {
+            const request = await fetch(`${Url}/private`, {
                 method: "GET", 
                  headers: {
                     "Authorization": `Bearer  ${token}`

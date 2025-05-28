@@ -62,8 +62,7 @@ def private_route():
     user = User.query.get(user_id)
 
     return jsonify({
-        "confirmation":True,
-        "user":user.serialize()}), 200
+        "msg":True}), 200
 
 @users_api.route('/create', methods=["POST"])
 def create_user():
@@ -165,15 +164,17 @@ def sing_in():
         db.session.rollback()
         return jsonify({"error": "Error en el servidor"}), 500
     
-@users_api.route('/<int:user_id>/contracts', methods=["GET"])
+@users_api.route('/<int:user_id>/contracts/count', methods=["GET"])
 @jwt_required()   
 def get_user_contracts(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
     
-    contracts = user.contracts
+    contracts = user.contract
+    count=len(contracts)
 
     if not contracts:
         return jsonify({"error": "No hay contratos para este usuario"}), 404
-    return jsonify([contract.serialize() for contract in contracts]), 200
+    return jsonify(count), 200
+
