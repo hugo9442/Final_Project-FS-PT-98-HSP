@@ -19,7 +19,7 @@ class Apartment(db.Model):
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     owner: Mapped['User'] = relationship(
-        back_populates='apartment'
+        back_populates='apartments'
     )
     issues: Mapped[List['Issue']] = relationship(
         back_populates='apartment'

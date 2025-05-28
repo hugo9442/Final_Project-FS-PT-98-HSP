@@ -1,22 +1,65 @@
 from flask import request, jsonify, Blueprint
-from api.models import db, User
+from api.models import db, User, Apartment, Contract
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-users_api = Blueprint('users', __name__,url_prefix='/user')
+users_api = Blueprint('users_api', __name__, url_prefix='/users')
+
+CORS(users_api)
 
 bcrypt = Bcrypt()
 
-CORS(users_api)
+@users_api.route('/', methods=["GET"])
+@jwt_required()
+def get_all_users():
+    users = User.query.all()
+    return jsonify([user.serialize() for user in users]), 200
+
+@users_api.route('/<int:user_id>', methods=["GET"])
+@jwt_required()
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    return jsonify(user.serialize_with_relations()), 200
+
+@users_api.route('/<int:user_id>', methods=["PUT"])
+@jwt_required()
+def update_user(user_id):
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    data_request = request.get_json()
+
+    if 'email' in data_request:
+        existing_user = User.query.filter_by(email=data_request["email"]).first()
+        if existing_user and existing_user.id != user_id:
+            return jsonify({"error": "El email ya está registrado"}), 409
+
+    user.first_name = data_request.get("first_name", user.first_name)
+    user.last_name = data_request.get("last_name", user.last_name)
+    user.phone = data_request.get("phone", user.phone)
+    user.national_id = data_request.get("national_id", user.national_id)
+    user.account_number = data_request.get("account_number", user.account_number)
+    user.roll = data_request.get("roll", user.roll)
+
+    try:
+        db.session.commit()
+        return jsonify({"msg": "Usuario actualizado", "user": user.serialize()}), 200
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": "Error en el servido"}), 500
 
 @users_api.route('/private', methods=['GET'])
 @jwt_required()
 def private_route():
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
-    
 
     return jsonify({
         "msg":True}), 200
@@ -43,12 +86,12 @@ def create_user():
         last_name=data_request["last_name"],
         email=email,
         password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone=data_request.get("phone_number"),
+        phone_number=data_request.get("phone_number"),
         national_id=data_request.get("national_id"),
-        account_number=data_request.get("account_number"),
+        account_number=data_request.get("account_number")
         role=data_request["role"]
     )
-    
+
     try:
         db.session.add(new_user)
         db.session.commit()
@@ -63,6 +106,38 @@ def create_user():
     except Exception as e:
         print(e)
         db.session.rollback()
+        return jsonify({"error": "Error en el servido"}), 500
+    
+@users_api.route('/<int:user_id>', methods=["DELETE"])
+@jwt_required()
+def delete_user(user_id):
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        return jsonify({"msg": "Usuario eliminado"}), 200
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": "Error en el servido"}), 500
+
+
+@users_api.route('/<int:user_id>/apartments', methods=["GET"])
+@jwt_required()
+def get_user_apartments(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    apartments = user.apartments
+    if not apartments:
+        return jsonify({"error": "No hay apartamentos para este usuario"}), 404
+
+    return jsonify([apartment.serialize() for apartment in apartments]), 200
         return jsonify({"error": "Error en el servidor"}), 500
 
 @users_api.route('/login', methods=["POST"])
@@ -98,6 +173,7 @@ def get_user_contracts(user_id):
     
     contracts = user.contract
     count=len(contracts)
+
     if not contracts:
         return jsonify({"error": "No hay contratos para este usuario"}), 404
     return jsonify(count), 200

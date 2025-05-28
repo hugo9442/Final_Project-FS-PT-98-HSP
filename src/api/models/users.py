@@ -17,7 +17,6 @@ role_type = Enum(
     validate_strings=True
 )
 
-
 if TYPE_CHECKING:
     from .contracts import Contract
     from . apartments import Apartment
@@ -34,10 +33,10 @@ class User(db.Model):
     national_id: Mapped[str] = mapped_column(String(255), nullable=False)
     account_number: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(role_type, nullable=False)
-    apartment: Mapped[List["Apartment"]] = relationship(
+    apartments: Mapped[List["Apartment"]] = relationship(
         back_populates="owner"
     )
-    contract: Mapped[List["Contract"]] = relationship(
+    contracts: Mapped[List["Contract"]] = relationship(
         back_populates="owner"
     )
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
@@ -45,7 +44,7 @@ class User(db.Model):
     )
 
     def serialize(self):
-        return{
+        return {
             "id":self.id,
             "first_name": self.first_name, 
             "last_name": self.last_name,
@@ -54,8 +53,6 @@ class User(db.Model):
             "national_id": self.national_id,
             "account_number": self.account_number,
             "role": self.role.value
-    
-
         }
     
     def serialize_with_relations(self):
