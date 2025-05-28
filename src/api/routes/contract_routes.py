@@ -1,7 +1,10 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, current_app, url_for, send_from_directory, abort
 from api.models import db, Contract
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
+from datetime import datetime
+from werkzeug.utils import secure_filename
+import os
 
 contracts_api = Blueprint('contracts_api', __name__, url_prefix='/contracts')
 
@@ -42,29 +45,75 @@ def update_contract(contract_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error in the server"}), 500
+
+@contracts_api.route('/download/<filename>',methods=['GET'])
+@jwt_required()  
+def download_file(filename):
     
-@contracts_api.route('/create', methods=["POST"])
-@jwt_required()
-def create_contract():
-    data_request = request.get_json()
-
-    if not 'title' in data_request or not 'description' in data_request:
-        return jsonify({"error": "The fields: title and description are required"}), 400
-
-    new_contract = Contract(
-        start_date=data_request.get("start_date"),
-        end_date=data_request.get("end_date"),
-        owner_id=data_request.get("owner_id")
+    if not filename or '.' not in filename:
+        return({"msg":"Nombre de archivo inválido"})
+    
+    upload_folder = current_app.config['UPLOAD_FOLDER']
+   
+    return send_from_directory(
+        directory=upload_folder,
+        path=filename,
+        as_attachment=True  # Opcional: fuerza la descarga en lugar de mostrar en navegador
     )
 
-    try:
-        db.session.add(new_contract)
-        db.session.commit()
-        return jsonify({"msg": "Contract created", "contract": new_contract.serialize()}), 201
-    except Exception as e:
-        print(e)
-        db.session.rollback()
-        return jsonify({"error": "Error in the server"}), 500
+@contracts_api.route('/create', methods=['POST'])
+@jwt_required()
+def create_contract():
+
+    
+    def allowed_file(filename):
+        print(filename)
+        return '.' in filename and \
+               filename.rsplit('.', 1)[1].lower() in {'pdf'}
+    
+    # Verificar si el archivo es parte de la petición
+    if 'document' not in request.files:
+        return jsonify({"error": "No file part"}), 400
+        
+    file = request.files['document']
+    
+    # Si el usuario no selecciona archivo
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+        
+    # Validar tipo de archivo
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        
+        try:
+            file.save(filepath)
+            
+            
+            new_contract = Contract(
+                start_date=datetime.fromisoformat(request.form['start_date']),
+                end_date=datetime.fromisoformat(request.form['end_date']),
+                owner_id=request.form['owner_id'],
+                document=filename
+            )
+            
+            db.session.add(new_contract)
+            db.session.commit()
+
+            file_url = url_for('contracts_api.download_file', filename=filename, _external=True)
+            
+            
+            return jsonify({
+                "message": "El contrato ha sido registrado satisfactoriamente",
+                "file_url": file_url,
+                "contract": new_contract.serialize()
+            }), 201
+            
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 500
+            
+    return jsonify({"error": "File type not allowed"}), 400
 
 @contracts_api.route('/<int:contract_id>', methods=["DELETE"])
 @jwt_required()

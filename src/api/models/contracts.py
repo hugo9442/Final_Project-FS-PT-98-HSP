@@ -28,10 +28,10 @@ class Contract(db.Model):
         return{
             "id":self.id,
             "start_date": self.start_date, 
-            "end_day": self.end_day,
+            "end_date": self.end_date,
             "document": self.document,
-            "owner_id": self.user_id
-    
+            "owner_id": self.owner_id
+
 
         }
     

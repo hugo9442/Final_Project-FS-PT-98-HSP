@@ -1,30 +1,66 @@
-// Import necessary components and functions from react-router-dom.
-
 import {
-    createBrowserRouter,
-    createRoutesFromElements,
-    Route,
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
 import { Home } from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
+import Acceso from "./pages/Acceso";
+import Contact from "./pages/Contact";
+import Servicios from "./pages/Servicios";
+import PropietarioIndex from "./pages/PropietarioIndex";
+import InquilinoIndex from "./pages/InquilinoIndex";
+import Contrato from "./pages/Contrato";
+import Incidencias from "./pages/Incidencias";
+import Inquilinos from "./pages/Inquilinos";
+import Viviendas from "./pages/Viviendas";
+
+
+
+
 
 export const router = createBrowserRouter(
-    createRoutesFromElements(
-    // CreateRoutesFromElements function allows you to build route elements declaratively.
-    // Create your routes here, if you want to keep the Navbar and Footer in all views, add your new routes inside the containing Route.
-    // Root, on the contrary, create a sister Route, if you have doubts, try it!
-    // Note: keep in mind that errorElement will be the default page when you don't get a route, customize that page to make your project more attractive.
-    // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
+  createRoutesFromElements(
+    <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
+      <Route path="/contact" element={<Contact />} />
+      <Route path="/acceso" element={<Acceso />} />
+      <Route path="/servicios" element={<Servicios />} />
+      <Route index element={<Home />} />  {/* Página raíz */}
+      <Route path="demo" element={<Demo />} />
+      <Route path="single/:theId" element={<Single />} />
+      <Route path="propietarioindex" element={<PropietarioIndex />} />
+      <Route path="InquilinoIndex" element={<InquilinoIndex />} />
+      <Route path="/Contrato" element={<Contrato />} />
+      <Route path="/Incidencias" element={<Incidencias />} />
+      <Route path="/Inquilinos" element={<Inquilinos />} />
+      <Route path="/Viviendas" element={<Viviendas />} />
+    </Route>
+  ),
+  {
+    // ⚙️ Activamos flags de futura compatibilidad con React Router v7
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }
+  }
 
-      // Root Route: All navigation will start from here.
-      <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>} >
+import LoginSection from "./pages/Acceso"
+import { PrivateRoutes } from "./pages/Privateroute";
+import PropietarioIndex from "./pages/PropietarioIndex";
 
-        {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
-        <Route path= "/" element={<Home />} />
-        <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
+export const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
+      <Route path="/" element={<Home />} />
+       <Route path="/propietarioindex" element={<PropietarioIndex />} />
+      <Route path="/acceso" element={<LoginSection />} />
+      <Route element={<PrivateRoutes />}>
+        <Route path="/single/:theId" element={<Single />} />
         <Route path="/demo" element={<Demo />} />
       </Route>
-    )
+    </Route>
+  )
+
 );

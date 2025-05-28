@@ -12,14 +12,10 @@ class Apartment(db.Model):
     __tablename__ = 'apartments'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    address: Mapped[str] = mapped_column(String(250))
-    number: Mapped[int] = mapped_column(Integer, nullable=False)
-    stairs: Mapped[str] = mapped_column(Integer, nullable=True)
-    floor: Mapped[int] = mapped_column(Integer, nullable=True)
-    door: Mapped[str] = mapped_column(Integer, nullable=True)
+    address: Mapped[str] = mapped_column(String(255),nullable=False)
     postal_code: Mapped[str] = mapped_column(Integer, nullable=False)
-    city: Mapped[str] = mapped_column(String(50), nullable=False)
-    parking_slot: Mapped[str] = mapped_column(String(50), nullable=False)
+    city: Mapped[str] = mapped_column(String(255), nullable=False)
+    parking_slot: Mapped[str] = mapped_column(String(255), nullable=False)
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     owner: Mapped['User'] = relationship(
@@ -37,15 +33,11 @@ class Apartment(db.Model):
         return {
             "apartment_id": self.id,
             "address": self.address,
-            "number": self.number,
-            "stairs": self.stairs,
-            "floor": self.floor,
-            "door": self.door,
             "postal_code": self.postal_code,
             "city": self.city,
             "parking_slot": self.parking_slot,
             "is_rent": self.is_rent,
-            "owner_id": self.user_id,
+            "owner_id": self.owner_id,
         }
     
     def serialize_with_relations(self):

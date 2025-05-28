@@ -1,5 +1,6 @@
 from flask import request, jsonify, Blueprint
 from api.models import db, User, Apartment, Contract
+from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -54,13 +55,23 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
 
-@users_api.route('/create', methods=["POST"])
+@users_api.route('/private', methods=['GET'])
 @jwt_required()
+def private_route():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    return jsonify({
+        "confirmation":True,
+        "user":user.serialize()}), 200
+
+@users_api.route('/create', methods=["POST"])
 def create_user():
     data_request = request.get_json()
+    
 
-    if not 'email' in data_request or not 'password' in data_request:
-        return jsonify({"error": "Los campos: email y password son obligatorios"}), 400
+    if not 'email' in data_request or not 'password' or not 'first_name' in data_request:
+        return jsonify({"error": "Los campos: first_name, email, password son obligatorios"}), 400
 
     if '@' not in data_request["email"] or len(data_request["password"]) < 8:
         return jsonify({"error": "Email o contraseña inválidos"}), 400
@@ -79,6 +90,7 @@ def create_user():
         phone_number=data_request.get("phone_number"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number")
+        role=data_request["role"]
     )
 
     try:
@@ -127,7 +139,32 @@ def get_user_apartments(user_id):
         return jsonify({"error": "No hay apartamentos para este usuario"}), 404
 
     return jsonify([apartment.serialize() for apartment in apartments]), 200
+        return jsonify({"error": "Error en el servidor"}), 500
 
+@users_api.route('/login', methods=["POST"])
+def sing_in():
+    data_request = request.get_json()
+
+    if not 'email' in data_request or not 'password' in data_request:
+        return jsonify({"error": "Los campos: email y password son requeridos"}), 400
+
+    user = User.query.filter_by(email=data_request["email"]).first()
+
+    if not user or not bcrypt.check_password_hash(user.password, data_request["password"]):
+        return jsonify({"msg": "El email o la contraseña es incorrecto"}), 401
+
+    try:
+     
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({
+            "user":user.serialize(),
+            "token": access_token
+      }), 200
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": "Error en el servidor"}), 500
+    
 @users_api.route('/<int:user_id>/contracts', methods=["GET"])
 @jwt_required()   
 def get_user_contracts(user_id):
@@ -136,6 +173,7 @@ def get_user_contracts(user_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
     
     contracts = user.contracts
+
     if not contracts:
         return jsonify({"error": "No hay contratos para este usuario"}), 404
     return jsonify([contract.serialize() for contract in contracts]), 200
