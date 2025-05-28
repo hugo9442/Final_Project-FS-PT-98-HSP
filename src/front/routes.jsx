@@ -24,13 +24,13 @@ export const router = createBrowserRouter(
 
       <Route path="/acceso" element={<Acceso />} />
       <Route index element={<Home />} /> {/* Página raíz */}
-      <Route element={<PrivateRoutes />}>
         <Route path="/servicios" element={<Servicios />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="demo" element={<Demo />} />
-        <Route path="single/:theId" element={<Single />} />
-        <Route path="propietarioindex" element={<PropietarioIndex />} />
-        <Route path="InquilinoIndex" element={<InquilinoIndex />} />
+      <Route element={<PrivateRoutes />}>
+        <Route path="/demo" element={<Demo />} />
+        <Route path="/single/:theId" element={<Single />} />
+        <Route path="/propietarioindex" element={<PropietarioIndex />} />
+        <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
         <Route path="/Contrato" element={<Contrato />} />
         <Route path="/Incidencias" element={<Incidencias />} />
         <Route path="/Inquilinos" element={<Inquilinos />} />

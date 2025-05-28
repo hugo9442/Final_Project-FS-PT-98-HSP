@@ -29,5 +29,5 @@ export const PrivateRoutes = () => {
     return null; 
   }
 
-  return valid ? <Outlet /> : <Navigate to="/" />;
+  return valid ? <Outlet /> : <Navigate to="/Acceso" />;
 };
