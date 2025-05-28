@@ -4,27 +4,40 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/con
  export const contracts = {
 
     create_contract: async (start, end, document, owner_id, token) => {
-    console.log("Subiendo contrato con PDF...");
+    console.log("Subiendo contrato a Cloudflare R2...");
     
+   
+    if (!document || !document.name.toLowerCase().endsWith('.pdf')) {
+        console.error("Error: Solo se permiten archivos PDF");
+        return { error: "Formato no válido. Solo se aceptan PDFs" };
+    }
+
     const formData = new FormData();
     formData.append("start_date", start);
     formData.append("end_date", end);
     formData.append("document", document); 
     formData.append("owner_id", owner_id);
-    
+
     try {
-        const request = await fetch(`${Url}/create`, {
+        const response = await fetch(`${Url}/create`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${token}` 
             },
-            body: formData 
+            body: formData
         });
-        const response = await request.json();
-        return response;
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error("Error del backend:", errorData.error);
+            return { error: errorData.error || "Error en el servidor" };
+        }
+
+        return await response.json(); // { message, file_url, contract }
+
     } catch (error) {
-        console.error("Error subiendo PDF:", error);
-        return { error: "Error al subir el contrato" };
+        console.error("Error de red:", error);
+        return { error: "Error de conexión. Revisa tu red" };
     }
 },
 getcontract: async () => {

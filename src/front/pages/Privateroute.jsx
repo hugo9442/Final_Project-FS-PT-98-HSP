@@ -26,7 +26,7 @@ export const PrivateRoutes = () => {
 
 
   if (valid === null) {
-    return null; // o un spinner de carga
+    return null; 
   }
 
   return valid ? <Outlet /> : <Navigate to="/" />;
