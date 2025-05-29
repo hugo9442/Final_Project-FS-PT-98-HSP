@@ -108,6 +108,50 @@ def create_user():
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
     
+@users_api.route('/create/tenant', methods=["POST"])
+@jwt_required()
+def create_tenant():
+    data_request = request.get_json()
+    
+
+    if not 'email' in data_request or not 'password' or not 'first_name' in data_request:
+        return jsonify({"error": "Los campos: first_name, email, password son obligatorios"}), 400
+
+    if '@' not in data_request["email"] or len(data_request["password"]) < 8:
+        return jsonify({"error": "Email o contraseña inválidos"}), 400
+
+    email = data_request["email"].strip().lower()
+
+    existing_user = User.query.filter_by(email=data_request["email"]).first()
+    if existing_user:
+        return jsonify({"error": "El email ya está registrado"}), 409
+    
+    new_user = User(
+        first_name=data_request["first_name"],
+        last_name=data_request["last_name"],
+        email=email,
+        password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
+        phone_number=data_request.get("phone_number"),
+        national_id=data_request.get("national_id"),
+        account_number=data_request.get("account_number"),
+        role=data_request["role"]
+    )
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        access_token = create_access_token(identity=str(new_user.id))
+
+        return jsonify({
+            "msg": "El Inquilino ha sido creado exitosamente",
+            "user": new_user.serialize()
+        }), 201
+    
+    except Exception as e:
+        print(e)
+        db.session.rollback()
+        return jsonify({"error": "Error en el servido"}), 500
+    
 @users_api.route('/<int:user_id>', methods=["DELETE"])
 @jwt_required()
 def delete_user(user_id):
@@ -138,6 +182,20 @@ def get_user_apartments(user_id):
         return jsonify({"error": "No hay apartamentos para este usuario"}), 404
 
     return jsonify([apartment.serialize() for apartment in apartments]), 200
+
+@users_api.route('/<int:user_id>/apartments/count', methods=["GET"])
+@jwt_required()
+def get_user_apartments_count(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    apartments = user.apartments
+    count=len(apartments)
+    if not apartments:
+        return jsonify({"error": "No hay apartamentos para este usuario"}), 404
+
+    return jsonify({"total":count}), 200
 
 
 @users_api.route('/login', methods=["POST"])
@@ -171,10 +229,10 @@ def get_user_contracts(user_id):
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
     
-    contracts = user.contract
+    contracts = user.contracts
     count=len(contracts)
 
     if not contracts:
         return jsonify({"error": "No hay contratos para este usuario"}), 404
-    return jsonify(count), 200
+    return jsonify({"total":count}), 200
 

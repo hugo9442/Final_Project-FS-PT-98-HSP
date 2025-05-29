@@ -1,5 +1,5 @@
   
-  const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/user"
+  const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/users"
 
   export const users = {
 
@@ -49,9 +49,7 @@
         try {
             const request = await fetch(`${Url}/create`, {
                 method: "POST",
-                headers: {
-                    "content-Type": "application/json"
-                },
+                
                 body: JSON.stringify(user)
             })
             const response = await request.json();
@@ -105,8 +103,42 @@
     },
      getUser: async (id) => {
         try {
-            const request = await fetch(`${Url}/user/${id}`, {
+            const request = await fetch(`${Url}/${id}`, {
                 method: "GET"
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    getUserContracts: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/contracts/count`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    getUserApartments: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/apartments/count`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
             })
             const response = await request.json();
             console.log(response)
