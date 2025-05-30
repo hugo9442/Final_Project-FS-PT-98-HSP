@@ -3,10 +3,11 @@ import { contracts } from "../fecht_contract.js";
 import { users } from "../fecht_user.js";
 import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Contrato = () => {
   const { store, dispatch } = useGlobalReducer();
+  const [item,setItem]=useState(null)
 
   const fetchData = async () => {
     try {
@@ -28,7 +29,7 @@ const Contrato = () => {
   }, []);
   const handleDownloadContract= async () =>{
     try {
-      const data = contracts.downloadcontract(4,store.token)
+      const data = contracts.downloadcontract(item,store.token)
       
     } catch (error) {
       
@@ -115,7 +116,7 @@ const Contrato = () => {
                         <p>Contrato: {splitDocument}</p>
                       </div>
                       <button className="btn btn-success"
-                        onClick={downContract}>
+                        onClick={(e)=>{setItem(item.id),downContract}}>
                         Consultar Contrato
                       </button>
                     </li>

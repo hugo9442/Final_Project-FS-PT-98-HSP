@@ -86,7 +86,7 @@ def create_user():
         last_name=data_request["last_name"],
         email=email,
         password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone_number=data_request.get("phone_number"),
+        phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]
@@ -131,7 +131,7 @@ def create_tenant():
         last_name=data_request["last_name"],
         email=email,
         password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone_number=data_request.get("phone_number"),
+        phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]

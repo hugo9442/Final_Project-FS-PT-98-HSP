@@ -9,7 +9,7 @@
              "last_name":`${lastname}`,
              "email": `${email}`, 
              "password": `${pass}`,
-             "phone_number":`${phone}`,
+             "phone":`${phone}`,
              "national_id":`${national_id}`,
              "account_number":`${aacc}`,
              "role":"PROPIETARIO"
@@ -39,7 +39,7 @@
              "last_name":`${lastname}`,
              "email": `${email}`, 
              "password": `${pass}`,
-             "phone_number":`${phone}`,
+             "phone":`${phone}`,
              "national_id":`${national_id}`,
              "account_number":`${aacc}`,
              "role":"INQUILINO"
