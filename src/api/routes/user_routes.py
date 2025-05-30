@@ -224,7 +224,7 @@ def sing_in():
     
 @users_api.route('/<int:user_id>/contracts/count', methods=["GET"])
 @jwt_required()   
-def get_user_contracts(user_id):
+def get_user_contracts_count(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
@@ -235,4 +235,18 @@ def get_user_contracts(user_id):
     if not contracts:
         return jsonify({"error": "No hay contratos para este usuario"}), 404
     return jsonify({"total":count}), 200
+
+@users_api.route('/<int:user_id>/contracts', methods=["GET"])
+@jwt_required()   
+def get_user_contracts(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    contracts = user.contracts
+    
+
+    if not contracts:
+        return jsonify({"error": "No hay contratos para este usuario"}), 404
+    return jsonify({"contracts":[contracts.serialize() for contracts in contracts]}), 200
 

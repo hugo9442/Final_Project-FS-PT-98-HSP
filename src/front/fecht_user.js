@@ -115,9 +115,26 @@
 
         }
     },
-    getUserContracts: async (id, token) => {
+    getUserContractsCount: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}/contracts/count`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    getUserContracts: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/contracts`, {
                   method: "GET", 
                  headers: {
                     "Authorization": `Bearer  ${token}`

@@ -37,7 +37,7 @@ const PropietarioIndex = () => {
 
       try {
 
-        const data = await users.getUserContracts(store.todos[0].id, store.token);
+        const data = await users.getUserContractsCount(store.todos[0].id, store.token);
 
         console.log(data)
         setTotalContratos(data.total);
