@@ -93,12 +93,7 @@ const LoginSection = () => {
   const logingUser = async () => {
     if (store.email !== "" && store.password !== "") {
        await handleLogingUser();
-      //handleNavigate();
-      //checkToken()
-
-      // if (dataLogin.validToken) {
-      //    await handleprivate();
-      //  }
+    
     }
   };
  console.log(store)
@@ -146,9 +141,8 @@ const LoginSection = () => {
                         <div className="form-outline mb-4">
                           <input
                             type="email"
-                            id="form2Example17"
+                            id="email"
                             className="form-control form-control-lg"
-                            value={store.email}
                             onChange={(e) =>
                               dispatch({
                                 type: "addEmail",
@@ -158,7 +152,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example17"
+                            htmlFor="email"
                           >
                             Email
                           </label>
@@ -167,9 +161,8 @@ const LoginSection = () => {
                         <div className="form-outline mb-4">
                           <input
                             type="password"
-                            id="form2Example27"
+                            id="pass"
                             className="form-control form-control-lg"
-                            value={store.password}
                             onChange={(e) =>
                               dispatch({
                                 type: "addPassword",
@@ -179,7 +172,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example27"
+                            htmlFor="pass"
                           >
                             Contraseña
                           </label>
@@ -198,9 +191,19 @@ const LoginSection = () => {
                             className="btn btn-dark btn-lg btn-block"
                             style={{ margin: 5 }}
                             type="button"
-                            onClick={() => navigate("/PropietarioIndex")}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              dispatch({
+                                type: "register",
+                                value: "none",
+                              })
+                              dispatch({
+                                type: "login",
+                                value: "",
+                              })
+                            }}
                           >
-                            Prueba Propietario
+                            Crear Cuenta
                           </button>
                         </div>
 
@@ -288,9 +291,8 @@ const LoginSection = () => {
                         <div className="form-outline mb-4">
                           <input
                             type="text"
-                            id="form2Example1"
+                            id="firsth"
                             className="form-control form-control-lg"
-                            value={store.firstname}
                             onChange={(e) =>
                               dispatch({
                                 type: "addFirtsname",
@@ -300,7 +302,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example1"
+                            htmlFor="firsth"
                           >
                             "First name"
                           </label>
@@ -309,7 +311,7 @@ const LoginSection = () => {
                         <div className="form-outline mb-4">
                           <input
                             type="text"
-                            id="form2Example2"
+                            id="lasth"
                             className="form-control form-control-lg"
                             value={store.lastname}
                             onChange={(e) =>
@@ -321,7 +323,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example2"
+                            htmlFor="lasth"
                           >
                             "Last name"
                           </label>
@@ -330,7 +332,7 @@ const LoginSection = () => {
                         <div className="form-outline mb-4">
                           <input
                             type="email"
-                            id="form2Example3"
+                            id="emailh"
                             className="form-control form-control-lg"
                             value={store.email}
                             onChange={(e) =>
@@ -341,7 +343,7 @@ const LoginSection = () => {
                             }
                           />
                           <label
-                            className="form-label"
+                            className="emailh"
                             htmlFor="form2Example3"
                           >
                             Email
@@ -351,7 +353,7 @@ const LoginSection = () => {
                         <div className="form-outline mb-4">
                           <input
                             type="password"
-                            id="form2Example4"
+                            id="passh"
                             className="form-control form-control-lg"
                             value={store.password}
                             onChange={(e) =>
@@ -363,7 +365,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example4"
+                            htmlFor="passh"
                           >
                             Contraseña
                           </label>
@@ -372,7 +374,7 @@ const LoginSection = () => {
                              <div className="form-outline mb-4">
                           <input
                             type="text"
-                            id="form2Example5"
+                            id="phoneh"
                             className="form-control form-control-lg"
                             value={store.Phone}
                             onChange={(e) =>
@@ -384,7 +386,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example5"
+                            htmlFor="phoneh"
                           >
                             Telefono
                           </label>
@@ -393,7 +395,7 @@ const LoginSection = () => {
                               <div className="form-outline mb-4">
                           <input
                             type="text"
-                            id="form2Example6"
+                            id="nidh"
                             className="form-control form-control-lg"
                             value={store.National_Id}
                             onChange={(e) =>
@@ -405,7 +407,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example6"
+                            htmlFor="nidh"
                           >
                             "DNI"
                           </label>
@@ -413,7 +415,7 @@ const LoginSection = () => {
                          <div className="form-outline mb-4">
                           <input
                             type="text"
-                            id="form2Example7"
+                            id="aacch"
                             className="form-control form-control-lg"
                             value={store.aacc}
                             onChange={(e) =>
@@ -425,7 +427,7 @@ const LoginSection = () => {
                           />
                           <label
                             className="form-label"
-                            htmlFor="form2Example7"
+                            htmlFor="aacch"
                           >
                             "Account Number"
                           </label>
@@ -444,21 +446,21 @@ const LoginSection = () => {
                             className="btn btn-dark btn-lg btn-block"
                             style={{ margin: 5 }}
                             type="button"
-                            onClick={() => navigate("/PropietarioIndex")}
+                           onClick={(e) => {
+                              e.preventDefault();
+                              dispatch({
+                                type: "register",
+                                value: "",
+                              })
+                              dispatch({
+                                type: "login",
+                                value: "none",
+                              })
+                            }}
                           >
-                            Prueba Propietario
+                            volver a login
                           </button>
                         </div>
-
-                        <a className="small text-muted" href="#!">
-                          Olvidaste tu contraseña?
-                        </a>
-                        <p
-                          className="mb-5 pb-lg-2"
-                          style={{ color: "red" }}
-                        >
-                         
-                        </p>
                         <a href="#!" className="small text-muted">
                           Terms of use.
                         </a>

@@ -3,7 +3,7 @@ import MenuLateral from "../components/MenuLateral";
 
 const InquilinoIndex = () => {
     const [activeOption, setActiveOption] = useState(null);
-
+    
     const renderContent = () => {
         switch (activeOption) {
             case "contrato":

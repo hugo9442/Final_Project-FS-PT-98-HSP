@@ -5,3 +5,10 @@
 #is_rent{
     width: 20px;
 }
+.contratitem{
+    display: flex;
+    flex-direction: column;
+}
+.mi-button{
+    margin-left: 20px;
+}

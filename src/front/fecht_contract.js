@@ -53,5 +53,33 @@ getcontract: async () => {
             return error
 
         }
-    }
+    },
+    downloadcontract: async (id, token) => {
+  try {
+    const request = await fetch(`${Url}/download/${id}`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    if (!request.ok) throw new Error("Error al descargar");
+
+    const blob = await request.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "contrato.pdf"; // puedes poner aquí el nombre dinámico
+    a.click();
+    a.remove();
+
+    return blob;
+
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
  }

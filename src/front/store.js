@@ -21,7 +21,8 @@ export const initialStore = () => {
     visibility2: "",
     validToken: false,
     todos: [],
-    tenant:[]
+    tenant:[],
+    contracts:[]
   };
 };
 
@@ -138,12 +139,24 @@ export default function storeReducer(store, action = {}) {
         ),
       };
     case "add_user":
-      const userExists = store.todos.some((u) => u.id === action.value.id);
+      
+       const userExists = store.todos.some((u) => u.id === action.value.id);
       if (userExists) return store; 
-
+     
+       
       return {
         ...store,
         todos: [...store.todos, action.value],
+      };
+      case "add_contracts":
+       //const allContracts = store.contracts.flat();
+       const contractsExits = store.contracts.some(u => u.id === action.value.id);
+      if (contractsExits) return store; 
+     
+       
+      return {
+        ...store,
+        contracts: [...store.contracts, action.value],
       };
        case "add_tenant":
       const tenantExists = store.tenant.some((u) => u.id === action.value.id);
