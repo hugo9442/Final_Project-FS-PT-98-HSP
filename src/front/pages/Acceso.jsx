@@ -13,25 +13,25 @@ const LoginSection = () => {
 
 
   const handleCreatuser = async () => {
-      try {
-        const data = await users.createuser(store.firstname,store.lastname,store.email,store.password,store.phone,store.national_id,store.aacc);
-        console.log(data);
-        console.log(data.error)
-       if ((typeof data.token === "string" && data.token.length > 0)) {
+    try {
+      const data = await users.createuser(store.firstname, store.lastname, store.email, store.password, store.phone, store.national_id, store.aacc);
+      console.log(data);
+      console.log(data.error)
+      if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user });
         handleNavigate()
       }
-       if (data.error==="El email ya está registrado"){
-         swal({
-          title: "ERROR",
-          text: `${data.error}`,
-          icon: "warning",
+      if (data.msg) {
+        swal({
+          title: "Usuario Creado",
+          text: `${data.msg}`,
+          icon: "success",
           buttons: true,
           dangerMode: true,
         });
       }
-      if (data.error==="Email o contraseña inválidos"){
+      if (data.error === "El email ya está registrado") {
         swal({
           title: "ERROR",
           text: `${data.error}`,
@@ -40,7 +40,16 @@ const LoginSection = () => {
           dangerMode: true,
         });
       }
-       else {
+      if (data.error === "Email o contraseña inválidos") {
+        swal({
+          title: "ERROR",
+          text: `${data.error}`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
+      }
+      else {
         swal({
           title: "ERROR",
           text: `${data.msg}`,
@@ -50,8 +59,8 @@ const LoginSection = () => {
         });
       }
 
-      } catch (error) {}
-    };
+    } catch (error) { }
+  };
   const handleLogingUser = async () => {
     try {
       const data = await users.loginguser(store.email, store.password);
@@ -61,8 +70,8 @@ const LoginSection = () => {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user });
         handleNavigate()
-      }else if (data.msg==="El mail o la contraseña es incorrecto"){
-         swal({
+      } else if (data.msg === "El mail o la contraseña es incorrecto") {
+        swal({
           title: "ERROR",
           text: `${data.msg}`,
           icon: "warning",
@@ -70,7 +79,7 @@ const LoginSection = () => {
           dangerMode: true,
         });
       }
-       else {
+      else {
         swal({
           title: "ERROR",
           text: `${data.msg}`,
@@ -80,23 +89,23 @@ const LoginSection = () => {
         });
       }
       return data;
-    } catch (error) {}
+    } catch (error) { }
   };
   const createContact = async () => {
     if (store.email !== "" && store.password !== "") {
       await
-      handleCreatuser();
-      
-     // handleNavigate();
+        handleCreatuser();
+
+      // handleNavigate();
     }
   };
   const logingUser = async () => {
     if (store.email !== "" && store.password !== "") {
-       await handleLogingUser();
-    
+      await handleLogingUser();
+
     }
   };
- console.log(store)
+  console.log(store)
   return (
     <div>
       <section
@@ -251,7 +260,7 @@ const LoginSection = () => {
 
       <section
         className="vh-100"
-        style={{ backgroundColor: "#ebf5fb", display:`${store.visibility}` }}
+        style={{ backgroundColor: "#ebf5fb", display: `${store.visibility}` }}
       >
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -328,7 +337,7 @@ const LoginSection = () => {
                             "Last name"
                           </label>
                         </div>
-                                                     
+
                         <div className="form-outline mb-4">
                           <input
                             type="email"
@@ -370,8 +379,8 @@ const LoginSection = () => {
                             Contraseña
                           </label>
                         </div>
-                        
-                             <div className="form-outline mb-4">
+
+                        <div className="form-outline mb-4">
                           <input
                             type="text"
                             id="phoneh"
@@ -391,8 +400,8 @@ const LoginSection = () => {
                             Telefono
                           </label>
                         </div>
-                        
-                              <div className="form-outline mb-4">
+
+                        <div className="form-outline mb-4">
                           <input
                             type="text"
                             id="nidh"
@@ -412,7 +421,7 @@ const LoginSection = () => {
                             "DNI"
                           </label>
                         </div>
-                         <div className="form-outline mb-4">
+                        <div className="form-outline mb-4">
                           <input
                             type="text"
                             id="aacch"
@@ -446,7 +455,7 @@ const LoginSection = () => {
                             className="btn btn-dark btn-lg btn-block"
                             style={{ margin: 5 }}
                             type="button"
-                           onClick={(e) => {
+                            onClick={(e) => {
                               e.preventDefault();
                               dispatch({
                                 type: "register",

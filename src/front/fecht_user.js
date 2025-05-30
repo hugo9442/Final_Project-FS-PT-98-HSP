@@ -1,5 +1,5 @@
   
-  const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/users"
+  const Url = "https://refactored-computing-machine-69r94jvv6p6jhg6x-3001.app.github.dev/users"
 
   export const users = {
 
@@ -9,7 +9,7 @@
              "last_name":`${lastname}`,
              "email": `${email}`, 
              "password": `${pass}`,
-             "phone_number":`${phone}`,
+             "phone":`${phone}`,
              "national_id":`${national_id}`,
              "account_number":`${aacc}`,
              "role":"PROPIETARIO"
