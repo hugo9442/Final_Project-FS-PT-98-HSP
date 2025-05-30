@@ -51,9 +51,9 @@ const LoginSection = () => {
       }
       else {
         swal({
-          title: "ERROR",
+          title: "USUARIO CREADO",
           text: `${data.msg}`,
-          icon: "warning",
+          icon: "success",
           buttons: true,
           dangerMode: true,
         });
