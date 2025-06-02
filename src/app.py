@@ -17,7 +17,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 from flask_cors import CORS
-from flask_mail import Mail, Message
+from api.extensions import mail
 
 env_path = Path(__file__).resolve().parent.parent / '.env'  # Sube dos niveles desde src/
 load_dotenv(env_path)
@@ -88,7 +88,7 @@ app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
 
-mail = Mail(app)
+mail.init_app(app)
 
 # Handle/serialize errors like a JSON object
 

@@ -24,9 +24,7 @@ export const initialStore = () => {
     tenant:[],
     contracts:[],
     forgotPasswordVisibility: "none",
-    resetPasswordVisibility: "none",
-    resetMessage: null,
-    resetToken: null,
+    resetPasswordVisibility: "none"
   };
 };
 
@@ -67,7 +65,6 @@ export default function storeReducer(store, action = {}) {
         ...store,
         is_rent: action.value,
       };
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     case "login":
       return {
         ...store,
@@ -106,11 +103,6 @@ export default function storeReducer(store, action = {}) {
         visibility2: "none",
         forgotPasswordVisibility: "none",
       };
-    case "setResetMessage":
-      return {
-        ...store,
-        resetMessage: action.value,
-      };
     case "setResetToken":
       return {
         ...store,
@@ -122,17 +114,16 @@ export default function storeReducer(store, action = {}) {
         ...store,
         token: action.value,
       };
-    case "addEmail": // Esto es para los inputs, puede ser útil para olvidar contraseña si no quieres estado local
+    case "addEmail":
         return {
             ...store,
             email: action.value,
         };
-    case "addPassword": // Esto es para los inputs
+    case "addPassword":
         return {
             ...store,
             password: action.value,
         };
-      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
     case "validate":
       return {
         ...store,

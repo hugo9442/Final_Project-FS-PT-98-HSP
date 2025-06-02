@@ -175,21 +175,23 @@ const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/
     },
     
     forgotPassword: async (email) => {
+        let mail = {"email":email}
         try {
             const request = await fetch(`${Url}/forgot-password`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ email: email }),
+                body: JSON.stringify(mail),
             });
-
+            console.log(mail)
+            
             const response = await request.json();
-            return { message: response.message, success: request.ok };
+            return  response;
 
         } catch (error) {
             console.error("Error al solicitar restablecimiento:", error);
-            return { message: "Error de conexión. Intenta más tarde.", success: false };
+            return { error };
         }
     },
 

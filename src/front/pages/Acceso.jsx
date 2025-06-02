@@ -15,6 +15,7 @@ const LoginSection = () => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [messageFeedback, setMessageFeedback] = useState(null); 
   
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -24,9 +25,9 @@ const LoginSection = () => {
       dispatch({ type: "setResetToken", value: urlToken });
       dispatch({ type: "showResetPassword" });
     } else {
-      if (store.visibility === "none" && store.visibility2 === "none" && store.forgotPasswordVisibility === "none" && store.resetPasswordVisibility === "none") {
+      dispatch({ type: "setResetToken", value: null });
+      if (store.visibility === "none" && store.forgotPasswordVisibility === "none" && store.resetPasswordVisibility === "none" && store.visibility2 === "none")
         dispatch({ type: "login", value: "block" });
-      }
     }
   }, [location.search, dispatch, store.visibility, store.visibility2, store.forgotPasswordVisibility, store.resetPasswordVisibility]);
 
@@ -116,16 +117,16 @@ const LoginSection = () => {
   };
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
-    dispatch({ type: "setResetMessage", value: null });
+    setMessageFeedback(null);
 
     if (!forgotEmail) {
-      dispatch({ type: "setResetMessage", value: "Por favor, ingresa tu correo electrónico." });
+      setMessageFeedback("Por favor, ingresa tu correo electrónico.");
       return;
     }
 
     const result = await users.forgotPassword(forgotEmail);
-    dispatch({ type: "setResetMessage", value: result.message });
-    if (result.success) {
+
+    if (result.message) {
       swal({
         title: "Correo enviado",
         text: result.message,
@@ -135,7 +136,7 @@ const LoginSection = () => {
     } else {
       swal({
         title: "Error",
-        text: result.message,
+        text: result.error,
         icon: "error",
         buttons: true,
       });
@@ -147,17 +148,17 @@ const LoginSection = () => {
     dispatch({ type: "setResetMessage", value: null });
 
     if (!store.resetToken) {
-      dispatch({ type: "setResetMessage", value: "Token de restablecimiento no encontrado." });
+      setMessageFeedback("Token de restablecimiento no encontrado.");
       return;
     }
 
     if (newPassword.length < 8) {
-      dispatch({ type: "setResetMessage", value: "La contraseña debe tener al menos 8 caracteres." });
+      setMessageFeedback("La contraseña debe tener al menos 8 caracteres.");
       return;
     }
 
     if (newPassword !== confirmNewPassword) {
-      dispatch({ type: "setResetMessage", value: "Las contraseñas no coinciden." });
+      setMessageFeedback("Las contraseñas no coinciden.");
       return;
     }
 
@@ -169,10 +170,12 @@ const LoginSection = () => {
         title: "Contraseña restablecida",
         text: result.message,
         icon: "success",
-        buttons: true,
+        buttons: false,
+        timer: 2500,
       }).then(() => {
-        dispatch({ type: "login", value: "block" });
-        navigate("/login");
+        setTimeout(() => {
+            navigate("/Acceso");
+        }, 500);
       });
     } else {
       swal({
@@ -231,7 +234,7 @@ const LoginSection = () => {
                             id="email"
                             className="form-control form-control-lg"
                             onChange={(e) => dispatch({ type: "addEmail", value: e.target.value })}
-                            value={store.email || ''} // Asegura que el valor sea controlado
+                            value={store.email || ''}
                           />
                           <label className="form-label" htmlFor="email">Email</label>
                         </div>
@@ -241,7 +244,7 @@ const LoginSection = () => {
                             id="pass"
                             className="form-control form-control-lg"
                             onChange={(e) => dispatch({ type: "addPassword", value: e.target.value })}
-                            value={store.password || ''} // Asegura que el valor sea controlado
+                            value={store.password || ''}
                           />
                           <label className="form-label" htmlFor="pass">Contraseña</label>
                         </div>
@@ -260,7 +263,7 @@ const LoginSection = () => {
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
-                              dispatch({ type: "register", value: "block" }); // Muestra registro
+                              dispatch({ type: "register", value: "block" });
                             }}
                           >
                             Crear Cuenta
@@ -272,7 +275,7 @@ const LoginSection = () => {
                           href="#!"
                           onClick={(e) => {
                             e.preventDefault();
-                            dispatch({ type: "showForgotPassword" }); // Muestra el formulario de olvidé contraseña
+                            dispatch({ type: "showForgotPassword" });
                           }}
                         >
                           ¿Olvidaste tu contraseña?
@@ -571,7 +574,7 @@ const LoginSection = () => {
                             className="form-control form-control-lg"
                             value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
-                            required
+                            // required
                           />
                           <label
                             className="form-label"
@@ -702,6 +705,7 @@ const LoginSection = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           dispatch({ type: "login", value: "block" });
+                          navigate("/Acceso");
                         }}
                       >
                         Volver al inicio de sesión
