@@ -308,58 +308,102 @@ console.log(store)
         return null;
       default:
         return (
-          <div className="text-center">
-            <h2>Bienvenido, propietario</h2>
-            <p>Gestiona tu inmueble desde este panel.</p>
+                // Contenedor principal del contenido por defecto, ocupa todo el ancho y centra el texto
+                <div className="text-center w-100"> 
+                    <h2 className="mb-4">Bienvenido, propietario</h2> 
+                    <p className="mb-4">Gestiona tu inmueble desde este panel.</p>
 
-            <button className="btn btn-primary btn-lg">Registra Inquilino</button>
-            <button className="btn btn-primary btn-lg m-3">Registra Vivienda</button>
-            <button className="btn btn-primary btn-lg">Registra Incidencia</button>
+                    {/* Contenedor para los botones principales, usa flexbox para centrar y añadir espaciado */}
+                    <div className="d-flex justify-content-center flex-wrap gap-3 mb-5"> 
+                        <button className="btn btn-primary btn-lg">Registra Inquilino</button>
+                        <button className="btn btn-primary btn-lg">Registra Vivienda</button>
+                        <button className="btn btn-primary btn-lg">Registra Incidencia</button>
+                    </div>
 
-            {/* Carrusel */}
-            <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5" data-bs-ride="carousel">
-              <div className="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-              </div>
-              <div className="carousel-inner">
-                <div className="carousel-item active" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalViviendas}</h1>
-                      <p className="lead">Total de Viviendas Registradas</p>
+                    {/* Carrusel, centrado con mx-auto y con un ancho máximo */}
+                    <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5 mx-auto" style={{ maxWidth: '800px' }} data-bs-ride="carousel"> 
+                        <div className="carousel-indicators">
+                            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
+                            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                        </div>
+                        <div className="carousel-inner">
+                            <div className="carousel-item active" data-bs-interval="5000">
+                                <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
+                                    <div className="text-center">
+                                        <h1 className="display-4">{totalViviendas}</h1>
+                                        <p className="lead">Total de Viviendas Registradas</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="carousel-item" data-bs-interval="5000">
+                                <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
+                                    <div className="text-center">
+                                        <h1 className="display-4">{totalContratos}</h1>
+                                        <p className="lead">Total de Contratos Activos</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="carousel-item" data-bs-interval="5000">
+                                <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
+                                    <div className="text-center">
+                                        <h1 className="display-4">{totalIncidencias}</h1>
+                                        <p className="lead">Total de Incidencias Abiertas</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                            <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Anterior</span>
+                        </button>
+                        <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                            <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span className="visually-hidden">Siguiente</span>
+                        </button>
                     </div>
-                  </div>
-                </div>
-                <div className="carousel-item" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalContratos}</h1>
-                      <p className="lead">Total de Contratos Activos</p>
+
+                    {/* Cards fuera del carrusel, alineadas en el centro de la fila */}
+                    <div className="row mt-4 justify-content-center"> 
+                        <div className="col-md-4 mb-3">
+                            <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                                    {/* Nota: el h1 y p aquí parecen duplicar info. Revisa si es intencional o si debería ser solo de inquilinos */}
+                                    <h1 className="display-4">{totalViviendas}</h1> 
+                                    <p className="lead mb-0">Total de Inquilinos</p>
+                                </div>
+                                <div className="card-body">
+                                    <p className="card-text">Gestión completa de tus inquilinos.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-4 mb-3">
+                            <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                                    <h1 className="display-4">{totalContratos}</h1>
+                                    <p className="lead mb-0">Total de Contratos Activos</p>
+                                </div>
+                                <div className="card-body">
+                                    <p className="card-text">Consulta y edición de viviendas.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-md-4 mb-3">
+                            <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
+                                <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
+                                    <h1 className="display-4">{totalIncidencias}</h1>
+                                    <p className="lead mb-0">Total de Incidencias Abiertas</p>
+                                </div>
+                                <div className="card-body">
+                                    <p className="card-text">Revisión de problemas y reportes.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
                 </div>
-                <div className="carousel-item" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalIncidencias}</h1>
-                      <p className="lead">Total de Incidencias Abiertas</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Anterior</span>
-              </button>
-              <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Siguiente</span>
-              </button>
-            </div>
-          </div>
-        );
+            );
     }
   };
 

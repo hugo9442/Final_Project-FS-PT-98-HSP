@@ -1,9 +1,13 @@
-from flask import request, jsonify, Blueprint
+import os
+from flask import request, jsonify, Blueprint, render_template, current_app
 from api.models import db, User, Apartment, Contract
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, get_jwt
+from datetime import timedelta, datetime
+from api.extensions import mail
+from flask_mail import Message
 
 users_api = Blueprint('users_api', __name__, url_prefix='/users')
 
@@ -66,6 +70,7 @@ def private_route():
 
 @users_api.route('/create', methods=["POST"])
 def create_user():
+    print("msg")
     data_request = request.get_json()
     
 
@@ -86,7 +91,7 @@ def create_user():
         last_name=data_request["last_name"],
         email=email,
         password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone_number=data_request.get("phone_number"),
+        phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]
@@ -131,7 +136,7 @@ def create_tenant():
         last_name=data_request["last_name"],
         email=email,
         password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone_number=data_request.get("phone_number"),
+        phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]
@@ -250,3 +255,67 @@ def get_user_contracts(user_id):
         return jsonify({"error": "No hay contratos para este usuario"}), 404
     return jsonify({"contracts":[contracts.serialize() for contracts in contracts]}), 200
 
+
+
+@users_api.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    data_request = request.get_json()
+    email = data_request.get('email')
+
+    if not email:
+        return jsonify({"message": "El email es necesario"}), 404
+    
+    user = User.query.filter_by(email=email).first()
+
+    if not user:
+        print(f"Intento de restablecimiento de contraseña para correo NO registrado: {email}")
+        return jsonify({"message": "Si tu correo electrónico está registrado, recibirás un enlace de restablecimiento."}), 200
+    
+    claims = {"forgot_password": True, "email": email}
+    reset_token = create_access_token(identity=str(user.id),
+                                      expires_delta=timedelta(minutes=15),
+                                      additional_claims=claims)
+
+    frontend_url = current_app.config.get("FRONTEND_URL")
+    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
+
+    try:
+        html_body = render_template('reset_password_email.html',
+                                    reset_link=reset_link,
+                                    current_year=datetime.now().year,
+                                    app_name="Mi Aplicación")
+
+        msg = Message('Restablece tu contraseña - Mi Aplicación',
+                      sender=os.getenv("MAIL_USERNAME"),
+                      recipients=[email, os.getenv("TEST_MAIL")],
+                      html=html_body)
+
+        mail.send(msg)
+        return jsonify({"message": "Email enviado"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en el servidor, intenta más tarde"})
+
+
+@users_api.route('/reset-password', methods=["POST"])
+@jwt_required()
+def reset_password():
+    data_request = request.get_json()
+    new_password = data_request.get('password')
+    if not new_password:
+        return jsonify({"message": "La contraseña es obligatoria"}),400
+
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        claims = get_jwt()
+
+        if claims.get("forgot_password") and claims.get("email") == user.email:
+            user.password = new_password
+            db.session.commit()
+            return jsonify({"message": "Contraseña restablecida"}), 200
+        else:
+            return jsonify({"message": "Error en la validación de los datos, contacta al administrador"}), 401
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "Error en el servidor, intenta más tarde"}), 500

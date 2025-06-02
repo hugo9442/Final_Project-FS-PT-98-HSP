@@ -1,5 +1,4 @@
-  
-  const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/users"
+const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/users"
 
   export const users = {
 
@@ -9,18 +8,19 @@
              "last_name":`${lastname}`,
              "email": `${email}`, 
              "password": `${pass}`,
-             "phone_number":`${phone}`,
+             "phone":`${phone}`,
              "national_id":`${national_id}`,
              "account_number":`${aacc}`,
              "role":"PROPIETARIO"
            
         };
+        
         console.log(user)
         try {
             const request = await fetch(`${Url}/create`, {
                 method: "POST",
                 headers: {
-                    "content-Type": "application/json"
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(user)
             })
@@ -33,13 +33,14 @@
 
         }
     },
+
     createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
         let user = {
              "first_name":`${firstname}`,
              "last_name":`${lastname}`,
              "email": `${email}`, 
              "password": `${pass}`,
-             "phone_number":`${phone}`,
+             "phone":`${phone}`,
              "national_id":`${national_id}`,
              "account_number":`${aacc}`,
              "role":"INQUILINO"
@@ -61,6 +62,7 @@
 
         }
     },
+
       loginguser: async (email, pass) => {
         let user = {
              "email": `${email}`, "password": `${pass}`
@@ -83,6 +85,7 @@
 
         }
     },
+
     privateareauser: async (token) => {
         try {
             const request = await fetch(`${Url}/private`, {
@@ -101,6 +104,7 @@
 
         }
     },
+
      getUser: async (id) => {
         try {
             const request = await fetch(`${Url}/${id}`, {
@@ -115,6 +119,7 @@
 
         }
     },
+
     getUserContractsCount: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}/contracts/count`, {
@@ -132,6 +137,7 @@
 
         }
     },
+
     getUserContracts: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}/contracts`, {
@@ -149,6 +155,7 @@
 
         }
     },
+
     getUserApartments: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}/apartments/count`, {
@@ -166,5 +173,44 @@
 
         }
     },
+    
+    forgotPassword: async (email) => {
+        try {
+            const request = await fetch(`${Url}/forgot-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: email }),
+            });
 
-    }
+            const response = await request.json();
+            return { message: response.message, success: request.ok };
+
+        } catch (error) {
+            console.error("Error al solicitar restablecimiento:", error);
+            return { message: "Error de conexión. Intenta más tarde.", success: false };
+        }
+    },
+
+    resetPassword: async (token, newPassword) => {
+        try {
+            const request = await fetch(`${Url}/reset-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({ password: newPassword }),
+            });
+
+            const response = await request.json();
+
+            return { message: response.message, success: request.ok };
+
+        } catch (error) {
+            console.error("Error al restablecer contraseña:", error);
+            return { message: "Error de conexión. Intenta más tarde.", success: false };
+        }
+    },
+};

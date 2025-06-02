@@ -16,13 +16,17 @@ export const initialStore = () => {
     phone:"",
     national_id:"",
     aacc:"",
-    token: "",
+    token: localStorage.getItem("jwt-token") || "",
     visibility: "none",
-    visibility2: "",
+    visibility2: "block",
     validToken: false,
     todos: [],
     tenant:[],
-    contracts:[]
+    contracts:[],
+    forgotPasswordVisibility: "none",
+    resetPasswordVisibility: "none",
+    resetMessage: null,
+    resetToken: null,
   };
 };
 
@@ -63,16 +67,72 @@ export default function storeReducer(store, action = {}) {
         ...store,
         is_rent: action.value,
       };
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     case "login":
       return {
         ...store,
-        visibility: action.value,
+        visibility2: action.value,
+        visibility: "none",
+        forgotPasswordVisibility: "none",
+        resetPasswordVisibility: "none",
+        resetMessage: null,
+        resetToken: null,
       };
     case "register":
       return {
         ...store,
-        visibility2: action.value,
+        visibility: action.value,
+        visibility2: "none",
+        forgotPasswordVisibility: "none",
+        resetPasswordVisibility: "none",
+        resetMessage: null,
+        resetToken: null,
       };
+    case "showForgotPassword":
+      return {
+        ...store,
+        forgotPasswordVisibility: "block",
+        visibility: "none",
+        visibility2: "none",
+        resetPasswordVisibility: "none",
+        resetMessage: null,
+        resetToken: null,
+      };
+    case "showResetPassword":
+      return {
+        ...store,
+        resetPasswordVisibility: "block",
+        visibility: "none",
+        visibility2: "none",
+        forgotPasswordVisibility: "none",
+      };
+    case "setResetMessage":
+      return {
+        ...store,
+        resetMessage: action.value,
+      };
+    case "setResetToken":
+      return {
+        ...store,
+        resetToken: action.value,
+      };
+    case "addToken":
+      localStorage.setItem("jwt-token", action.value);
+      return {
+        ...store,
+        token: action.value,
+      };
+    case "addEmail": // Esto es para los inputs, puede ser útil para olvidar contraseña si no quieres estado local
+        return {
+            ...store,
+            email: action.value,
+        };
+    case "addPassword": // Esto es para los inputs
+        return {
+            ...store,
+            password: action.value,
+        };
+      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
     case "validate":
       return {
         ...store,
@@ -112,11 +172,6 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         password: action.value,
-      };
-    case "addToken":
-      return {
-        ...store,
-        token: action.value,
       };
       case "addstart_date":
       return {
