@@ -1,4 +1,5 @@
 import os
+import uuid
 from flask import request, jsonify, Blueprint, render_template, current_app
 from api.models import db, User, Apartment, Contract
 from api.utils import generate_sitemap, APIException
@@ -286,11 +287,9 @@ def forgot_password():
     reset_token = create_access_token(identity=str(user.id),
                                       expires_delta=timedelta(minutes=15),
                                       additional_claims=claims)
-    print(reset_token)
 
     frontend_url = current_app.config.get("FRONTEND_URL")
     reset_link = f"{frontend_url}/reset-password?token={reset_token}"
-    print(reset_link)
 
     try:
         html_body = render_template('reset_password_email.html',
@@ -332,3 +331,113 @@ def reset_password():
         print(e)
         db.session.rollback()
         return jsonify({"message": "Error en el servidor, intenta más tarde"}), 500
+
+
+@users_api.route('/register-tenant-initiate', methods=["POST"])
+@jwt_required()
+def register_tenant_initiate():
+    owner_id = get_jwt_identity()
+
+    data_request = request.get_json()
+    first_name = data_request.get("first_name")
+    last_name = data_request.get("last_name")
+    email = data_request.get("email")
+    phone = data_request.get("phone")
+    national_id = data_request.get("national_id")
+    account_number = data_request.get("account_number")
+
+
+    if not email or not first_name:
+        return jsonify({"message": "Nombre y email del inquilino son obligatorios"}), 400
+    
+    if '@' not in email:
+        return jsonify({"message": "Formato de email inválido"}), 400
+
+    email_lower = email.strip().lower()
+    existing_user = User.query.filter_by(email=email_lower).first()
+
+    if existing_user:
+        return jsonify({"message": "Ya existe un usuario con este email"}), 409
+
+    temporary_password = str(uuid.uuid4())
+    hashed_temporary_password = bcrypt.generate_password_hash(temporary_password).decode('utf-8')
+
+    new_tenant = User(
+        first_name=first_name,
+        last_name=last_name,
+        email=email_lower,
+        password=hashed_temporary_password,
+        phone=phone,
+        national_id=national_id,
+        account_number=account_number,
+        role="INQUILINO"
+    )
+
+    claims = {"setup_password": True, "email": new_tenant.email}
+
+    try:
+        db.session.add(new_tenant)
+        db.session.commit()
+
+        setup_password_token = create_access_token(
+            identity=str(new_tenant.id),
+            expires_delta=timedelta(days=30),
+            additional_claims=claims
+        )
+
+        frontend_url = current_app.config.get("FRONTEND_URL")
+        setup_password_link = f"{frontend_url}/set-password?token={setup_password_token}"
+
+        
+        html_body = render_template('tenant_welcome_email.html',
+                                    first_name=new_tenant.first_name,
+                                    setup_password_link=setup_password_link)
+
+        test_email_recipient = os.getenv("TEST_MAIL")
+        recipients_list = [new_tenant.email]
+        if test_email_recipient and test_email_recipient != new_tenant.email:
+            recipients_list.append(test_email_recipient)
+
+        msg = Message('¡Bienvenido a InmuGestion! Configura tu Contraseña',
+                      sender=os.getenv("MAIL_USERNAME"),
+                      recipients=recipients_list,
+                      html=html_body)
+        mail.send(msg)
+
+        return jsonify({"message": "Inquilino registrado exitosamente. Se ha enviado un email para configurar su contraseña."}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al registrar inquilino o enviar email: {e}")
+        return jsonify({"message": "Error en el servidor al registrar inquilino, intenta más tarde."}), 500
+
+
+@users_api.route('/set-password', methods=["POST"])
+@jwt_required()
+def set_tenant_password():
+    tenant_id = get_jwt_identity()
+    data_request = request.get_json()
+    new_password = data_request.get('password')
+
+    if not new_password:
+        return jsonify({"message": "La contraseña es obligatoria"}), 400
+
+    try:
+        tenant = User.query.get(tenant_id)
+        if not tenant:
+            return jsonify({"message": "Inquilino no encontrado o token inválido."}), 404
+
+        claims = get_jwt()
+
+        if not claims.get("setup_password") or claims.get("email") != tenant.email:
+            return jsonify({"message": "Token inválido o no autorizado para esta operación."}), 401
+        
+        tenant.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+        
+        db.session.commit()
+        return jsonify({"message": "Contraseña configurada exitosamente. Ya puedes iniciar sesión."}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al configurar contraseña del inquilino: {e}")
+        return jsonify({"message": "Error en el servidor al configurar la contraseña, intenta más tarde."}), 500

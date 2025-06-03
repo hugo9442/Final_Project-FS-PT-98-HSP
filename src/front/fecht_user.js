@@ -63,7 +63,7 @@ const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/
         }
     },
 
-      loginguser: async (email, pass) => {
+    loginguser: async (email, pass) => {
         let user = {
              "email": `${email}`, "password": `${pass}`
         };
@@ -105,7 +105,7 @@ const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/
         }
     },
 
-     getUser: async (id) => {
+    getUser: async (id) => {
         try {
             const request = await fetch(`${Url}/${id}`, {
                 method: "GET"
@@ -213,6 +213,50 @@ const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/
         } catch (error) {
             console.error("Error al restablecer contraseña:", error);
             return { message: "Error de conexión. Intenta más tarde.", success: false };
+        }
+    },
+
+    sendTenantInvite: async (tenantData, ownerToken) => {
+        try {
+            const request = await fetch(`${Url}/register-tenant-initiate`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${ownerToken}`
+                },
+                body: JSON.stringify(tenantData),
+            });
+            const response = await request.json();
+
+            if (!request.ok) {
+                return { success: false, message: response.message || response.msg || "Error al iniciar el registro del inquilino." };
+            }
+            return { success: true, message: response.message || "Invitación de inquilino enviada exitosamente." };
+        } catch (error) {
+            console.error("Error al enviar invitación de inquilino:", error);
+            return { success: false, message: "Error de conexión al enviar invitación." };
+        }
+    },
+
+    setTenantInitialPassword: async (token, newPassword) => {
+        try {
+            const request = await fetch(`${Url}/set-password`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ password: newPassword }),
+            });
+            const response = await request.json();
+
+            if (!request.ok) {
+                return { success: false, message: response.message || response.msg || "Error al configurar la contraseña." };
+            }
+            return { success: true, message: response.message || "Contraseña configurada exitosamente." };
+        } catch (error) {
+            console.error("Error al configurar contraseña del inquilino:", error);
+            return { success: false, message: "Error de conexión. Intenta más tarde." };
         }
     },
 };

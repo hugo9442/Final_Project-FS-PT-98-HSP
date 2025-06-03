@@ -11,25 +11,45 @@ const LoginSection = () => {
   const history = useNavigate();
   const handleNavigate = () => history("/propietarioindex");
   const navigate = useNavigate();
-  
+
   const [forgotEmail, setForgotEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
-  const [messageFeedback, setMessageFeedback] = useState(null); 
-  
+  const [messageFeedback, setMessageFeedback] = useState(null);
+
+  const [tenantSetPassword, setTenantSetPassword] = useState("");
+  const [confirmTenantSetPassword, setConfirmTenantSetPassword] = useState("");
+
+
   useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const urlToken = queryParams.get("token");
-  
-    if (urlToken) {
-      dispatch({ type: "setResetToken", value: urlToken });
-      dispatch({ type: "showResetPassword" });
-    } else {
-      dispatch({ type: "setResetToken", value: null });
-      if (store.visibility === "none" && store.forgotPasswordVisibility === "none" && store.resetPasswordVisibility === "none" && store.visibility2 === "none")
-        dispatch({ type: "login", value: "block" });
-    }
-  }, [location.search, dispatch, store.visibility, store.visibility2, store.forgotPasswordVisibility, store.resetPasswordVisibility]);
+        const queryParams = new URLSearchParams(location.search);
+        const urlToken = queryParams.get("token");
+
+        setMessageFeedback(null);
+
+        if (urlToken) {
+            dispatch({ type: "setResetToken", value: urlToken });
+
+            if (location.pathname === "/set-password") {
+                dispatch({ type: "showTenantSetPassword" });
+            } else if (location.pathname === "/reset-password") {
+                dispatch({ type: "showResetPassword" });
+            } else {
+                dispatch({ type: "login", value: "block" });
+                setMessageFeedback("Enlace de acceso inválido o expirado.");
+            }
+        } else {
+            dispatch({ type: "setResetToken", value: null }); 
+            if (store.visibility === "none" && 
+                store.forgotPasswordVisibility === "none" && 
+                store.resetPasswordVisibility === "none" &&
+                store.tenantSetPasswordVisibility === "none" &&
+                store.visibility2 === "none") 
+            {
+                 dispatch({ type: "login", value: "block" });
+            }
+        }
+    }, [location.pathname, location.search, dispatch, store.visibility, store.forgotPasswordVisibility, store.resetPasswordVisibility, store.tenantSetPasswordVisibility, store.visibility2]); 
 
   const handleCreatuser = async () => {
     try {
@@ -71,6 +91,7 @@ const LoginSection = () => {
 
     } catch (error) { }
   };
+
   const handleLogingUser = async () => {
     try {
       const data = await users.loginguser(store.email, store.password);
@@ -101,6 +122,7 @@ const LoginSection = () => {
       return data;
     } catch (error) { }
   };
+
   const createContact = async () => {
     if (store.email !== "" && store.password !== "") {
       await
@@ -109,12 +131,14 @@ const LoginSection = () => {
       // handleNavigate();
     }
   };
+
   const logingUser = async () => {
     if (store.email !== "" && store.password !== "") {
       await handleLogingUser();
 
     }
   };
+
   const handleForgotPasswordSubmit = async (e) => {
     e.preventDefault();
     setMessageFeedback(null);
@@ -145,7 +169,7 @@ const LoginSection = () => {
 
   const handleResetPasswordSubmit = async (e) => {
     e.preventDefault();
-    dispatch({ type: "setResetMessage", value: null });
+    setMessageFeedback(null);
 
     if (!store.resetToken) {
       setMessageFeedback("Token de restablecimiento no encontrado.");
@@ -163,7 +187,6 @@ const LoginSection = () => {
     }
 
     const result = await users.resetPassword(store.resetToken, newPassword);
-    dispatch({ type: "setResetMessage", value: result.message });
 
     if (result.success) {
       swal({
@@ -174,9 +197,10 @@ const LoginSection = () => {
         timer: 2500,
       }).then(() => {
         setTimeout(() => {
-            navigate("/Acceso");
+          navigate("/Acceso");
         }, 500);
       });
+      setMessageFeedback(result.message);
     } else {
       swal({
         title: "Error",
@@ -186,7 +210,62 @@ const LoginSection = () => {
       });
     }
   };
-  console.log(store)
+
+  const handleTenantSetPasswordSubmit = async (e) => {
+    e.preventDefault();
+    setMessageFeedback(null);
+
+    if (!store.resetToken) {
+      setMessageFeedback("Token inválido o no encontrado. Por favor, utiliza el enlace de tu correo electrónico.");
+      return;
+    }
+
+    if (tenantSetPassword.length < 8) {
+      setMessageFeedback("La contraseña debe tener al menos 8 caracteres.");
+      return;
+    }
+
+    if (tenantSetPassword !== confirmTenantSetPassword) {
+      setMessageFeedback("Las contraseñas no coinciden.");
+      return;
+    }
+
+    try {
+      const result = await users.setTenantInitialPassword(store.resetToken, tenantSetPassword);
+
+      if (result.success) {
+        swal({
+          title: "Contraseña Configurada",
+          text: result.message,
+          icon: "success",
+          buttons: false,
+          timer: 2500,
+        }).then(() => {
+          setTimeout(() => {
+            dispatch({ type: "login", value: "block" });
+            navigate("/acceso");
+          }, 500);
+        });
+      } else {
+        swal({
+          title: "Error",
+          text: result.message,
+          icon: "error",
+          buttons: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error al configurar la contraseña del inquilino:", error);
+      swal({
+        title: "Error",
+        text: "Error de conexión al configurar la contraseña.",
+        icon: "error",
+        buttons: true,
+      });
+    }
+  };
+
+
   return (
     <div>
       <section
@@ -574,7 +653,7 @@ const LoginSection = () => {
                             className="form-control form-control-lg"
                             value={forgotEmail}
                             onChange={(e) => setForgotEmail(e.target.value)}
-                            // required
+                          // required
                           />
                           <label
                             className="form-label"
@@ -710,6 +789,56 @@ const LoginSection = () => {
                       >
                         Volver al inicio de sesión
                       </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        className="vh-100"
+        style={{ backgroundColor: "#ebf5fb", display: `${store.tenantSetPasswordVisibility}` }}
+      >
+        <div className="container py-5 h-100">
+          <div className="row d-flex justify-content-center align-items-center h-100">
+            <div className="col col-xl-10">
+              <div className="card" style={{ borderRadius: "1rem" }}>
+                <div className="row g-0">
+                  <div className="col-md-6 col-lg-5 d-none d-md-block">
+                    <img src={ImgEdificio} alt="set password form" className="img-fluid" style={{ borderRadius: "1rem 0 0 1rem" }} />
+                  </div>
+                  <div className="col-md-6 col-lg-7 d-flex align-items-center">
+                    <div className="card-body p-4 p-lg-5 text-black">
+                      <h5 className="fw-normal mb-3 pb-3" style={{ letterSpacing: "1px" }}>Configura tu Contraseña</h5>
+                      {store.resetToken === null && (
+                        <p className="text-center text-danger">Token inválido o no encontrado. Por favor, utiliza el enlace de tu correo electrónico.</p>
+                      )}
+                      {messageFeedback && (
+                        <div className={`alert ${messageFeedback.includes("éxito") ? "alert-success" : "alert-danger"}`} role="alert">
+                          {messageFeedback}
+                        </div>
+                      )}
+
+                      {store.resetToken && (
+                        <form onSubmit={handleTenantSetPasswordSubmit}>
+                          <div className="form-outline mb-4">
+                            <input type="password" id="tenantSetPassword" className="form-control form-control-lg"
+                              value={tenantSetPassword} onChange={(e) => setTenantSetPassword(e.target.value)} required minLength="8" />
+                            <label className="form-label" htmlFor="tenantSetPassword">Nueva Contraseña</label>
+                          </div>
+                          <div className="form-outline mb-4">
+                            <input type="password" id="confirmTenantSetPassword" className="form-control form-control-lg"
+                              value={confirmTenantSetPassword} onChange={(e) => setConfirmTenantSetPassword(e.target.value)} required minLength="8" />
+                            <label className="form-label" htmlFor="confirmTenantSetPassword">Confirmar Contraseña</label>
+                          </div>
+                          <div className="pt-1 mb-4">
+                            <button className="btn btn-dark btn-lg btn-block" type="submit">Guardar Contraseña</button>
+                          </div>
+                        </form>
+                      )}
+                      <a href="#!" className="small text-muted" onClick={(e) => { e.preventDefault(); dispatch({ type: "login", value: "block" }); navigate("/acceso"); }}>Volver al inicio de sesión</a>
                     </div>
                   </div>
                 </div>

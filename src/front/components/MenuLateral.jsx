@@ -26,7 +26,7 @@ const SidebarMenu = ({ setActiveOption }) => {
                 backgroundColor: 'rgba(138, 223, 251, 0.8)',
                 padding: '1.5rem 1rem',
                 boxShadow: '2px 0 10px rgba(0, 0, 0, 0.1)',
-                position: 'fixed',
+                // position: 'fixed',
                 top: 0,
                 left: 0,
                 zIndex: 1000,
