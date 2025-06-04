@@ -1,6 +1,4 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
+
 import os
 from pathlib import Path
 from flask import Flask, request, jsonify, url_for, send_from_directory
@@ -8,8 +6,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
-"""from .models import db """
-from api.routes import apartments_api, users_api, contracts_api, issues_api, actions_api
+from api.routes import apartments_api, users_api, contracts_api, issues_api, actions_api, asociates_api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
@@ -17,6 +14,8 @@ from datetime import timedelta
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
+from flask_cors import CORS
+from api.extensions import mail
 
 env_path = Path(__file__).resolve().parent.parent / '.env'  # Sube dos niveles desde src/
 load_dotenv(env_path)
@@ -57,6 +56,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
 app.config["JWT_SECRET_KEY"] =os.getenv("SECRET_KEY") 
+app.config["FRONTEND_URL"] = os.getenv("FRONTEND_URL", "http://localhost:3000")
 
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 jwt=JWTManager(app)
@@ -76,6 +76,18 @@ app.register_blueprint(apartments_api)
 app.register_blueprint(contracts_api)
 app.register_blueprint(issues_api)
 app.register_blueprint(actions_api)
+app.register_blueprint(asociates_api)
+
+
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER') 
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True').lower() in ('true', '1', 't') 
+app.config['MAIL_USE_SSL'] = os.getenv('MAIL_USE_SSL', 'False').lower() in ('true', '1', 't')
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+
+mail.init_app(app)
 
 # Handle/serialize errors like a JSON object
 
