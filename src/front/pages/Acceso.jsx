@@ -838,7 +838,7 @@ const LoginSection = () => {
                           </div>
                         </form>
                       )}
-                      <a href="#!" className="small text-muted" onClick={(e) => { e.preventDefault(); dispatch({ type: "login", value: "block" }); navigate("/acceso"); }}>Volver al inicio de sesión</a>
+                      <a href="#!" className="small text-muted" onClick={(e) => { e.preventDefault(); dispatch({ type: "login", value: "block" }); navigate("/Acceso"); }}>Volver al inicio de sesión</a>
                     </div>
                   </div>
                 </div>
