@@ -2,10 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
 import MenuLateral from "../components/MenuLateral";
-
-
 import { apartments } from "../fecht_apartment.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { contracts } from "../fecht_contract.js";

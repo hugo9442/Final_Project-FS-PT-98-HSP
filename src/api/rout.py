@@ -5,7 +5,7 @@ from api.models import db, User
 from api.utils import generate_sitemap, APIException
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import create_access_token, jwt_required
 
 
 api = Blueprint('api', __name__)
@@ -35,12 +35,12 @@ def public_route():
 
     return jsonify(response_body), 200
 
+
 @api.route('/user', methods=['GET'])
 def get_user():
-    raw_list_user=User.query.all()
-    users_list=[users.serialize() for users in raw_list_user]
-    return jsonify(users_list), 
-
+    raw_list_user = User.query.all()
+    users_list = [users.serialize() for users in raw_list_user]
+    return jsonify(users_list),
 
 
 @api.route('/private', methods=['GET'])
@@ -50,15 +50,14 @@ def private_route():
     user = User.query.get(user_id)
 
     return jsonify({
-        "confirmation":True
-        }), 200
-
+        "confirmation": True
+    }), 200
 
 
 @api.route('/user/login', methods=["POST"])
 def sing_in():
     data_request = request.get_json()
-   
+
     if not 'email' in data_request or not 'password' in data_request:
         return jsonify({"error": "Los campos: email y password son requeridos"}), 400
 
@@ -68,15 +67,17 @@ def sing_in():
         return jsonify({"msg": "El email o la contraseña es incorrecto"}), 401
 
     try:
-     
+
         access_token = create_access_token(identity=str(user.id))
         return jsonify({
-            "user":user.serialize(),
+            "user": user.serialize(),
             "token": access_token
-      }), 200
+        }), 200
     except Exception as e:
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error en el servidor"}), 500
+
+
 
 

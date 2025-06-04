@@ -35,6 +35,7 @@ def get_user(user_id):
     return jsonify({"user":user.serialize()}), 200
 
 
+
 @users_api.route('/<int:user_id>', methods=["PUT"])
 @jwt_required()
 def update_user(user_id):
@@ -91,7 +92,7 @@ def create_user():
         last_name=data_request["last_name"],
         email=email,
         password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone=data_request.get("phone"),
+        phone_number=data_request.get("phone_number"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]
@@ -112,7 +113,6 @@ def create_user():
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
-
 @users_api.route('/<int:user_id>', methods=["DELETE"])
 @jwt_required()
 def delete_user(user_id):
@@ -203,6 +203,7 @@ def get_user_not_rented_apartments(user_id):
     not_rented_apartments = Apartment.query.filter(Apartment.owner_id == user_id, Apartment.is_rent == False).all()
 
     return jsonify({"apartments":[apartment.serialize() for apartment in not_rented_apartments]}), 200
+
 
 
 @users_api.route('/<int:user_id>/apartments/count', methods=["GET"])
@@ -311,12 +312,12 @@ def sing_in():
         return jsonify({"msg": "El email o la contraseña es incorrecto"}), 401
 
     try:
-     
+
         access_token = create_access_token(identity=str(user.id))
         return jsonify({
-            "user":user.serialize(),
+            "user": user.serialize(),
             "token": access_token
-      }), 200
+        }), 200
     except Exception as e:
         print(e)
         db.session.rollback()

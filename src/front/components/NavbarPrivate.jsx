@@ -21,9 +21,9 @@ const Navbar = () => {
 			</a>
 
 			<div className="d-flex gap-3">
-				<a href="/PropietarioIndex" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
+				<Link to="/PropietarioIndex" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
 					Principal
-				</a>
+				</Link>
 				<Link to="/Contact" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
 					Contacto
 				</Link>
