@@ -91,7 +91,6 @@ const LoginSection = () => {
 
     } catch (error) { }
   };
-
   const handleLogingUser = async () => {
     try {
       const data = await users.loginguser(store.email, store.password);

@@ -6,16 +6,17 @@ import { router } from "./routes";
 import { StoreProvider } from './hooks/useGlobalReducer';
 import { BackendURL } from './components/BackendURL';
 import { AuthProvider } from './context/AuthContext';
-import './assets/img/fontawesome';
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; 
+
+
 
 const Main = () => {
-    if (!import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL === "") {
-        return (
-            <React.StrictMode>
-                <BackendURL />
-            </React.StrictMode>
-        );
-    }
+
+    if (! import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL == "") return (
+        <React.StrictMode>
+            <BackendURL />
+        </React.StrictMode>
+    );
     return (
         <React.StrictMode>
             {/* Provide global state to all components */}
