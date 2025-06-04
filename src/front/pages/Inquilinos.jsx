@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { users } from "../fecht_user.js";
 import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
-import { format, differenceInDays } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import {Asociations} from "../fetch_asociations.js";
 import { contracts } from "../fecht_contract.js";
 

@@ -1,4 +1,4 @@
-const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/users"
+const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/users"
 
   export const users = {
 
