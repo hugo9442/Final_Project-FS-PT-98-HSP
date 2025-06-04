@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { useNavigate } from "react-router-dom";
 const Navbar = () => {
+  const { store, dispatch } = useGlobalReducer();
+  const history = useNavigate();
+  const handleNavigatePropietarioIndex = () => history("/propietarioindex");
+  const handleNavigateAcceso=()=>history("/acceso")
+  const accessToPropietarioIndex=()=>{
+    
+    if (store.token.length>0){
+        handleNavigatePropietarioIndex()
+    }else {handleNavigateAcceso()}
+  }
 
 	return (
 
@@ -26,7 +37,7 @@ const Navbar = () => {
             <Link to="/" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>Inicio</Link>
             <Link to="/Contact" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>Contacto</Link>
             <Link to="/Servicios" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>Servicios</Link>
-            <Link to="/Acceso" className="btn btn-light btn-sm w-100 me-5" style={{ minWidth: "120px" }}>Acceso</Link>
+            <button className="btn btn-light btn-sm w-100 me-5" style={{ minWidth: "120px" }} onClick={accessToPropietarioIndex}>Acceso</button>
         </div>
     </nav>
 );

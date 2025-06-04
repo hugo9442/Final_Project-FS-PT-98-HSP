@@ -15,9 +15,9 @@ import { users } from "../fecht_user.js";
 const PropietarioIndex = () => {
   const [activeOption, setActiveOption] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [totalViviendas, setTotalViviendas] = useState(0);
-  const [totalContratos, setTotalContratos] = useState(0);
-  const [totalIncidencias, setTotalIncidencias] = useState(0);
+  const [totalViviendas, setTotalViviendas] = useState();
+  const [totalContratos, setTotalContratos] = useState();
+  const [totalIncidencias, setTotalIncidencias] = useState();
 
   const { store, dispatch } = useGlobalReducer();
 
@@ -27,34 +27,42 @@ const PropietarioIndex = () => {
     const fetchData = async () => {
       try {
 
-        const data = await users.getUserApartments(store.todos[0].id, store.token);;
-        console.log("apartments:", data)
-        setTotalViviendas(data.total);
+        const data = await users. getUserApartmentsCount(store.todos.id, store.token);
+        if(data.total===null){
+          setTotalViviendas(0);
+        }
+      else  {
+        setTotalViviendas(data.total)
+      } ;
       } catch (error) {
         console.error("Error al cargar total de viviendas", error);
-        setTotalViviendas(10);
+        setTotalViviendas(0);
       }
 
       try {
 
-        const data = await users.getUserContractsCount(store.todos[0].id, store.token);
-
-        console.log(data)
-        setTotalContratos(data.total);
+        const data = await users.getUserContractsCount(store.todos.id, store.token);
+        console.log(data.total)
+        if (data.error==="No hay contratos para este usuario"){
+          setTotalContratos(0)
+        }
+        else{
+          setTotalContratos(data.total)
+        };
+        
       } catch (error) {
         console.error("Error al cargar total de contratos", error);
-        setTotalContratos(1);
+        setTotalContratos(0);
       }
 
       try {
 
         const res = await fetch("/api/incidencias/count");
-
         const data = await res.json();
         setTotalIncidencias(data.total);
       } catch (error) {
         console.error("Error al cargar total de incidencias", error);
-        setTotalIncidencias(7);
+        setTotalIncidencias(0);
       }
     };
     fetchData();
@@ -62,253 +70,15 @@ const PropietarioIndex = () => {
 
   
   
-console.log(store)
+console.log(totalContratos)
 
   const renderContent = () => {
     switch (activeOption) {
       case "contrato":
-        return (
-          <div>
-            <h5>Aquí puedes registrar un nuevo contrato.</h5>
-
-            
-            <div className="mb-3">
-                <label htmlFor="start_day" className="form-label">
-                  Fecha de inicio
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="start_day"
-                   onChange={(e) =>
-                  dispatch({ type: "addstart_date", value: e.target.value })}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="start_day" className="form-label">
-                  Fecha de Fin
-                </label>
-                <input
-                  type="date"
-                  className="form-control"
-                  id="end_day"
-                   onChange={(e) =>
-                  dispatch({ type: "addend_date", value: e.target.value })}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="pdfUpload" className="form-label">
-                  Sube tu contrato en PDF
-                </label>
-                <input
-                  type="file"
-                  className="form-control"
-                  id="pdfUpload"
-                  accept="application/pdf"
-
-                  onChange={(e)=>dispatch({type:"addcontract", value:e.target.files[0]})}
-                />
-              </div>
-              <button  className="btn btn-success" onClick={Ccontract}>
-                Guardar Contrato
-              </button>
-          
-          </div>
-        );
-       
-      case "viviendas":
-        return  (
-          <div>
-            <h5>Aquí puedes registrar una nueva vivienda.</h5>
-            
-            <div className="mb-3">
-                <label htmlFor="address" className="form-label">
-                  Direccion
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="address"
-                   onChange={(e) =>
-                  dispatch({ type: "address", value: e.target.value })}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="postal_code" className="form-label">
-                  Codigo Postal
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="postal_code"
-                   onChange={(e) =>
-                  dispatch({ type: "postal_code", value: e.target.value })}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="city" className="form-label">
-                  Ciudad
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="city"
-                  onChange={(e)=>dispatch({type:"city", value:e.target.value})}
-                />
-              </div>
-               <div className="mb-3">
-                <label htmlFor="parking_slot" className="form-label">
-                  Cochera
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="parking_slot"
-                  onChange={(e)=>dispatch({type:"parking_slot", value:e.target.value})}
-                />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="is_rent" className="form-label">
-                  Esta Arrendado
-                </label>
-                <input
-                  type="checkbox"
-                  className="form-control"
-                  id="is_rent"
-                  checked={store.is_rent}
-                  onChange={(e)=>dispatch({type:"is_rent", value: e.target.checked })}
-                />
-              </div>
-              <button  className="btn btn-success" onClick={Capratment}>
-                Añadir vivienda
-              </button>
-          
-          </div>
-        );
-      case "contactos":
-        return <p>Gestión de contactos y clientes.</p>;
-      case "inquilinos":
-        return(  <div>
-            <h5>Aquí puedes registrar un nuevo Inquilino.</h5>
-            
-            <div className="mb-3">
-                <label htmlFor="first_name" className="form-label">
-                  Nombre
-                </label>
-                <input
-                            type="text"
-                            id="first_name"
-                            className="form-control"
-                            value={store.lastname}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addLastname",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="last_name" className="form-label">
-                  Apellidos
-                </label>
-                 <input
-                            type="email"
-                            id="last_name"
-                            className="form-control"
-                            value={store.email}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addEmail",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="city" className="form-label">
-                  Password
-                </label>
-                 <input
-                            type="password"
-                            id="Password"
-                            className="form-control form-control-lg"
-                            value={store.password}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addPassword",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-              </div>
-               <div className="mb-3">
-                <label htmlFor="parking_slot" className="form-label">
-                  Phone
-                </label>
-                 <input
-                            type="text"
-                            id="phone"
-                            className="form-control form-control-lg"
-                            value={store.Phone}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addPhone",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="is_rent" className="form-label">
-                 DNI
-                </label>
-                 <input
-                            type="text"
-                            id="DNI"
-                            className="form-control"
-                            value={store.National_Id}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addNid",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-              </div>
-              <div className="mb-3">
-                <label htmlFor="is_rent" className="form-label">
-                Cuenta Corriente
-                </label>
-                <input
-                            type="text"
-                            id="aacc"
-                            className="form-control form-control-lg"
-                            value={store.aacc}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addAacc",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-              </div>
-              <button  className="btn btn-success" onClick={Ctenant}>
-                Añadir vivienda
-              </button>
-          
-          </div>
-        );
-
-      case "perfil":
-        return <p>Información de perfil del usuario.</p>;
-      case "salir":
-        navigate("/acceso");
-        return null;
+    
       default:
         return (
-          <div className="text-center">
+          <div className="text-center" style={{marginLeft:"250px"}}>
             <h2>Bienvenido, propietario</h2>
             <p>Gestiona tu inmueble desde este panel.</p>
 
@@ -385,10 +155,10 @@ console.log(store)
                 <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
                   <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
                     <h1 className="display-4">{totalViviendas}</h1>
-                    <p className="lead mb-0">Total de Inquilinos</p>
+                    <p className="lead mb-0">Total de Viviendas</p>
                   </div>
                   <div className="card-body">
-                    <p className="card-text">Gestión completa de tus inquilinos.</p>
+                    <p className="card-text">Gestión completa de tus Viviendas.</p>
                   </div>
                 </div>
               </div>

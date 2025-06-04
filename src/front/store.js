@@ -1,3 +1,5 @@
+
+
 export const initialStore = () => {
   return {
     message: null,
@@ -22,7 +24,9 @@ export const initialStore = () => {
     validToken: false,
     todos: [],
     tenant:[],
-    contracts:[]
+    contracts:[],
+    apartments:[],
+    asociation:[]
   };
 };
 
@@ -128,43 +132,43 @@ export default function storeReducer(store, action = {}) {
         ...store,
         contract_end_date: action.value,
       };
-      
-    case "add_task":
-      const { id, color } = action.payload;
-
-      return {
-        ...store,
-        todos: store.todos.map((todo) =>
-          todo.id === id ? { ...todo, background: color } : todo
-        ),
-      };
+    
     case "add_user":
-      
-       const userExists = store.todos.some((u) => u.id === action.value.id);
-      if (userExists) return store; 
-     
-       
+    
       return {
         ...store,
-        todos: [...store.todos, action.value],
-      };
-      case "add_contracts":
-       //const allContracts = store.contracts.flat();
-       const contractsExits = store.contracts.some(u => u.id === action.value.id);
-      if (contractsExits) return store; 
-     
-       
-      return {
-        ...store,
-        contracts: [...store.contracts, action.value],
+        todos: action.value,
       };
        case "add_tenant":
-      const tenantExists = store.tenant.some((u) => u.id === action.value.id);
-      if (tenantExists) return store; 
+    
+      return {
+        ...store,
+        tenant:action.value,
+      };
+      case "add_asociation":
+    
+      return {
+        ...store,
+        asociation: action.value,
+      };
+      case "add_contracts":
+     
+      return {
+        ...store,
+        contracts: action.value,
+      };
+       case "add_apartments":
+     
+      return {
+        ...store,
+        apartments: action.value,
+      };
+       case "add_tenant":
+     
 
       return {
         ...store,
-        tenant: [...store.tenant, action.value],
+        tenant:action.value,
       };
     default:
       throw Error("Unknown action.");

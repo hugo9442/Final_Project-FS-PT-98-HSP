@@ -33,7 +33,7 @@
 
         }
     },
-    createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
+    createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc, token) => {
         let user = {
              "first_name":`${firstname}`,
              "last_name":`${lastname}`,
@@ -47,8 +47,12 @@
         };
         console.log(user)
         try {
-            const request = await fetch(`${Url}/create`, {
+            const request = await fetch(`${Url}/create/tenant`, {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer  ${token}`
+                },
                 
                 body: JSON.stringify(user)
             })
@@ -149,10 +153,78 @@
 
         }
     },
-    getUserApartments: async (id, token) => {
+    getUserApartmentsCount: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}/apartments/count`, {
                   method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    getUserApartments: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/apartments`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    getUserApartmentsNotRented: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/apartments/notrented`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    get_asociation: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/contracts/assoc`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    delete_tenant: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}`, {
+                  method: "DELETE", 
                  headers: {
                     "Authorization": `Bearer  ${token}`
                 },
