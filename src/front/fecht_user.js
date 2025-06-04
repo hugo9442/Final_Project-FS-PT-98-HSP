@@ -33,8 +33,38 @@ const Url = "https://animated-space-memory-rjrw4x4v9qwfx55j-3001.app.github.dev/
 
         }
     },
-   
-    loginguser: async (email, pass) => {
+
+
+    createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
+        let user = {
+             "first_name":`${firstname}`,
+             "last_name":`${lastname}`,
+             "email": `${email}`, 
+             "password": `${pass}`,
+             "phone":`${phone}`,
+             "national_id":`${national_id}`,
+             "account_number":`${aacc}`,
+             "role":"INQUILINO"
+           
+        };
+        console.log(user)
+        try {
+            const request = await fetch(`${Url}/create`, {
+                method: "POST",
+                
+                body: JSON.stringify(user)
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+      loginguser: async (email, pass) => {
+
         let user = {
              "email": `${email}`, "password": `${pass}`
         };
