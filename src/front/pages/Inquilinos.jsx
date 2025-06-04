@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { users } from "../fecht_user.js";
 import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
@@ -474,4 +474,4 @@ const handleCreatenant = async () => {
   );
 };
 
-export default Inquilinos;
+      export default Inquilinos;

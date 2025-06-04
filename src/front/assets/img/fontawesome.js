@@ -8,7 +8,6 @@ import {
   faUser,
   faRightFromBracket
 } from '@fortawesome/free-solid-svg-icons';
-
 import { faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons';
 
 library.add(
