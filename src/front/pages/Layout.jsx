@@ -10,9 +10,9 @@ export const Layout = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    const privateRoutes = ["/admin", "/Contrato", "/Viviendas", "/Inquilinos", "/Incidencias", "/propietarioindex", "/Servicios", "/Contact"];
+    const privateRoutes = ["/admin", "/Contrato", "/Viviendas", "/Inquilinos", "/Incidencias", "/propietarioindex"];
     const secondaryRoutes = ["/inquilinoindex"];
-    const publicRoutes = ["/acceso"];
+    const publicRoutes = ["/contact", "/acceso", "/servicios"];
 
     const showPrivateNavbar = privateRoutes.some(route => path.startsWith(route));
     const showSecondaryNavbar = secondaryRoutes.some(route => path.startsWith(route));
