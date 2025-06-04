@@ -4,12 +4,14 @@ import { users } from "../fecht_user.js";
 import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
+
 import { format, differenceInDays } from 'date-fns';
 
 
 
 const Contrato = () => {
   const { store, dispatch } = useGlobalReducer();
+  const [item,setItem]=useState(null)
 
   const [item, setItem] = useState()
 
@@ -33,7 +35,9 @@ const Contrato = () => {
   const handleDownloadContract = async () => {
     console.log(item)
     try {
-      const data = contracts.downloadcontract(item, store.token)
+
+      const data = contracts.downloadcontract(item,store.token)
+      
 
     } catch (error) {
 
@@ -91,6 +95,7 @@ const Contrato = () => {
               <h2>Gestión de Contratos</h2>
               <p>Aquí puedes visualizar, cargar o gestionar contratos activos.</p>
               <div className="map" style={{ display: `${store.visibility2}` }}>
+
                 <ul className="list-group">
                   {
                     store && store.contracts.map((item) => {
@@ -141,6 +146,7 @@ const Contrato = () => {
                       value: "",
                     })
                   }}>Añadir Contrato</button>
+
               </div>
 
               <div className="form" style={{ display: `${store.visibility}` }}>
