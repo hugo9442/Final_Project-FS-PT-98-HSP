@@ -3,227 +3,213 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { apartments } from "../fecht_apartment.js";
-import { contracts } from "../fecht_contract.js"; 
-import { incidents } from "../fecht_incidents.js";
 
-const InquilinoIndex = () => {
-    const [activeOption, setActiveOption] = useState(null);
+import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { apartments } from "../fecht_apartment.js"; 
+import { contracts } from "../fecht_contract.js";   
+import { incidents } from "../fecht_incidents.js"; 
+
+const InquilinoIndex = () => { 
     const [miViviendaInfo, setMiViviendaInfo] = useState(null);
     const [miContratoInfo, setMiContratoInfo] = useState(null);
-    const [totalMisIncidencias, setTotalMisIncidencias] = useState(0);
+    const [misIncidencias, setMisIncidencias] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);     
 
-    const { store, dispatch } = useGlobalReducer();
+    const { store } = useGlobalReducer();
     const navigate = useNavigate();
     const location = useLocation();
 
     const navItems = [
-        { "name": "Inicio", "path": "/inquilinoindex", "icon": "gauge-high", "internalOption": null },
-        { "name": "Mi Vivienda", "path": "/inquilinoindex", "icon": "house-chimney", "internalOption": "mi_vivienda" },
-        { "name": "Mi Contrato", "path": "/inquilinoindex", "icon": "file-signature", "internalOption": "mi_contrato" },
-        { "name": "Mis Incidencias", "path": "/inquilinoindex", "icon": "triangle-exclamation", "internalOption": "mis_incidencias" },
-        { "name": "Perfil", "path": "/inquilinoindex", "icon": "user", "internalOption": "perfil" },
-        { "name": "Salir", "path": "/acceso", "icon": "right-from-bracket", "internalOption": "salir" }
+        { "name": "Inicio", "path": "/inquilinoindex", "icon": "gauge-high" }, 
+        { "name": "Mi Vivienda", "path": "/inquilinoindex", "icon": "house-chimney" },
+        { "name": "Mi Contrato", "path": "/inquilinoindex", "icon": "file-signature" },
+        { "name": "Mis Incidencias", "path": "/inquilinoindex", "icon": "triangle-exclamation" },
+        { "name": "Perfil", "path": "/inquilinoindex", "icon": "user" },
+        { "name": "Salir", "path": "/acceso", "icon": "right-from-bracket" }
     ];
 
     useEffect(() => {
         const fetchInquilinoData = async () => {
-            if (store.user && store.user.id && store.token) {
-                try {
-                    const viviendaData = await apartments.getApartmentByTenantId(store.user.id, store.token);
-                    if (viviendaData && !viviendaData.error) {
-                        setMiViviendaInfo(viviendaData);
-                    } else {
-                        console.warn("No se pudo obtener la vivienda del inquilino o no tiene una:", viviendaData.error);
-                        setMiViviendaInfo(null);
-                    }
+            setLoading(true);
+            setError(null);
 
-                    const contratoData = await contracts.getContractByTenantId(store.user.id, store.token);
-                    if (contratoData && !contratoData.error) {
-                        setMiContratoInfo(contratoData);
-                    } else {
-                        console.warn("No se pudo obtener el contrato del inquilino o no tiene uno:", contratoData.error);
-                        setMiContratoInfo(null);
-                    }
-
-                    const incidenciasCount = await incidents.getIncidentsByTenantId(store.user.id, store.token);
-                    if (incidenciasCount && incidenciasCount.total !== undefined) {
-                        setTotalMisIncidencias(incidenciasCount.total);
-                    } else {
-                        console.warn("No se pudo obtener el recuento de incidencias:", incidenciasCount.error);
-                        setTotalMisIncidencias(0);
-                    }
-
-                } catch (error) {
-                    console.error("Error general al cargar datos del inquilino:", error);
-                }
-            } else {
+            if (!store.user || !store.token) {
                 console.log("Usuario o token no disponibles, no se cargan datos del inquilino.");
-                navigate("/Acceso"); 
+                setLoading(false);
+                return;
+            }
+
+            try {
+                const viviendaRes = await apartments.getApartmentByTenantId(store.token);
+                if (viviendaRes && !viviendaRes.error && viviendaRes.apartment) {
+                    setMiViviendaInfo(viviendaRes.apartment);
+
+                    if (viviendaRes.apartment.id) {
+                        const incidenciasRes = await incidents.getIncidentsByApartmentId(viviendaRes.apartment.id, store.token);
+                        if (incidenciasRes && !incidenciasRes.error && incidenciasRes.incidents) {
+                            setMisIncidencias(incidenciasRes.incidents);
+                        } else {
+                            setMisIncidencias([]);
+                        }
+                    } else {
+                        setMisIncidencias([]);
+                    }
+                } else {
+                    setMiViviendaInfo(null);
+                    setMisIncidencias([]);
+                }
+
+                const contratoRes = await contracts.getContractByTenantId(store.token);
+                if (contratoRes && !contratoRes.error && contratoRes.contract) {
+                    setMiContratoInfo(contratoRes.contract);
+                } else {
+                    setMiContratoInfo(null);
+                }
+
+            } catch (err) {
+                console.error("Error general al cargar datos del inquilino:", err);
+                setError("Hubo un problema al cargar tu información. Inténtalo de nuevo más tarde.");
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchInquilinoData();
     }, [store.user, store.token, navigate]);
 
-    const renderContent = () => {
-        switch (activeOption) {
-            case "mi_vivienda":
-                return (
-                    <div>
-                        <h3>Detalles de Mi Vivienda</h3>
-                        {miViviendaInfo ? (
-                            <div>
-                                <p><strong>Dirección:</strong> {miViviendaInfo.address}</p>
-                                <p><strong>Ciudad:</strong> {miViviendaInfo.city}</p>
-                                <p>Aquí se mostrará la información detallada de la vivienda que tienes asignada.</p>
-                            </div>
-                        ) : (
-                            <p>No tienes una vivienda asignada o hubo un problema al cargarla.</p>
-                        )}
-                    </div>
-                );
-            case "mi_contrato":
-                return (
-                    <div>
-                        <h3>Detalles de Mi Contrato</h3>
-                        {miContratoInfo ? (
-                            <div>
-                                <p><strong>Fecha Inicio:</strong> {miContratoInfo.contract_start_date}</p>
-                                <p><strong>Fecha Fin:</strong> {miContratoInfo.contract_end_date}</p>
-                                <p><strong>Alquiler Mensual:</strong> {miContratoInfo.monthly_rent}€</p>
-                                <p>Esta es la pantalla donde podrás ver los términos y condiciones de tu contrato de alquiler.</p>
-                            </div>
-                        ) : (
-                            <p>No tienes un contrato asignado o hubo un problema al cargarla.</p>
-                        )}
-                    </div>
-                );
-            case "mis_incidencias":
-                return (
-                    <div>
-                        <h3>Mis Incidencias</h3>
-                        <p>Tienes **{totalMisIncidencias}** incidencias abiertas.</p>
-                        <p>Aquí podrás consultar el estado de tus incidencias reportadas y crear nuevas.</p>
-                        <button className="btn btn-primary mt-3">Reportar Nueva Incidencia</button>
-                    </div>
-                );
-            case "perfil":
-                return (
-                    <div>
-                        <h3>Mi Perfil</h3>
-                        <p>Aquí podrás ver y editar la información de tu perfil de usuario.</p>
-                        {store.user ? (
-                            <>
-                                <p><strong>Nombre:</strong> {store.user.first_name} {store.user.last_name}</p>
-                                <p><strong>Email:</strong> {store.user.email}</p>
-                                <p><strong>Teléfono:</strong> {store.user.phone}</p>
-                                <p><strong>DNI:</strong> {store.user.national_id}</p>
-                                <p><strong>Rol:</strong> {store.user.role}</p>
-                            </>
-                        ) : (
-                            <p>Cargando información del perfil...</p>
-                        )}
-                    </div>
-                );
-            default:
-                return (
-                    <div className="text-center w-100">
-                        <h2 className="mb-4">Bienvenido, inquilino</h2>
-                        <p className="mb-4">Desde aquí puedes consultar tu información personal, los detalles de tu vivienda y tu contrato, así como gestionar tus solicitudes.</p>
-
-                        <div className="d-flex justify-content-center flex-wrap gap-3 mb-5">
-                            <button className="btn btn-primary btn-lg" onClick={() => setActiveOption("mis_incidencias")}>Reportar Incidencia</button>
-                            <button className="btn btn-secondary btn-lg" onClick={() => setActiveOption("mi_vivienda")}>Ver Mi Vivienda</button>
-                            <button className="btn btn-info btn-lg" onClick={() => setActiveOption("mi_contrato")}>Ver Mi Contrato</button>
-                        </div>
-
-                        <div id="inquilinoCarouselDark" className="carousel carousel-dark slide mt-5 mx-auto" style={{ maxWidth: '800px' }} data-bs-ride="carousel">
-                            <div className="carousel-indicators">
-                                <button type="button" data-bs-target="#inquilinoCarouselDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                                <button type="button" data-bs-target="#inquilinoCarouselDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                                <button type="button" data-bs-target="#inquilinoCarouselDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-                            </div>
-                            <div className="carousel-inner">
-                                <div className="carousel-item active" data-bs-interval="5000">
-                                    <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                                        <div className="text-center">
-                                            <h1 className="display-4">{miViviendaInfo ? '1' : '0'}</h1>
-                                            <p className="lead">Mi Vivienda Asignada</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="carousel-item" data-bs-interval="5000">
-                                    <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                                        <div className="text-center">
-                                            <h1 className="display-4">{miContratoInfo ? '1' : '0'}</h1>
-                                            <p className="lead">Mi Contrato Activo</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="carousel-item" data-bs-interval="5000">
-                                    <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                                        <div className="text-center">
-                                            <h1 className="display-4">{totalMisIncidencias}</h1>
-                                            <p className="lead">Mis Incidencias Abiertas</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button className="carousel-control-prev" type="button" data-bs-target="#inquilinoCarouselDark" data-bs-slide="prev">
-                                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                                <span className="visually-hidden">Anterior</span>
-                            </button>
-                            <button className="carousel-control-next" type="button" data-bs-target="#inquilinoCarouselDark" data-bs-slide="next">
-                                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                                <span className="visually-hidden">Siguiente</span>
-                            </button>
-                        </div>
-
-                        <div className="row mt-4 justify-content-center">
-                            <div className="col-md-4 mb-3">
-                                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                                    <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                                        <h1 className="display-4">{miViviendaInfo ? '1' : '0'}</h1>
-                                        <p className="lead mb-0">Mi Vivienda</p>
-                                    </div>
-                                    <div className="card-body">
-                                        <p className="card-text">Consulta los detalles de la vivienda que tienes asignada.</p>
-                                        <button className="btn btn-sm btn-outline-primary" onClick={() => setActiveOption("mi_vivienda")}>Ver Detalles</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-md-4 mb-3">
-                                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                                    <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                                        <h1 className="display-4">{miContratoInfo ? '1' : '0'}</h1>
-                                        <p className="lead mb-0">Mi Contrato</p>
-                                    </div>
-                                    <div className="card-body">
-                                        <p className="card-text">Revisa los términos y la duración de tu contrato de alquiler.</p>
-                                        <button className="btn btn-sm btn-outline-primary" onClick={() => setActiveOption("mi_contrato")}>Ver Detalles</button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="col-md-4 mb-3">
-                                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                                    <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                                        <h1 className="display-4">{totalMisIncidencias}</h1>
-                                        <p className="lead mb-0">Mis Incidencias</p>
-                                    </div>
-                                    <div className="card-body">
-                                        <p className="card-text">Reporta nuevos problemas o consulta el estado de los existentes.</p>
-                                        <button className="btn btn-sm btn-outline-primary" onClick={() => setActiveOption("mis_incidencias")}>Ver Incidencias</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
+    const renderMainContent = () => {
+        if (loading) {
+            return <div className="text-center p-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div><p className="mt-3">Cargando tu información...</p></div>;
         }
+        if (error) {
+            return <div className="alert alert-danger text-center p-3">{error}</div>;
+        }
+        const getContractDetails = (contract) => {
+            if (!contract || !contract.contract_start_date || !contract.contract_end_date) {
+                return {
+                    startDateFormatted: 'N/A',
+                    endDateFormatted: 'N/A',
+                    documentName: 'N/A',
+                    daysRemaining: 'N/A'
+                };
+            }
+
+            const startDate = new Date(contract.contract_start_date);
+            const endDate = new Date(contract.contract_end_date);
+            const today = new Date();
+
+            const startDateFormatted = format(startDate, 'dd MMMM yyyy', { locale: es });
+            const endDateFormatted = format(endDate, 'dd MMMM yyyy', { locale: es });
+            
+            const daysRemaining = differenceInDays(endDate, today);
+
+            const documentName = contract.document ? contract.document.split('/').pop() : 'Sin documento';
+
+            return {
+                startDateFormatted,
+                endDateFormatted,
+                documentName,
+                daysRemaining
+            };
+        };
+
+        const contractDetails = miContratoInfo ? getContractDetails(miContratoInfo) : null;
+
+
+        return (
+            <div className="text-center w-100 p-4">
+                <h2 className="mb-4">Bienvenido, inquilino</h2>
+                <p className="mb-4">Aquí tienes un resumen de tu contrato, vivienda e incidencias.</p>
+
+                <div className="row justify-content-center g-4"> 
+                    <div className="col-lg-10 col-md-10 col-sm-12">
+                        <div className="card h-100 shadow-lg border-primary">
+                            <div className="card-header bg-primary text-white text-center">
+                                <h5 className="mb-0">Mi Contrato</h5>
+                            </div>
+                            <div className="card-body text-left">
+                                {contractDetails ? (
+                                    <>
+                                        <p className="card-text mb-1">
+                                            <strong>Inicio:</strong> {contractDetails.startDateFormatted}
+                                        </p>
+                                        <p className="card-text mb-1">
+                                            <strong>Fin:</strong> {contractDetails.endDateFormatted}
+                                        </p>
+                                        <p className="card-text mb-1">
+                                            <strong>Documento:</strong> {contractDetails.documentName}
+                                        </p>
+                                        <p className="card-text">
+                                            <strong>Días restantes:</strong> {contractDetails.daysRemaining}
+                                        </p>
+                                        <p className="card-text">
+                                            <strong>Renta Mensual:</strong> {miContratoInfo?.monthly_rent ? `${miContratoInfo.monthly_rent}€` : 'N/A'}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <p className="card-text text-muted text-center">No tienes un contrato asignado o no se pudo cargar la información.</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-6 col-md-8 col-sm-10">
+                        <div className="card h-100 shadow-lg border-success">
+                            <div className="card-header bg-success text-white text-center">
+                                <h5 className="mb-0">Mi Vivienda</h5>
+                            </div>
+                            <div className="card-body">
+                                {miViviendaInfo ? (
+                                    <>
+                                        <p className="card-text mb-1"><strong>Dirección:</strong> {miViviendaInfo.address || 'N/A'}</p>
+                                        <p className="card-text mb-1"><strong>Ciudad:</strong> {miViviendaInfo.city || 'N/A'}</p>
+                                        <p className="card-text"><strong>C.P.:</strong> {miViviendaInfo.postal_code || 'N/A'}</p>
+                                    </>
+                                ) : (
+                                    <p className="card-text text-muted">No tienes una vivienda asignada o no se pudo cargar la información.</p>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="col-lg-10 col-md-10 col-sm-12 mt-4">
+                        <div className="card h-100 shadow-lg border-warning">
+                            <div className="card-header bg-warning text-dark text-center">
+                                <h5 className="mb-0">Mis Incidencias ({misIncidencias.length})</h5>
+                            </div>
+                            <div className="card-body">
+                                {misIncidencias.length > 0 ? (
+                                    <ul className="list-group list-group-flush text-left">
+                                        {misIncidencias.map(inc => {
+                                            const issueStartDate = inc.start_date ? format(new Date(inc.start_date), 'dd/MM/yyyy') : 'N/A';
+                                            const issueEndDate = inc.end_date ? format(new Date(inc.end_date), 'dd/MM/yyyy') : 'N/A';
+
+                                            return (
+                                                <li key={inc.issue_id} className="list-group-item d-flex justify-content-between align-items-center py-2 px-0">
+                                                    <div>
+                                                        <strong className="text-dark">{inc.title || 'Sin título'}</strong>
+                                                        <small className="d-block text-muted">
+                                                            Fecha: {issueStartDate} - {issueEndDate}
+                                                        </small>
+                                                        <span className={`badge ${inc.status === 'Abierta' ? 'bg-danger' : inc.status === 'En Proceso' ? 'bg-warning text-dark' : 'bg-secondary'} ms-2`}>
+                                                            {inc.status || 'Desconocido'}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                ) : (
+                                    <p className="card-text text-muted text-center">No se encontraron incidencias activas para tu vivienda.</p>
+                                )}
+                                <button className="btn btn-outline-dark mt-3">Reportar Nueva Incidencia</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     return (
@@ -261,18 +247,16 @@ const InquilinoIndex = () => {
                                 <Link
                                     to={item.path}
                                     className={`nav-link d-flex align-items-center rounded py-2 px-3
-                                    ${location.pathname === item.path && activeOption === item.internalOption ? 'active-sidebar-link' : 'text-white'}`}
+                                    ${location.pathname === item.path ? 'active-sidebar-link' : 'text-white'}`}
                                     onClick={(e) => {
-                                        if (item.path === location.pathname && activeOption === item.internalOption && item.path !== "/acceso") {
+                                        if (item.path === location.pathname && item.path !== "/acceso") {
                                             e.preventDefault();
                                         }
-                                        setActiveOption(item.internalOption);
-                                        if (item.path !== location.pathname || item.name === "Salir") {
+                                        if (item.path !== location.pathname) {
                                             navigate(item.path);
                                         }
                                         if (item.name === "Salir") {
                                             localStorage.removeItem("jwt-token");
-                                            // dispatch({ type: "clear_user_data" }); // Considera una acción para limpiar el store
                                         }
                                     }}
                                     style={{
@@ -292,8 +276,8 @@ const InquilinoIndex = () => {
                 </div>
 
                 <div className="col-md-9">
-                    <div className="p-2 border rounded bg-light">
-                        {renderContent()}
+                    <div className="p-2 border rounded bg-light min-vh-100">
+                        {renderMainContent()}
                     </div>
                 </div>
             </div>

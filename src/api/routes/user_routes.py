@@ -515,3 +515,82 @@ def set_tenant_password():
         db.session.rollback()
         print(f"Error al configurar contraseña del inquilino: {e}")
         return jsonify({"message": "Error en el servidor al configurar la contraseña, intenta más tarde."}), 500
+
+
+@users_api.route('/<int:user_id>/apartments', methods=["GET"])
+@jwt_required()
+def get_user_apartment(user_id):
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=user_id).first()
+    if not assoc:
+        return jsonify({"error": "No hay asociaciones de inquilino para este usuario"}), 404
+    apartment_id = assoc.apartment_id
+    if not apartment_id:
+        return jsonify({"error": "No hay apartamentos asociados a este inquilino"}), 404
+    
+    apartment = Apartment.query.get(apartment_id)
+    if not apartment:
+        return jsonify({"error": "Apartamento no encontrado"}), 404
+    
+    return jsonify({ "apartment": apartment.serialize()}), 200
+
+
+@users_api.route('/<int:user_id>/contracts', methods=["GET"])
+@jwt_required()
+def get_user_contract(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=user_id).first()
+    if not assoc:
+        return jsonify({"error": "No hay asociaciones de inquilino para este usuario"}), 404
+    
+    contract_id = assoc.contract_id
+    if not contract_id:
+        return jsonify({"error": "No hay contratos asociados a este inquilino"}), 404
+    
+    contract = Contract.query.get(contract_id)  
+    if not contract:
+        return jsonify({"error": "Contrato no encontrado"}), 404
+    
+    return jsonify({"contract": contract.serialize()}), 200
+
+
+@users_api.route('/tenant_apartment', methods=["GET"]) 
+@jwt_required()
+def get_current_tenant_apartment():
+    current_user_id = get_jwt_identity()
+
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=current_user_id)\
+                                           .options(db.joinedload(AssocTenantApartmentContract.apartment))\
+                                           .first()
+    
+    if not assoc:
+        return jsonify({"message": "No hay una vivienda asignada a este inquilino."}), 404
+        
+    if not assoc.apartment:
+        return jsonify({"message": "No hay una vivienda válida asociada a esta asignación."}), 404
+        
+    return jsonify({ "apartment": assoc.apartment.serialize()}), 200
+
+
+@users_api.route('/tenant_contract', methods=["GET"])
+@jwt_required()
+def get_current_tenant_contract():
+    current_user_id = get_jwt_identity()
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=current_user_id)\
+                                           .options(db.joinedload(AssocTenantApartmentContract.contract))\
+                                           .first()
+    
+    if not assoc:
+        return jsonify({"message": "No hay un contrato asignado a este inquilino."}), 404
+        
+    if not assoc.contract:
+        return jsonify({"message": "No hay un contrato válido asociado a esta asignación."}), 404
+        
+    return jsonify({"contract": assoc.contract.serialize()}), 200

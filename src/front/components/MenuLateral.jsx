@@ -14,7 +14,7 @@ const SidebarMenu = ({ setActiveOption }) => {
         { "name": "Inquilinos", "path": "/Inquilinos", "icon": "people-roof", "internalOption": "inquilinos" },
         { "name": "Incidencias", "path": "/Incidencias", "icon": "triangle-exclamation", "internalOption": "incidencias" },
         { "name": "Perfil", "path": "/Perfil", "icon": "user", "internalOption": "perfil" },
-        { " name": "Salir", "path": "/acceso", "icon": "right-from-bracket", "internalOption": "salir" }
+        { "name": "Salir", "path": "/acceso", "icon": "right-from-bracket", "internalOption": "salir" }
     ];
     "path"
     return (

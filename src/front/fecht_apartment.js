@@ -36,9 +36,9 @@ export const apartments = {
       return error;
     }
   },
-  getApartmentByTenantId: async (tenantId, token) => {
+  getApartmentByTenantId: async (token) => {
         try {
-            const request = await fetch(`${Url}/tenant/${tenantId}`, {
+            const request = await fetch(`${Url}/tenant_apartment`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

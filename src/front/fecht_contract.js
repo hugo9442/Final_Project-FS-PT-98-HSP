@@ -92,9 +92,9 @@ export const contracts = {
       return error;
     }
   },
-  getContractByTenantId: async (tenantId, token) => {
+  getContractByTenantId: async (token) => {
         try {
-            const request = await fetch(`${Url_contract}/tenant/${tenantId}`, {
+            const request = await fetch(`${Url}/tenant_contract`, { 
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
