@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 export const PrivateRoutes = () => {
   const { store } = useGlobalReducer();
-  const [valid, setValid] = useState(null); 
+  const [valid, setValid] = useState(null);
 
   const checkToken = async () => {
     if (typeof store.token === "string" && store.token.length > 0) {
@@ -22,11 +22,11 @@ export const PrivateRoutes = () => {
 
   useEffect(() => {
     checkToken();
-  }, [store.token]); 
+  }, [store.token]);
 
 
   if (valid === null) {
-    return null; 
+    return null;
   }
 
   return valid ? <Outlet /> : <Navigate to="/Acceso" />;

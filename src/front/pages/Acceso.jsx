@@ -8,9 +8,8 @@ import swal from "sweetalert";
 const LoginSection = () => {
 
   const { store, dispatch } = useGlobalReducer();
-  const history = useNavigate();
-  const handleNavigate = () => history("/propietarioindex");
   const navigate = useNavigate();
+  const handleNavigate = () => navigate("/propietarioindex");
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -51,7 +50,7 @@ const LoginSection = () => {
         }
     }, [location.pathname, location.search, dispatch, store.visibility, store.forgotPasswordVisibility, store.resetPasswordVisibility, store.tenantSetPasswordVisibility, store.visibility2]); 
 
-  const handleCreatuser = async () => {
+  const handleCreatUser = async () => {
     try {
       const data = await users.createuser(store.firstname, store.lastname, store.email, store.password, store.phone, store.national_id, store.aacc);
       console.log(data);
@@ -99,7 +98,14 @@ const LoginSection = () => {
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user });
-        handleNavigate()
+          if (data.user && data.user.role === "propietario") {
+            navigate("/propietarioindex");
+          } else if (data.user && data.user.role === "inquilino") {
+            navigate("/InquilinoIndex");
+          } else {
+            console.log("Rol de usuario no reconocido. Redirigiendo a página de acceso.");
+            navigate("/Acceso");
+          }
       } else if (data.msg === "El mail o la contraseña es incorrecto") {
         swal({
           title: "ERROR",
@@ -125,7 +131,7 @@ const LoginSection = () => {
   const createContact = async () => {
     if (store.email !== "" && store.password !== "") {
       await
-        handleCreatuser();
+        handleCreatUser();
 
       // handleNavigate();
     }
@@ -682,7 +688,7 @@ console.log(store)
                           className="small text-muted"
                           onClick={(e) => {
                             e.preventDefault();
-                            dispatch({ type: "login", value: "block" }); // Volver a la sección de login
+                            dispatch({ type: "login", value: "block" });
                           }}
                         >
                           Volver al inicio de sesión
