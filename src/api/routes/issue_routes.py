@@ -23,7 +23,7 @@ def get_issue(issue_id):
 
 @issues_api.route('/<int:apartment_id>', methods=["GET"])
 @jwt_required()
-def get_issue(apartment_id):
+def get_issue_by_apartment(apartment_id):
     issues = Issue.query.filter_by(apartment_id=apartment_id).all()
     if not issues:
         return jsonify({"error": "Issue not found"}), 404

@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { apartments } from "../fecht_apartment.js"; 
 import { contracts } from "../fecht_contract.js";   
-import { incidents } from "../fecht_incidents.js"; 
+import { issues } from "../fecht_issues.js"; 
 
 const InquilinoIndex = () => { 
     const [miViviendaInfo, setMiViviendaInfo] = useState(null);
@@ -46,9 +46,9 @@ const InquilinoIndex = () => {
                     setMiViviendaInfo(viviendaRes.apartment);
 
                     if (viviendaRes.apartment.id) {
-                        const incidenciasRes = await incidents.getIncidentsByApartmentId(viviendaRes.apartment.id, store.token);
-                        if (incidenciasRes && !incidenciasRes.error && incidenciasRes.incidents) {
-                            setMisIncidencias(incidenciasRes.incidents);
+                        const incidenciasRes = await issues.getIssuesByApartmentId(viviendaRes.apartment.id, store.token);
+                        if (incidenciasRes && !incidenciasRes.error && incidenciasRes.issues) {
+                            setMisIncidencias(incidenciasRes.issues);
                         } else {
                             setMisIncidencias([]);
                         }
