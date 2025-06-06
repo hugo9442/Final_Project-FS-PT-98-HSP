@@ -63,7 +63,7 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
 
         }
     },
-      loginguser: async (email, pass) => {
+    loginguser: async (email, pass) => {
 
         let user = {
              "email": `${email}`, "password": `${pass}`
@@ -94,7 +94,6 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
                  headers: {
                     "Authorization": `Bearer  ${token}`
                 },
-               
             })
             const response = await request.json();
             console.log(response)
@@ -301,7 +300,7 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
             return { message: "Error de conexión. Intenta más tarde.", success: false };
         }
     },
-createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc, token) => {
+    createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc, token) => {
         let user = {
              "first_name":`${firstname}`,
              "last_name":`${lastname}`,

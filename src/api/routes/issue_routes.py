@@ -21,6 +21,15 @@ def get_issue(issue_id):
         return jsonify({"error": "Issue not found"}), 404
     return jsonify(issue.serialize()), 200
 
+@issues_api.route('/<int:apartment_id>', methods=["GET"])
+@jwt_required()
+def get_issue_by_apartment(apartment_id):
+    issues = Issue.query.filter_by(apartment_id=apartment_id).all()
+    if not issues:
+        return jsonify({"error": "Issue not found"}), 404
+    serialized_issues = [issue.serialize() for issue in issues]
+    return jsonify({"incidents": serialized_issues}), 200
+
 @issues_api.route('/<int:issue_id>', methods=["PUT"])
 @jwt_required()
 def update_issue(issue_id):

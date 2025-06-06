@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import MenuLateral from "../components/MenuLateral";
-import { apartments } from "../fecht_apartment.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { apartments } from "../fecht_apartment.js";
 import { contracts } from "../fecht_contract.js";
 import { users } from "../fecht_user.js";
 
@@ -75,19 +75,16 @@ console.log(store)
     
       default:
         return (
-                // Contenedor principal del contenido por defecto, ocupa todo el ancho y centra el texto
                 <div className="text-center w-100"> 
                     <h2 className="mb-4">Bienvenido, propietario</h2> 
                     <p className="mb-4">Gestiona tu inmueble desde este panel.</p>
 
-                    {/* Contenedor para los botones principales, usa flexbox para centrar y añadir espaciado */}
                     <div className="d-flex justify-content-center flex-wrap gap-3 mb-5"> 
                         <button className="btn btn-primary btn-lg">Registra Inquilino</button>
                         <button className="btn btn-primary btn-lg">Registra Vivienda</button>
                         <button className="btn btn-primary btn-lg">Registra Incidencia</button>
                     </div>
 
-                    {/* Carrusel, centrado con mx-auto y con un ancho máximo */}
                     <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5 mx-auto" style={{ maxWidth: '800px' }} data-bs-ride="carousel"> 
                         <div className="carousel-indicators">
                             <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
@@ -130,12 +127,10 @@ console.log(store)
                         </button>
                     </div>
 
-                    {/* Cards fuera del carrusel, alineadas en el centro de la fila */}
                     <div className="row mt-4 justify-content-center"> 
                         <div className="col-md-4 mb-3">
                             <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
                                 <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                                    {/* Nota: el h1 y p aquí parecen duplicar info. Revisa si es intencional o si debería ser solo de inquilinos */}
                                     <h1 className="display-4">{totalViviendas}</h1> 
                                     <p className="lead mb-0">Total de Inquilinos</p>
                                 </div>
@@ -178,18 +173,14 @@ console.log(store)
 
     <div className="container-fluid mt-3 px-3">
       <div className="row">
-        {/* Menú lateral izquierdo */}
        <MenuLateral setActiveOption={setActiveOption} />
 
 
-        {/* Contenido principal + cards */}
         <div className="col-md-9">
           <div className="p-2 border rounded bg-light">
-            {/* Contenido dinámico */}
             {renderContent()}
           </div>
 
-          {/* Cards fuera del carrusel, solo si estamos en "Principal" */}
           {activeOption === null && (
             <div className="row mt-4">
               <div className="col-md-4 mb-3">

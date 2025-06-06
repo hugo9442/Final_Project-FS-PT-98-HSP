@@ -1,4 +1,4 @@
-import { faToiletPaper } from "@fortawesome/free-solid-svg-icons/faToiletPaper";
+
 
 
 export const initialStore = () => {
@@ -211,16 +211,6 @@ export default function storeReducer(store, action = {}) {
         ...store,
         aacc: action.value,
       };
-    case "addEmail":
-      return {
-        ...store,
-        email: action.value,
-      };
-    case "addPassword":
-      return {
-        ...store,
-        password: action.value,
-      };
     case "addstart_date":
       return {
         ...store,
@@ -265,13 +255,6 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         apartments: action.value,
-      };
-    case "add_tenant":
-     
-
-      return {
-        ...store,
-        tenant: action.value,
       };
     default:
       throw Error("Unknown action.");

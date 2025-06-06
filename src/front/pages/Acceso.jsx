@@ -8,9 +8,8 @@ import swal from "sweetalert";
 const LoginSection = () => {
 
   const { store, dispatch } = useGlobalReducer();
-  const history = useNavigate();
-  const handleNavigate = () => history("/propietarioindex");
   const navigate = useNavigate();
+  const handleNavigate = () => navigate("/propietarioindex");
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -22,36 +21,35 @@ const LoginSection = () => {
 
 
   useEffect(() => {
-        const queryParams = new URLSearchParams(location.search);
-        const urlToken = queryParams.get("token");
+    const queryParams = new URLSearchParams(location.search);
+    const urlToken = queryParams.get("token");
 
-        setMessageFeedback(null);
+    setMessageFeedback(null);
 
-        if (urlToken) {
-            dispatch({ type: "setResetToken", value: urlToken });
+    if (urlToken) {
+      dispatch({ type: "setResetToken", value: urlToken });
 
-            if (location.pathname === "/set-password") {
-                dispatch({ type: "showTenantSetPassword" });
-            } else if (location.pathname === "/reset-password") {
-                dispatch({ type: "showResetPassword" });
-            } else {
-                dispatch({ type: "login", value: "block" });
-                setMessageFeedback("Enlace de acceso inválido o expirado.");
-            }
-        } else {
-            dispatch({ type: "setResetToken", value: null }); 
-            if (store.visibility === "none" && 
-                store.forgotPasswordVisibility === "none" && 
-                store.resetPasswordVisibility === "none" &&
-                store.tenantSetPasswordVisibility === "none" &&
-                store.visibility2 === "none") 
-            {
-                 dispatch({ type: "login", value: "block" });
-            }
-        }
-    }, [location.pathname, location.search, dispatch, store.visibility, store.forgotPasswordVisibility, store.resetPasswordVisibility, store.tenantSetPasswordVisibility, store.visibility2]); 
+      if (location.pathname === "/set-password") {
+        dispatch({ type: "showTenantSetPassword" });
+      } else if (location.pathname === "/reset-password") {
+        dispatch({ type: "showResetPassword" });
+      } else {
+        dispatch({ type: "login", value: "block" });
+        setMessageFeedback("Enlace de acceso inválido o expirado.");
+      }
+    } else {
+      dispatch({ type: "setResetToken", value: null });
+      if (store.visibility === "none" &&
+        store.forgotPasswordVisibility === "none" &&
+        store.resetPasswordVisibility === "none" &&
+        store.tenantSetPasswordVisibility === "none" &&
+        store.visibility2 === "none") {
+        dispatch({ type: "login", value: "block" });
+      }
+    }
+  }, [location.pathname, location.search, dispatch, store.visibility, store.forgotPasswordVisibility, store.resetPasswordVisibility, store.tenantSetPasswordVisibility, store.visibility2]);
 
-  const handleCreatuser = async () => {
+  const handleCreatUser = async () => {
     try {
       const data = await users.createuser(store.firstname, store.lastname, store.email, store.password, store.phone, store.national_id, store.aacc);
      
@@ -102,9 +100,9 @@ const LoginSection = () => {
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user }); 
-      } if (data.user.role==="propietario"){
+      } if (data.user.role==="PROPIETARIO"){
         handleNavigate() 
-      }if(data.user.role==="inquilino"){
+      }if(data.user.role==="INQUILINO"){
         navigate("/InquilinoIndex")
       }else if (data.msg === "El mail o la contraseña es incorrecto") {
         swal({
@@ -117,9 +115,9 @@ const LoginSection = () => {
       }
       else {
         swal({
-          title: "ERROR",
-          text: `${data.msg}`,
-          icon: "warning",
+          title: "EXITO",
+          text: "LOGEADO CON EXITO",
+          icon: "success",
           buttons: true,
           dangerMode: true,
         });
@@ -131,7 +129,7 @@ const LoginSection = () => {
   const createContact = async () => {
     if (store.email !== "" && store.password !== "") {
       await
-        handleCreatuser();
+        handleCreatUser();
 
       // handleNavigate();
     }
@@ -270,7 +268,7 @@ const LoginSection = () => {
     }
   };
 
-console.log(store)
+  console.log(store)
   return (
     <div>
       <section
@@ -366,35 +364,14 @@ console.log(store)
                         >
                           ¿Olvidaste tu contraseña?
                         </a>
-                        <p
-                          className="mb-5 pb-lg-2"
-                          style={{ color: "#393f81" }}
-                        >
-                          No tienes cuenta?{" "}
-                          <a
-                            href="#!"
-                            style={{ color: "#393f81" }}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              dispatch({
-                                type: "register",
-                                value: "none",
-                              })
-                              dispatch({
-                                type: "login",
-                                value: "",
-                              })
-                            }}
-                          >
-                            Registrate aquí
+                        <div>
+                          <a href="#!" className="small text-muted">
+                            Terms of use
                           </a>
-                        </p>
-                        <a href="#!" className="small text-muted">
-                          Terms of use.
-                        </a>
-                        <a href="#!" className="small text-muted ms-2">
-                          Privacy policy
-                        </a>
+                          <a href="#!" className="small text-muted ms-2">
+                            Privacy policy
+                          </a>
+                        </div>
                       </form>
                     </div>
                   </div>
@@ -417,14 +394,14 @@ console.log(store)
                   <div className="col-md-6 col-lg-5 d-none d-md-block">
                     <img
                       src={ImgEdificio}
-                      alt="login form"
-                      className="img-fluid"
+                      alt="registration form"
+                      className="img-fluid h-100 object-fit-cover"
                       style={{ borderRadius: "1rem 0 0 1rem" }}
                     />
                   </div>
                   <div className="col-md-6 col-lg-7 d-flex align-items-center">
                     <div className="card-body p-4 p-lg-5 text-black">
-                      <form>
+                      <form onSubmit={(e) => { e.preventDefault(); createContact(); }}>
                         <div className="d-flex align-items-center mb-3 pb-1">
                           <img
                             src="src/front/assets/img/LogoTrabajoFinal.png"
@@ -441,159 +418,90 @@ console.log(store)
                           className="fw-normal mb-3 pb-3"
                           style={{ letterSpacing: "1px" }}
                         >
-                          Accede a tu cuenta
+                          Crea tu Cuenta de Propietario
                         </h5>
 
-                        <div className="form-outline mb-4">
-                          <input
-                            type="text"
-                            id="firsth"
-                            className="form-control form-control-lg"
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addFirtsname",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                          <label
-                            className="form-label"
-                            htmlFor="firsth"
-                          >
-                            Nombre
-                          </label>
-                        </div>
-
-                        <div className="form-outline mb-4">
-                          <input
-                            type="text"
-                            id="lasth"
-                            className="form-control form-control-lg"
-                            value={store.lastname}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addLastname",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                          <label
-                            className="form-label"
-                            htmlFor="lasth"
-                          >
-                            Apellido
-                          </label>
+                        <div className="row">
+                          <div className="col-md-6 mb-4">
+                            <div className="form-outline">
+                              <input
+                                type="text"
+                                id="firstName"
+                                className="form-control form-control-lg"
+                                onChange={(e) => dispatch({ type: "addFirtsname", value: e.target.value })}
+                                value={store.firstname || ''}
+                              />
+                              <label className="form-label" htmlFor="firstName">Nombre</label>
+                            </div>
+                          </div>
+                          <div className="col-md-6 mb-4">
+                            <div className="form-outline">
+                              <input
+                                type="text"
+                                id="lastName"
+                                className="form-control form-control-lg"
+                                onChange={(e) => dispatch({ type: "addLastname", value: e.target.value })}
+                                value={store.lastname || ''}
+                              />
+                              <label className="form-label" htmlFor="lastName">Apellido</label>
+                            </div>
+                          </div>
                         </div>
 
                         <div className="form-outline mb-4">
                           <input
                             type="email"
-                            id="emailh"
+                            id="registerEmail"
                             className="form-control form-control-lg"
-                            value={store.email}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addEmail",
-                                value: e.target.value,
-                              })
-                            }
+                            autoComplete="new-password"
+                            onChange={(e) => dispatch({ type: "addEmail", value: e.target.value })}
+                            value={store.email || ''}
                           />
-                          <label
-                            className="emailh"
-                            htmlFor="form2Example3"
-                          >
-                            Email
-                          </label>
+                          <label className="form-label" htmlFor="registerEmail">Email</label>
                         </div>
-
                         <div className="form-outline mb-4">
                           <input
                             type="password"
-                            id="passh"
+                            id="registerPassword"
                             className="form-control form-control-lg"
-                            value={store.password}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addPassword",
-                                value: e.target.value,
-                              })
-                            }
+                            autoComplete="new-password"
+                            onChange={(e) => dispatch({ type: "addPassword", value: e.target.value })}
+                            value={store.password || ''}
                           />
-                          <label
-                            className="form-label"
-                            htmlFor="passh"
-                          >
-                            Contraseña
-                          </label>
+                          <label className="form-label" htmlFor="registerPassword">Contraseña</label>
                         </div>
 
-                        <div className="form-outline mb-4">
-                          <input
-                            type="text"
-                            id="phoneh"
-                            className="form-control form-control-lg"
-                            value={store.Phone}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addPhone",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                          <label
-                            className="form-label"
-                            htmlFor="phoneh"
-                          >
-                            Telófono
-                          </label>
-                        </div>
-
-                        <div className="form-outline mb-4">
-                          <input
-                            type="text"
-                            id="nidh"
-                            className="form-control form-control-lg"
-                            value={store.National_Id}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addNid",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                          <label
-                            className="form-label"
-                            htmlFor="nidh"
-                          >
-                            DNI
-                          </label>
-                        </div>
-                        <div className="form-outline mb-4">
-                          <input
-                            type="text"
-                            id="aacch"
-                            className="form-control form-control-lg"
-                            value={store.aacc}
-                            onChange={(e) =>
-                              dispatch({
-                                type: "addAacc",
-                                value: e.target.value,
-                              })
-                            }
-                          />
-                          <label
-                            className="form-label"
-                            htmlFor="aacch"
-                          >
-                            Número de cuenta
-                          </label>
+                        <div className="row">
+                          <div className="col-md-6 mb-4">
+                            <div className="form-outline">
+                              <input
+                                type="text"
+                                id="phone"
+                                className="form-control form-control-lg"
+                                onChange={(e) => dispatch({ type: "addPhone", value: e.target.value })}
+                                value={store.phone || ''}
+                              />
+                              <label className="form-label" htmlFor="phone">Teléfono</label>
+                            </div>
+                          </div>
+                          <div className="col-md-6 mb-4">
+                            <div className="form-outline">
+                              <input
+                                type="text"
+                                id="nationalId"
+                                className="form-control form-control-lg"
+                                onChange={(e) => dispatch({ type: "addNid", value: e.target.value })}
+                                value={store.national_id || ''}
+                              />
+                              <label className="form-label" htmlFor="nationalId">DNI</label>
+                            </div>
+                          </div>
                         </div>
 
                         <div className="pt-1 mb-4">
                           <button
                             className="btn btn-dark btn-lg btn-block"
-                            type="button"
-                            onClick={createContact}
+                            type="submit"
                           >
                             Crear Cuenta
                           </button>
@@ -603,14 +511,14 @@ console.log(store)
                             type="button"
                             onClick={(e) => {
                               e.preventDefault();
-                              dispatch({ type: "login", value: "block" }); // Muestra login
+                              dispatch({ type: "login", value: "block" });
                             }}
                           >
-                            volver a login
+                            Volver a login
                           </button>
                         </div>
                         <a href="#!" className="small text-muted">
-                          Terms of use.
+                          Terms of use
                         </a>
                         <a href="#!" className="small text-muted ms-2">
                           Privacy policy
@@ -688,7 +596,7 @@ console.log(store)
                           className="small text-muted"
                           onClick={(e) => {
                             e.preventDefault();
-                            dispatch({ type: "login", value: "block" }); // Volver a la sección de login
+                            dispatch({ type: "login", value: "block" });
                           }}
                         >
                           Volver al inicio de sesión

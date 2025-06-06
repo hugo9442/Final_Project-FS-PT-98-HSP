@@ -97,12 +97,9 @@ const Viviendas = () => {
                           className="list-group-item d-flex justify-content-between">
                           <div className="contratitem">
                             <p>Dirección: {item.address}, CP: {item.postal_code},  Ciudad: {item.city}, Parking: {item.parking_slot}, Estado: {alquilado}</p>
-                              
-
+                            
                           </div>
-                          <button className="btn btn-success">
-                            Consultar incidencias
-                          </button>
+                          
                         </li>
                       );
                     })}{(!store.apartments || store.apartments.length === 0) && (
@@ -189,7 +186,7 @@ const Viviendas = () => {
                   value: "none",
                 })
                 fetchApartments()
-              }}>Salir</button>
+              }}>Ver Viviendas</button>
             </div>
             </div>
           </div>
