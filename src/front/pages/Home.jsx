@@ -1,7 +1,9 @@
 import React, { useEffect } from "react"
-import viviendaUrl from "../assets/img/vivienda2.jpg" // Imagen principal para el Hero Section
+import viviendaUrl from "../assets/img/vivienda2.jpg"
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import Card from "../components/Card.jsx" // Tu componente Card existente
+import Card from "../components/Card.jsx"
+import 'animate.css'; 
+import { Link } from "react-router-dom";
 
 
 export const Home = () => {
@@ -64,9 +66,12 @@ export const Home = () => {
                         Desde la gestión de contratos hasta el seguimiento de incidencias,
                         todo en un solo lugar.
                     </p>
-                    <button className="btn btn-primary btn-lg shadow-sm animate__animated animate__zoomIn">
+                    <Link 
+                        to="/Acceso" 
+                        className="btn btn-primary btn-lg shadow-sm animate__animated animate__zoomIn"
+                    >
                         Empieza Ahora
-                    </button>
+                    </Link>
                 </div>
             </section>
 
@@ -109,46 +114,6 @@ export const Home = () => {
                 </div>
             </section>
 
-            {/* Puedes añadir más secciones aquí si lo deseas (Testimonios, Precios, etc.) */}
-
         </div>
     );
 };
-
-// Notas importantes sobre tu componente `Card.jsx`:
-// Para que las Cards se vean elegantes como lo hemos hecho en Contacto y Servicios,
-// tu componente `Card.jsx` debería tener una estructura similar a esta:
-/*
-// components/Card.jsx
-import React from 'react';
-
-const Card = ({ image, text, text2, alt }) => {
-    return (
-        <div className="card h-100 shadow-sm border-0 transform-on-hover" style={{ maxWidth: '350px' }}>
-            {image && ( // Renderiza la imagen solo si se proporciona
-                <img src={image} className="card-img-top p-3" alt={alt || 'Card image'} style={{ objectFit: 'cover', height: '180px' }} />
-            )}
-            <div className="card-body d-flex flex-column text-center">
-                <h5 className="card-title fw-bold" style={{ color: '#0056b3' }}>{text}</h5> // Título de la tarjeta en azul oscuro
-                <p className="card-text text-muted flex-grow-1">{text2}</p>
-                // Puedes añadir un botón o enlace aquí si la tarjeta necesita una acción
-            </div>
-        </div>
-    );
-};
-
-export default Card;
-*/
-
-// Y asegúrate de que el CSS para 'transform-on-hover' esté disponible globalmente o en un archivo CSS importado.
-// Ejemplo de CSS:
-/*
-.transform-on-hover:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
-    transition: all 0.3s ease-in-out;
-}
-.transform-on-hover {
-    transition: all 0.3s ease-in-out;
-}
-*/
