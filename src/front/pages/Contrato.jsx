@@ -5,7 +5,6 @@ import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
 import swal from "sweetalert";
-
 import { format, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 
