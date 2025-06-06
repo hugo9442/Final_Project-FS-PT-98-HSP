@@ -207,6 +207,23 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
 
         }
     },
+     getUserIssue: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/issues`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
     get_asociation: async (id, token) => {
         
         try {

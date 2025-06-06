@@ -54,13 +54,13 @@ const LoginSection = () => {
   const handleCreatuser = async () => {
     try {
       const data = await users.createuser(store.firstname, store.lastname, store.email, store.password, store.phone, store.national_id, store.aacc);
-      console.log(data);
-      console.log(data.error)
+     
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user });
-        handleNavigate()
+         handleNavigate()  
       }
+              
       if (data.error === "El email ya está registrado") {
         swal({
           title: "ERROR",
@@ -69,6 +69,9 @@ const LoginSection = () => {
           buttons: true,
           dangerMode: true,
         });
+        if(store.todos.role==="inquilino"){
+
+        }
       }
       if (data.error === "Email o contraseña inválidos") {
         swal({
@@ -98,9 +101,12 @@ const LoginSection = () => {
 
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
-        await dispatch({ type: "add_user", value: data.user });
-        handleNavigate()
-      } else if (data.msg === "El mail o la contraseña es incorrecto") {
+        await dispatch({ type: "add_user", value: data.user }); 
+      } if (data.user.role==="propietario"){
+        handleNavigate() 
+      }if(data.user.role==="inquilino"){
+        navigate("/InquilinoIndex")
+      }else if (data.msg === "El mail o la contraseña es incorrecto") {
         swal({
           title: "ERROR",
           text: `${data.msg}`,
@@ -311,7 +317,7 @@ console.log(store)
                             type="email"
                             id="email"
                             className="form-control form-control-lg"
-                            autocomplete="username"
+                            autoComplete="username"
                             onChange={(e) => dispatch({ type: "addEmail", value: e.target.value })}
                             value={store.email || ''}
                           />
@@ -321,7 +327,7 @@ console.log(store)
                           <input
                             type="password"
                             id="pass"
-                            autocomplete="current-password"
+                            autoComplete="current-password"
                             className="form-control form-control-lg"
                             onChange={(e) => dispatch({ type: "addPassword", value: e.target.value })}
                             value={store.password || ''}

@@ -47,7 +47,36 @@ const Inquilinos = () => {
 
     fetchData();
   }, []);
- 
+ const handleCreateRent = async () => {
+  try { const data = await Asociations.updateasociation(itpartment,itemcontract,store.token )
+    if (data.msg){
+      swal({ title: "ÉXITO", text: "Operaciones completadas", icon: "success" });
+      fetchData()
+    }else{
+       swal({
+          title: "ERROR",
+          text: `${data.error}`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
+    }
+    
+  } catch (error) {
+     swal({
+          title: "ERROR",
+          text: `${error}`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
+  }
+
+ }
+
+ const Crent =async()=>{
+  await handleCreateRent()
+ }
 
 const handleCreatenant = async () => {
   let createdTenantId = null;
@@ -131,8 +160,7 @@ const handleCreatenant = async () => {
   
   };
 
-  console.log(itpartment)
-  console.log(itemcontract)
+
   return (
     <>
 
@@ -330,7 +358,7 @@ const handleCreatenant = async () => {
                     onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })}
                   />
                 </div>
-                <button className="btn btn-success mi-button">contrato</button>
+                
               </div>
               </div>
               <div className="map" style={{ display: `${store.vista}` }}>
@@ -341,12 +369,15 @@ const handleCreatenant = async () => {
                   <ul className="list-group">
 
                     {store && store.asociation.map((item) => {
+                      if (item.asociaciones[0].apartment===null){
+
+                  
                       const startDate = new Date(item.asociaciones[0].contract.start_date).toLocaleDateString("es-ES", {
                           day: "2-digit",
                           month: "long",
                           year: "numeric"
                         });
-                        console.log(item.asociaciones[0].tenant.first_name)
+                      
                         return (
                           <li
                             key={item.asociaciones[0].assoc_id}
@@ -358,10 +389,9 @@ const handleCreatenant = async () => {
                               <p> Inquilino: {item.asociaciones[0].tenant.first_name}, {item.asociaciones[0].tenant.last_name} y de fecha  {startDate} </p>
                                <p>No tiene vivienda signada. Puedes asignarle una de las viviendas que estan más abajo.</p>
                             </div>
-                        
                           </li>
                         );
-                      })}
+                     } })}    
                   </ul>
         
                 </div>
@@ -375,7 +405,7 @@ const handleCreatenant = async () => {
                             key={item.id}
                             className="list-group-item d-flex justify-content-between contenedor">
                              <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input" type="checkbox" value="" 
-                             id="checkDefault" onClick={()=>{setItapartment(item.id)}} /></div> 
+                             id="checkDefault" onClick={(e)=>{setItapartment(item.id)}} /></div> 
                             <div className="contratitem">
                               <p>Dirección: {item.address}, CP: {item.postal_code}, Ciudad: {item.city}, Parking: {item.parking_slot}, Estado: {alquilado}</p>
                             </div>
@@ -388,7 +418,7 @@ const handleCreatenant = async () => {
 
                 </div>
              
-                <button className="btn btn-info mt-2" >Crear Alquiler</button>
+                <button className="btn btn-info mt-2" onClick={Crent}>Crear Alquiler</button>
                 <button className="btn btn-info mt-2 mi-button"
                   onClick={() => {
                     dispatch({

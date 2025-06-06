@@ -1,5 +1,5 @@
 
-from api.models import db, User, Apartment, Contract,AssocTenantApartmentContract
+from api.models import db, User, Apartment, Contract,AssocTenantApartmentContract, Issue
 from api.models.users import Role
 from sqlalchemy.orm import joinedload
 import os
@@ -176,7 +176,7 @@ def create_tenant():
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
     
-
+"""APARTMENTS ENDPOINT"""
 
 
 @users_api.route('/<int:user_id>/apartments', methods=["GET"])
@@ -192,6 +192,7 @@ def get_user_apartments(user_id):
 
     return jsonify({"msg":"ok", 
                     "apartments":[apartment.serialize() for apartment in apartments]}), 200
+
 
 @users_api.route('/<int:user_id>/apartments/notrented', methods=["GET"])
 @jwt_required()
@@ -219,6 +220,8 @@ def get_user_apartments_count(user_id):
         return jsonify({"error": "No hay apartamentos para este usuario"}), 404
     return jsonify({"total":count}), 200
 
+
+"""CONTRACTS ENDPOINT"""
 
 
 @users_api.route('/<int:user_id>/contracts/count', methods=["GET"])
@@ -288,6 +291,26 @@ def get_contracts_by_owner(user_id):
 
     return jsonify(contratos_data), 200
 
+"""ISSUES ENDPOINT"""
+
+@users_api.route('/<int:user_id>/issues', methods=["GET"])
+@jwt_required()
+def get_user_issues(user_id):
+    issues = (
+        db.session.query(Issue)
+        .join(Issue.apartment)  
+        .filter(Apartment.owner_id == user_id)
+        .options(joinedload(Issue.apartment)) 
+        .all()
+    )
+
+    return jsonify({
+        "msg": "ok",
+        "issues": [issue.serialize_with_relations() for issue in issues]
+    }), 200
+
+
+
 """VALIDATION ENDPOINT"""
 @users_api.route('/private', methods=['GET'])
 @jwt_required()
@@ -323,7 +346,7 @@ def sing_in():
         db.session.rollback()
         return jsonify({"error": "Error en el servidor"}), 500
 
-
+"""RESET PASSWORD END POINT"""
 
 @users_api.route('/forgot-password', methods=['POST'])
 def forgot_password():

@@ -157,6 +157,18 @@ const Contrato = () => {
                   <input
                     type="date"
                     className="form-control"
+                    id="start_day_issue"
+                    onChange={(e) =>
+                      dispatch({ type: "addstart_date", value: e.target.value })}
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="start_day" className="form-label">
+                    Fecha de inicio
+                  </label>
+                  <input
+                    type="date"
+                    className="form-control"
                     id="start_day"
                     onChange={(e) =>
                       dispatch({ type: "addstart_date", value: e.target.value })}

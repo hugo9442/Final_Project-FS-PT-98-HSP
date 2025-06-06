@@ -42,6 +42,6 @@ class Apartment(db.Model):
     
     def serialize_with_relations(self):
         data = self.serialize()
-        data['user'] = self.user.serialize()
-        data['issues'] = self.issues.serialize() if self.issues else {}
+        data['owner'] = self.owner.serialize()
+        data['issues'] = [issue.serialize() for issue in self.issues]
         return data

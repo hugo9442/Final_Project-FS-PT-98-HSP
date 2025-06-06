@@ -10,7 +10,7 @@ export const Layout = () => {
     const location = useLocation();
     const path = location.pathname;
 
-    const privateRoutes = ["/admin", "/Contrato", "/Viviendas", "/Inquilinos", "/Incidencias", "/propietarioindex"];
+    const privateRoutes = ["/admin", "/Contrato", "/Viviendas", "/Inquilinos", "/Alquileres","/Incidencias", "/propietarioindex"];
     const secondaryRoutes = ["/inquilinoindex"];
     const publicRoutes = ["/contact", "/acceso", "/servicios"];
 

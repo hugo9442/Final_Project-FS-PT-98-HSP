@@ -2,7 +2,7 @@ from flask import request, jsonify, Blueprint
 from api.models import db, Issue
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
-
+from datetime import datetime
 issues_api = Blueprint('issues_api', __name__, url_prefix='/issues')
 
 CORS(issues_api)
@@ -43,13 +43,25 @@ def update_issue(issue_id):
         db.session.rollback()
         return jsonify({"error": "Error in the server"}), 500
     
-@issues_api.route('/create', methods=["POST"])
+@issues_api.route('/create', methods=["POST"]) 
 @jwt_required()
 def create_issue():
     data_request = request.get_json()
 
-    if not 'title' in data_request or not 'description' in data_request:
+    if not data_request.get("title") or not data_request.get("description"):
         return jsonify({"error": "The fields: title and description are required"}), 400
+
+    try:
+        start_date = datetime.fromisoformat(data_request["start_date"])
+    except (KeyError, ValueError):
+        return jsonify({"error": "Invalid or missing start_date"}), 400
+
+    end_date = None
+    if "end_date" in data_request and data_request["end_date"]:
+        try:
+            end_date = datetime.fromisoformat(data_request["end_date"])
+        except ValueError:
+            return jsonify({"error": "Invalid end_date format"}), 400
 
     new_issue = Issue(
         title=data_request["title"],
@@ -58,18 +70,20 @@ def create_issue():
         apartment_id=data_request.get("apartment_id"),
         priority=data_request.get("priority", 1),
         type=data_request.get("type", "general"),
-        start_date=data_request.get("start_date"),
-        end_date=data_request.get("end_date")
+        start_date=start_date,
+        end_date=end_date
     )
 
     try:
         db.session.add(new_issue)
         db.session.commit()
-        return jsonify({"msg": "Issue created", "issue": new_issue.serialize()}), 201
+        return jsonify({"msg": "Incidencia Creada", "issue": new_issue.serialize()}), 201
     except Exception as e:
-        print(e)
+        import traceback
+        print("Error creating issue:", traceback.format_exc())
         db.session.rollback()
         return jsonify({"error": "Error in the server"}), 500
+
 
 @issues_api.route('/<int:issue_id>', methods=["DELETE"])
 @jwt_required()

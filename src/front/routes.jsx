@@ -17,7 +17,7 @@ import Incidencias from "./pages/Incidencias";
 import Inquilinos from "./pages/Inquilinos";
 import Viviendas from "./pages/Viviendas";
 import { PrivateRoutes } from "./pages/Privateroute";
-
+import Alquileres from "./pages/Alquileres";
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
@@ -27,9 +27,10 @@ export const router = createBrowserRouter(
       <Route path="/forgot-password" element={<Acceso />} />
       <Route path="/set-password" element={<Acceso />} />
       <Route index element={<Home />} /> {/* Página raíz */}
-        <Route path="/servicios" element={<Servicios />} />
-        <Route path="/contact" element={<Contact />} />
+      <Route path="/servicios" element={<Servicios />} />
+      <Route path="/contact" element={<Contact />} />
       <Route element={<PrivateRoutes />}>
+      <Route path="/alquileres" element={<Alquileres />} />
         <Route path="/demo" element={<Demo />} />
         <Route path="/single/:theId" element={<Single />} />
         <Route path="/propietarioindex" element={<PropietarioIndex />} />

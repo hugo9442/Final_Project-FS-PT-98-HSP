@@ -119,6 +119,7 @@ const Viviendas = () => {
                       type: "vista2",
                       value: "",
                     })
+                    
                   }}>Añadir Vivienda</button>
               </div>
              <div className="form" style={{ display: `${store.vista2}` }}>
@@ -171,20 +172,6 @@ const Viviendas = () => {
                 id="parking_slot"
                 onChange={(e) =>
                   dispatch({ type: "parking_slot", value: e.target.value })
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="is_rent" className="form-label">
-                Esta Arrendado
-              </label>
-              <input
-                type="checkbox"
-                className="form-control"
-                id="is_rent"
-                checked={store.is_rent}
-                onChange={(e) =>
-                  dispatch({ type: "is_rent", value: e.target.checked })
                 }
               />
             </div>

@@ -67,7 +67,7 @@ const PropietarioIndex = () => {
 
   
   
-console.log(totalContratos)
+console.log(store)
 
   const renderContent = () => {
     switch (activeOption) {

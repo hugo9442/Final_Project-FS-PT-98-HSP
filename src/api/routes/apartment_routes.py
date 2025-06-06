@@ -27,7 +27,7 @@ def create_apartment():
         new_apartment = Apartment(**body)
         db.session.add(new_apartment)
         db.session.commit()
-        return jsonify({"apartments":new_apartment.serialize(),
+        return jsonify({"apartments":[new_apartment.serialize()],
                         "msg":"La vivienda se ha registrado con exito"}), 201
     except Exception as e:
         db.session.rollback()
