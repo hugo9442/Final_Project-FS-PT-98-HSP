@@ -350,10 +350,10 @@ def forgot_password():
     else:
         print(f"No se encontró usuario para el email: {email}")
 
-    # if not user:
-    #     print(
-    #         f"Intento de restablecimiento de contraseña para correo NO registrado: {email}")
-    #     return jsonify({"message": "Si tu correo electrónico está registrado, recibirás un enlace de restablecimiento."}), 200
+    if not user:
+        print(
+            f"Intento de restablecimiento de contraseña para correo NO registrado: {email}")
+        return jsonify({"message": "Si tu correo electrónico está registrado, recibirás un enlace de restablecimiento."}), 200
 
     claims = {"forgot_password": True, "email": email}
     reset_token = create_access_token(identity=str(user.id),
@@ -361,7 +361,7 @@ def forgot_password():
                                       additional_claims=claims)
 
     frontend_url = current_app.config.get("FRONTEND_URL")
-    reset_link = f"{frontend_url}reset-password?token={reset_token}"
+    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
     print(reset_link)
     try:
         html_body = render_template('reset_password_email.html',
