@@ -96,7 +96,7 @@ const Viviendas = () => {
                           key={item.id}
                           className="list-group-item d-flex justify-content-between">
                           <div className="contratitem">
-                            <p>Dirección: {item.address}, CP: {item.postal_code},  Ciudad: {item.city}, Parking: {item.parking_slot}, Estado: {alquilado}</p>
+                            <p><strong>Dirección:</strong> {item.address}, <strong>CP:</strong> {item.postal_code},  <strong>Ciudad:</strong> {item.city}, <strong>Parking:</strong> {item.parking_slot}, <strong>Estado:</strong> {alquilado}</p>
                             
                           </div>
                           

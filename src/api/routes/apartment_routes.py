@@ -44,6 +44,17 @@ def get_apartment(id):
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     
+@apartments_api.route('/<int:id>/actions', methods=['GET'])
+@jwt_required()
+def get_apartment_actions(id):
+    try:
+        apartment = Apartment.query.get(id)
+        if not apartment:
+            return jsonify({"msg": "Apartment not found"}), 404
+        return jsonify(apartment.serialize_with_relations()), 200
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+    
 @apartments_api.route('/', methods=['GET'])
 @jwt_required()
 def get_apartments():

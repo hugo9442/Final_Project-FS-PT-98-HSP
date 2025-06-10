@@ -93,7 +93,7 @@ def create_user():
         email=email,
         password=bcrypt.generate_password_hash(
             data_request["password"]).decode('utf-8'),
-        phone_number=data_request.get("phone_number"),
+        phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]
@@ -113,7 +113,7 @@ def create_user():
     except Exception as e:
         print(e)
         db.session.rollback()
-        return jsonify({"error": "Error en el servido"}), 500
+        return jsonify({"error": "Error en el servidor"}), 500
 
 
 @users_api.route('/<int:user_id>', methods=["DELETE"])

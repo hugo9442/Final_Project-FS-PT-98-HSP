@@ -215,7 +215,6 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
                 },
             })
             const response = await request.json();
-            console.log(response)
             return response
         } catch (error) {
             console.log(error)

@@ -86,7 +86,7 @@ def create_issue():
     try:
         db.session.add(new_issue)
         db.session.commit()
-        return jsonify({"msg": "Incidencia Creada", "issue": new_issue.serialize()}), 201
+        return jsonify({"msg": "Incidencia Creada", "incidencia": new_issue.serialize()}), 201
     except Exception as e:
         import traceback
         print("Error creating issue:", traceback.format_exc())

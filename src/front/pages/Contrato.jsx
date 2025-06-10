@@ -113,9 +113,9 @@ const Contrato = () => {
   };
 
   const getDaysBadgeClass = (days) => {
-    if (days < 0) return 'bg-danger text-white';
-    if (days <= 30) return 'bg-warning text-dark';
-    if (days <= 90) return 'bg-info text-white';
+    if (days < 0){ return 'bg-danger text-white'};
+    if (days <= 30) {return 'bg-warning text-dark'};
+    if (days <= 90){ return 'bg-info text-white'};
     return 'bg-success text-white';
   };
 
@@ -136,15 +136,8 @@ const Contrato = () => {
               <h2 className="mb-3">Gestión de Contratos</h2>
               <p className="mb-4">Aquí puedes visualizar, cargar o gestionar contratos de tus propiedades.</p>
 
-              <button
-                className="btn btn-primary mb-4"
-                onClick={() => setShowAddContractForm(true)}
-                style={{ display: showAddContractForm ? 'none' : 'block' }}
-              >
-                Añadir Contrato
-              </button>
 
-              <div className="contract-list-section" style={{ display: showAddContractForm ? 'none' : 'block' }}>
+              <div className="contract-list-section">
                 {loading ? (
                     <div className="text-center p-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div><p className="mt-3">Cargando contratos...</p></div>
                 ) : error ? (
@@ -152,21 +145,21 @@ const Contrato = () => {
                 ) : store.contracts && store.contracts.length > 0 ? (
                   <div className="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-3">
                     {store.contracts.map((item) => {
-                      const startDate = new Date(item.contract_start_date).toLocaleDateString("es-ES", {
+                      const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric"
                       });
-                      const endDate = new Date(item.contract_end_date).toLocaleDateString("es-ES", {
+                      const endDate = new Date(item.end_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric"
                       });
                       const splitDocument = item.document ? item.document.split("/").pop() : 'Sin documento';
                       const today = new Date();
-                      const contractEndDateObj = new Date(item.contract_end_date);
+                      const contractEndDateObj = new Date(item.end_date);
                       const diffDays = differenceInDays(contractEndDateObj, today);
-
+                      
                       return (
                         <div className="col" key={item.id}>
                           <div className="card h-100 shadow-sm border">
@@ -203,68 +196,6 @@ const Contrato = () => {
                 ) : (
                     <div className="alert alert-info text-center">No hay contratos registrados para este usuario.</div>
                 )}
-              </div>
-
-              <div className="form mt-4 p-4 border rounded" style={{ display: showAddContractForm ? 'block' : 'none' }}>
-                <h4 className="mb-4">Registrar Nuevo Contrato</h4>
-                <div className="mb-3">
-                  <label htmlFor="start_day" className="form-label">
-                    Fecha de inicio
-                  </label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="start_day_issue"
-                    onChange={(e) =>
-                      dispatch({ type: "addstart_date", value: e.target.value })}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="start_day" className="form-label">
-                    Fecha de inicio
-                  </label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="start_day"
-                    value={store.contract_start_date || ''}
-                    onChange={(e) => dispatch({ type: "addstart_date", value: e.target.value })}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="end_day" className="form-label">
-                    Fecha de Fin
-                  </label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="end_day"
-                    value={store.contract_end_date || ''}
-                    onChange={(e) => dispatch({ type: "addend_date", value: e.target.value })}
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="pdfUpload" className="form-label">
-                    Sube tu contrato en PDF
-                  </label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    id="pdfUpload"
-                    accept="application/pdf"
-                    onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })}
-                  />
-                </div>
-                <button className="btn btn-success me-2" onClick={Ccontract}>
-                  Guardar Contrato
-                </button>
-                <button className="btn btn-secondary"
-                  onClick={() => setShowAddContractForm(false)}
-                >
-                  Cancelar
-                </button>
               </div>
             </div>
           </div>

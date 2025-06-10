@@ -6,77 +6,89 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
 import { format, differenceInDays } from 'date-fns';
 import MenuLateral from "../components/MenuLateral";
-import { issues } from "../feych_issues.js";
+import { Issues } from "../fecht_issues.js";
+import { Link } from "react-router-dom";
 
 
 const Incidencias = () => {
   const { store, dispatch } = useGlobalReducer();
   const [itpartment, setItapartment] = useState()
-const fetchApartments = async () => {
-      try {
-  
-        const data = await users.getUserApartments(store.todos.id, store.token);
-        if (data.msg==="ok") {
-          dispatch({ type: "add_apartments", value: data.apartments });
-        }
-      } catch (error) {
-        
-      };
-       try {
-  
-        const data = await users.getUserIssue(store.todos.id, store.token);
-        if (data.msg==="ok") {
-          dispatch({ type: "add_issues", value: data.issues });
-        }
-      } catch (error) {
-        
+  const fetchApartments = async () => {
+    try {
+
+      const data = await users.getUserApartments(store.todos.id, store.token);
+      if (data.msg === "ok") {
+        dispatch({ type: "add_apartments", value: data.apartments });
       }
+    } catch (error) {
 
     };
-     
- useEffect(()=>{
-   fetchApartments()
- }, [])
+    try {
+
+      const data = await users.getUserIssue(store.todos.id, store.token);
+      console.log(data)
+      if (data.msg) {
+        dispatch({ type: "add_issues", value: data.issues })
+      }
+    } catch (error) {
+
+    }
+
+  };
+
+  useEffect(() => {
+    fetchApartments()
+  }, [])
 
 
   const handlesIssues = async () => {
-    try { const data = await issues.create_issue(store.title, store.description, store.status, itpartment, 
-                        store.priority, store.type, store.contract_start_date, store.token )
-      if (data.msg){
-        swal({ title: "ÉXITO", text:`${data.msg}`, icon: "success" });
-        dispatch({type:"add_issues", value:data.isue})
-      }else{
-         swal({
-            title: "ERROR",
-            text: `${data.error}`,
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          });
+    try {
+      const data = await Issues.create_issue(store.title, store.description, store.status, itpartment,
+        store.priority, store.type, store.contract_start_date, store.contract_end_date, store.token)
+      if (data.msg) {
+        swal({ title: "ÉXITO", text: `${data.msg}`, icon: "success" });
+        dispatch({ type: "add_issues", value: data.issues })
+      } else {
+        swal({
+          title: "ERROR",
+          text: `${data.error}`,
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        });
       }
-      
-    } catch (error) {
-       swal({
-            title: "ERROR",
-            text: `${error}`,
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-          });
-    }
-  
-   };
 
-  const Cissue =async()=>{
-  await handlesIssues()
- }
- console.log(store)
+    } catch (error) {
+      swal({
+        title: "ERROR",
+        text: `${error}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      });
+    }
+
+    try {
+
+      const data = await users.getUserIssue(store.todos.id, store.token);
+
+      if (data.msg) {
+        dispatch({ type: "add_issues", value: data.issues })
+      }
+    } catch (error) {
+
+    }
+
+  };
+
+  const Cissue = async () => {
+    await handlesIssues()
+  }
+  console.log(store)
 
 
   return (
     <>
-
-
       <div className="container-fluid mt-4">
         <div className="row">
           {/* Menú lateral */}
@@ -86,20 +98,19 @@ const fetchApartments = async () => {
           <div className="col-md-9">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Incidencias</h2>
-              <p>Aquí puedes visualizar, cargar o gestionar incidencias activas.</p>
               <div className="map" style={{ display: `${store.vista}` }}>
                 <ul className="list-group">
                   {
                     store && store.apartments.map((item) => {
-                      const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
+
                       return (
                         <li
                           key={item.id}
-                          className="list-group-item d-flex justify-content-between contenedor">
-                            <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input" 
-                               type="checkbox" value="" id="checkDefault"onClick={(e)=>{setItapartment(item.id)} }/></div>
+                          className="list-group-item d-flex  contenedor">
+                          <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input"
+                            type="checkbox" value="" id="checkDefault" onClick={(e) => { setItapartment(item.id) }} /></div>
                           <div className="contratitem">
-                            <p>Dirección: {item.address},CP: {item.postal_code}, Ciudad: {item.city}, Parking: {item.parking_slot}, Estado: {alquilado}</p>
+                            <p><strong>Dirección</strong>: {item.address}, <strong>CP:</strong>: {item.postal_code}, <strong>Ciudad</strong>: {item.city}</p>
                           </div>
                         </li>
                       );
@@ -107,88 +118,103 @@ const fetchApartments = async () => {
                       <h1>Todavía no has registrado ninguna vivienda</h1>
                     )}
                 </ul>
-                <h1>Selecciona una vivienda para añadir incidencia</h1>
-                <div className="mb-3">
-                  <label htmlFor="Titulo" className="form-label">
-                    Titulo
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="Titulo"
-                    onChange={(e) =>
-                      dispatch({ type: "addTitle", value: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="start_day" className="form-label">
-                    Fecha de Inicio
-                  </label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="start_day_issue"
-                    onChange={(e) =>
-                      dispatch({ type: "addstart_date", value: e.target.value })}
-                  />
-                </div>
 
-                <div className="mb-3">
-                  <label htmlFor="start_day" className="form-label">
-                    Fecha de Fin
-                  </label>
-                  <input
-                    type="date"
-                    className="form-control"
-                    id="end_day_issue"
-                    onChange={(e) =>
-                      dispatch({ type: "addend_date", value: e.target.value })}
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="type" className="form-label">
-                    Clase
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="Clase"
-                    onChange={(e) =>
-                      dispatch({ type: "addtype", value: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="postal_code" className="form-label">
-                    Descripciom
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="descripcion"
-                    onChange={(e) =>
-                      dispatch({ type: "adddescription", value: e.target.value })
-                    }
-                  />
-                </div>
+                <div className="formIncidencia mt-2">
+                  <h3 className="mt-2, mb-2">Formulario de Creación de Incidencia</h3>
+                  <div className="formIncidenciadata">
+                    <div className="mb-1">
+                      <label htmlFor="Titulo" className="form-label">
+                        Titulo
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="Titulo"
+                        onChange={(e) =>
+                          dispatch({ type: "addTitle", value: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-1">
+                      <label htmlFor="start_day" className="form-label">
+                        Fecha de Inicio
+                      </label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="start_day_issue"
+                        onChange={(e) =>
+                          dispatch({ type: "addstart_date", value: e.target.value })}
+                      />
+                    </div>
 
-                <div className="mb-3">
-                  <label htmlFor="city" className="form-label">
-                    Estado
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="Estado"
-                    onChange={(e) =>
-                      dispatch({ type: "addstatus", value: e.target.value })
-                    }
-                  />
+                    <div className="mb-1">
+                      <label htmlFor="start_day" className="form-label">
+                        Fecha de Fin
+                      </label>
+                      <input
+                        type="date"
+                        className="form-control"
+                        id="end_day_issue"
+                        onChange={(e) =>
+                          dispatch({ type: "addend_date", value: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="mb-1">
+                      <label htmlFor="type" className="form-label">
+                        Clase
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="Clase"
+                        onChange={(e) =>
+                          dispatch({ type: "addtype", value: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div className="mb-1">
+                      <label htmlFor="city" className="form-label">
+                        Estado
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="Estado"
+                        onChange={(e) =>
+                          dispatch({ type: "addstatus", value: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="mb-1">
+                    <label htmlFor="postal_code" className="form-label">
+                      Descripción
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="descripcion"
+                      onChange={(e) =>
+                        dispatch({ type: "adddescription", value: e.target.value })
+                      }
+                    />
+                  </div>
+
+
                 </div>
-                 <button className="btn btn-success mt-2"
-                  onClick={Cissue}>Crear Incidencia</button>
-                <button className="btn btn-success mt-2"
+                <button className="btn btn-success mt-2" style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong",
+
+                }}
+                  onClick={Cissue}><strong>Crear Incidencia</strong></button>
+                <button className="btn btn-success mt-2 mi-button" style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)'
+                }}
                   onClick={(e) => {
                     dispatch({
                       type: "vista",
@@ -198,42 +224,52 @@ const fetchApartments = async () => {
                       type: "vista2",
                       value: "",
                     })
-                  }}>Volver a Incidencia</button>
+                  }}><strong >Volver a Incidencias</strong></button>
               </div>
-              <div className="form" style={{ display: `${store.vista2}` }}>
+              <div className="form mt-2" style={{ display: `${store.vista2}`,
+                          maxHeight: "600px",
+                          overflowY: "auto",
+                          overflowX: "hidden",
+                          paddingRight: "10px"
+                        }}>
                 <h1>Incidencias abiertas por vivienda</h1>
-                <ul className="list-group">
+                <ul className="list-group mt-2">
                   {
                     store && store.issues.map((item) => {
                       const alquilado = !item.apartment.is_rent ? "Pendiente de Alquilar" : "Alquilado";
-                       const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric"
-                        });
+                      const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                      });
                       return (
-                        <li
-                          key={item.apartment_id}
-                          className="list-group-item d-flex justify-content-between contenedor">
-                            <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input" 
-                               type="checkbox" value="" id="checkDefault"onClick={(e)=>{setItapartment(item.id)} }/></div>
-                          <div className="contratitem">
-                            <p>Dirección: {item.apartment.address},CP: {item.apartment.postal_code}, Ciudad: {item.apartment.ccity}, Estado: {alquilado}</p>
-                            <p>Incidencia: {item.title}</p>
-                             <p>Fecha de apertura: {startDate}, Estado: {item.status}</p>
-                             <p>Descripcion: {item.description} </p>
-                          </div>
-                        </li>
+                        
+                          <li
+                            key={item.apartment_id}
+                            className="list-group-item d-flex  contenedor">
+                            <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input"
+                              type="checkbox" value="" id="checkDefault" onClick={(e) => { setItapartment(item.id) }} /></div>
+                            <div className="contratitem">
+                              <p><strong>Dirección: </strong>{item.apartment.address}, <strong>CP:</strong> {item.apartment.postal_code}, <strong>Ciudad:</strong> {item.apartment.city}, <strong>Estado:</strong> {alquilado}</p>
+                              <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> {item.status}</p>
+                              <p><strong>Descripcion: </strong>{item.description} </p>      
+                               <Link to={"/single/" + item.apartment_id}>Link to: {item.title} </Link>                  
+                            </div>
+                          </li>
+                         
+              
                       );
                     })}{(!store.apartments || store.apartments.length === 0) && (
                       <h1>Todavía no has registrado ninguna vivienda</h1>
                     )}
                 </ul>
-                
-                
-                <button className="btn btn-success mi-button"
-                  onClick={() => {
 
+                <button className="btn btn-success mi-button mt-2" style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong",
+                }}
+                  onClick={() => {
                     dispatch({
                       type: "vista",
                       value: "",
@@ -242,9 +278,7 @@ const fetchApartments = async () => {
                       type: "vista2",
                       value: "none",
                     })
-
-                    
-                  }}>Abrir Actuacion</button>
+                  }}><strong>Abrir Nueva Incidencia</strong></button>
               </div>
             </div>
           </div>

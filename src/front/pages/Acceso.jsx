@@ -71,7 +71,7 @@ const LoginSection = () => {
 
         }
       }
-      if (data.error === "Email o contraseña inválidos") {
+      if (data.error) {
         swal({
           title: "ERROR",
           text: `${data.error}`,
@@ -86,7 +86,6 @@ const LoginSection = () => {
           text: `${data.msg}`,
           icon: "success",
           buttons: true,
-          dangerMode: true,
         });
       }
 
@@ -119,7 +118,6 @@ const LoginSection = () => {
           text: "LOGEADO CON EXITO",
           icon: "success",
           buttons: true,
-          dangerMode: true,
         });
       }
       return data;
@@ -494,6 +492,18 @@ const LoginSection = () => {
                                 value={store.national_id || ''}
                               />
                               <label className="form-label" htmlFor="nationalId">DNI</label>
+                            </div>
+                          </div>
+                          <div className="col-md-6 mb-4">
+                            <div className="form-outline">
+                              <input
+                                type="text"
+                                id="aacc"
+                                className="form-control form-control-lg"
+                                onChange={(e) => dispatch({ type: "Aaccadd", value: e.target.value })}
+                                value={store.aacc || ''}
+                              />
+                              <label className="form-label" htmlFor="nationalId">Número de Cuenta</label>
                             </div>
                           </div>
                         </div>

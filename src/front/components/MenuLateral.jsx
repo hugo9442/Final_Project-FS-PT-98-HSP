@@ -11,8 +11,8 @@ const SidebarMenu = ({ setActiveOption }) => {
         { "name": "Inicio", "path": "/PropietarioIndex", "icon": "gauge-high", "internalOption": null },
         { "name": "Viviendas", "path": "/Viviendas", "icon": "house-chimney", "internalOption": "viviendas" },
         { "name": "Contratos", "path": "/Contrato", "icon": "file-signature", "internalOption": "contrato" },
-        { "name": "Alquileres", "path": "/Alquileres", "icon": "house-chimney", "internalOption": "Alquileres" },
         { "name": "Inquilinos", "path": "/Inquilinos", "icon": "people-roof", "internalOption": "inquilinos" },
+        { "name": "Alquileres", "path": "/Alquileres", "icon": "house-chimney", "internalOption": "Alquileres" },
         { "name": "Incidencias", "path": "/Incidencias", "icon": "triangle-exclamation", "internalOption": "incidencias" },
         { "name": "Perfil", "path": "/Perfil", "icon": "user", "internalOption": "perfil" },
         { "name": "Salir", "path": "/acceso", "icon": "right-from-bracket", "internalOption": "salir" }
@@ -34,15 +34,15 @@ const SidebarMenu = ({ setActiveOption }) => {
                 paddingTop: 'calc(1.5rem + 70px)',
             }}
         >
-            <div className="sidebar-header text-center mb-4">
+            <div className="sidebar-header text-center mb-4 ">
                 <img
                     src="src/front/assets/img/LogoTrabajoFinal.png"
                     alt="Logo"
                     style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover" }}
                     className="mb-2"
                 />
-                <h5 className="text-white fw-bold mb-0">Panel de Propietario</h5>
-                <small className="text-white-50">Gestion Inmuebles</small>
+                <h5 className="text-black fw-bold mb-0" style={{color:"red"}}>Panel de Propietario</h5>
+                <small className="text-black-50">Gestion Inmuebles</small>
             </div>
 
             <ul className="nav flex-column flex-grow-1">
@@ -51,7 +51,7 @@ const SidebarMenu = ({ setActiveOption }) => {
                         <Link
                             to={item.path}
                             className={`nav-link d-flex align-items-center rounded py-2 px-3
-${location.pathname === item.path ? 'active-sidebar-link' : 'text-white'}`}
+                            ${location.pathname === item.path ? 'active-sidebar-link' : 'text-black'}`}
                             onClick={(e) => {
                                 if (item.path === location.pathname && item.path !== "/acceso") {
                                     e.preventDefault();

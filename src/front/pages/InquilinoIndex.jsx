@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { apartments } from "../fecht_apartment.js"; 
 import { contracts } from "../fecht_contract.js";   
-import { issues } from "../fecht_issues.js"; 
+import { Issues } from "../fecht_issues.js"; 
 
 const InquilinoIndex = () => { 
     const [miViviendaInfo, setMiViviendaInfo] = useState(null);
@@ -46,9 +46,9 @@ const InquilinoIndex = () => {
                     setMiViviendaInfo(viviendaRes.apartment);
 
                     if (viviendaRes.apartment.id) {
-                        const incidenciasRes = await issues.getIssuesByApartmentId(viviendaRes.apartment.id, store.token);
-                        if (incidenciasRes && !incidenciasRes.error && incidenciasRes.issues) {
-                            setMisIncidencias(incidenciasRes.issues);
+                        const incidenciasRes = await Issues.getissuesByApartmentId(viviendaRes.apartment.id, store.token);
+                        if (incidenciasRes && !incidenciasRes.error && incidenciasRes.Issues) {
+                            setMisIncidencias(incidenciasRes.Issues);
                         } else {
                             setMisIncidencias([]);
                         }
@@ -182,7 +182,7 @@ const InquilinoIndex = () => {
                                 {misIncidencias.length > 0 ? (
                                     <ul className="list-group list-group-flush text-left">
                                         {misIncidencias.map(inc => {
-                                            const issueStartDate = inc.start_date ? format(new Date(inc.start_date), 'dd/MM/yyyy') : 'N/A';
+                                            const issuestartDate = inc.start_date ? format(new Date(inc.start_date), 'dd/MM/yyyy') : 'N/A';
                                             const issueEndDate = inc.end_date ? format(new Date(inc.end_date), 'dd/MM/yyyy') : 'N/A';
 
                                             return (
@@ -190,7 +190,7 @@ const InquilinoIndex = () => {
                                                     <div>
                                                         <strong className="text-dark">{inc.title || 'Sin título'}</strong>
                                                         <small className="d-block text-muted">
-                                                            Fecha: {issueStartDate} - {issueEndDate}
+                                                            Fecha: {issuestartDate} - {issueEndDate}
                                                         </small>
                                                         <span className={`badge ${inc.status === 'Abierta' ? 'bg-danger' : inc.status === 'En Proceso' ? 'bg-warning text-dark' : 'bg-secondary'} ms-2`}>
                                                             {inc.status || 'Desconocido'}
