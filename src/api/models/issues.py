@@ -19,7 +19,7 @@ class Issue(db.Model):
     status: Mapped[str] = mapped_column(String(250), nullable=False)
     description: Mapped[str] = mapped_column(String(250), nullable=False)
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     apartment_id: Mapped[int] = mapped_column(ForeignKey('apartments.id'), nullable=False)
     apartment: Mapped['Apartment'] = relationship(
          back_populates='issues')

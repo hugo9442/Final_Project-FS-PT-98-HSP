@@ -1,8 +1,13 @@
 
 
+
 export const initialStore = () => {
   return {
     message: null,
+    title:"",
+    type:"",
+    description:"",
+    status:"",
     contract: "",
     address: "",
     postal_code: "",
@@ -25,10 +30,11 @@ export const initialStore = () => {
     visibility2: "block",
     validToken: false,
     todos: [],
-    apartments:[],
-    asociation:[],
+    apartments: [],
+    asociation: [],
     tenant: [],
     contracts: [],
+    issues: [],
     forgotPasswordVisibility: "none",
     resetPasswordVisibility: "none",
     tenantSetPasswordVisibility: "none",
@@ -51,6 +57,21 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         address: action.value,
+      };
+       case "addtype":
+      return {
+        ...store,
+        type: action.value,
+      };
+      case "addstatus":
+      return {
+        ...store,
+        status: action.value,
+      };
+       case "adddescription":
+      return {
+        ...store,
+        description: action.value,
       };
        case "vista":
       return {
@@ -150,6 +171,11 @@ export default function storeReducer(store, action = {}) {
         ...store,
         email: action.value,
       };
+       case "addTitle":
+      return {
+        ...store,
+        title: action.value,
+      };
     case "addPassword":
       return {
         ...store,
@@ -180,20 +206,10 @@ export default function storeReducer(store, action = {}) {
         ...store,
         national_id: action.value,
       };
-    case "addAacc":
+    case "Aaccadd":
       return {
         ...store,
         aacc: action.value,
-      };
-    case "addEmail":
-      return {
-        ...store,
-        email: action.value,
-      };
-    case "addPassword":
-      return {
-        ...store,
-        password: action.value,
       };
     case "addstart_date":
       return {
@@ -207,10 +223,14 @@ export default function storeReducer(store, action = {}) {
       };
     
     case "add_user":
-    
       return {
         ...store,
         todos: action.value,
+      };
+      case "add_issues":
+      return {
+        ...store,
+        issues: action.value,
       };
     case "add_tenant":
     
@@ -235,13 +255,6 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         apartments: action.value,
-      };
-    case "add_tenant":
-     
-
-      return {
-        ...store,
-        tenant: action.value,
       };
     default:
       throw Error("Unknown action.");

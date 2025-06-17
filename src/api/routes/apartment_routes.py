@@ -27,7 +27,7 @@ def create_apartment():
         new_apartment = Apartment(**body)
         db.session.add(new_apartment)
         db.session.commit()
-        return jsonify({"apartments":new_apartment.serialize(),
+        return jsonify({"apartments":[new_apartment.serialize()],
                         "msg":"La vivienda se ha registrado con exito"}), 201
     except Exception as e:
         db.session.rollback()
@@ -41,6 +41,17 @@ def get_apartment(id):
         if not apartment:
             return jsonify({"msg": "Apartment not found"}), 404
         return jsonify(apartment.serialize()), 200
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+    
+@apartments_api.route('/<int:id>/actions', methods=['GET'])
+@jwt_required()
+def get_apartment_actions(id):
+    try:
+        apartment = Apartment.query.get(id)
+        if not apartment:
+            return jsonify({"msg": "Apartment not found"}), 404
+        return jsonify(apartment.serialize_with_relations()), 200
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     

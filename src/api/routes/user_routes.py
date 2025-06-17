@@ -1,5 +1,5 @@
 
-from api.models import db, User, Apartment, Contract,AssocTenantApartmentContract
+from api.models import db, User, Apartment, Contract,AssocTenantApartmentContract, Issue
 from api.models.users import Role
 from sqlalchemy.orm import joinedload
 import os
@@ -19,6 +19,8 @@ CORS(users_api)
 bcrypt = Bcrypt()
 
 """ENDPOINT OF USER"""
+
+
 @users_api.route('/', methods=["GET"])
 @jwt_required()
 def get_all_users():
@@ -32,8 +34,7 @@ def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
-    return jsonify({"user":user.serialize()}), 200
-
+    return jsonify({"user": user.serialize()}), 200
 
 
 @users_api.route('/<int:user_id>', methods=["PUT"])
@@ -67,7 +68,6 @@ def update_user(user_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
-    
 
 
 @users_api.route('/create', methods=["POST"])
@@ -91,8 +91,9 @@ def create_user():
         first_name=data_request["first_name"],
         last_name=data_request["last_name"],
         email=email,
-        password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
-        phone_number=data_request.get("phone_number"),
+        password=bcrypt.generate_password_hash(
+            data_request["password"]).decode('utf-8'),
+        phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
         role=data_request["role"]
@@ -112,7 +113,9 @@ def create_user():
     except Exception as e:
         print(e)
         db.session.rollback()
-        return jsonify({"error": "Error en el servido"}), 500
+        return jsonify({"error": "Error en el servidor"}), 500
+
+
 @users_api.route('/<int:user_id>', methods=["DELETE"])
 @jwt_required()
 def delete_user(user_id):
@@ -129,8 +132,10 @@ def delete_user(user_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
-    
+
+
 """TENANT ENDPOINT"""
+
 
 @users_api.route('/create/tenant', methods=["POST"])
 @jwt_required()
@@ -153,7 +158,8 @@ def create_tenant():
         first_name=data_request["first_name"],
         last_name=data_request["last_name"],
         email=email,
-        password=bcrypt.generate_password_hash(data_request["password"]).decode('utf-8'),
+        password=bcrypt.generate_password_hash(
+            data_request["password"]).decode('utf-8'),
         phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
@@ -164,7 +170,6 @@ def create_tenant():
         db.session.add(new_user)
         db.session.commit()
         """access_token = create_access_token(identity=str(new_user.id))"""
-        
 
         return jsonify({
             "msg": "El Inquilino ha sido creado exitosamente",
@@ -176,7 +181,7 @@ def create_tenant():
         db.session.rollback()
         return jsonify({"error": "Error en el servido"}), 500
     
-
+"""APARTMENTS ENDPOINT"""
 
 
 @users_api.route('/<int:user_id>/apartments', methods=["GET"])
@@ -190,8 +195,10 @@ def get_user_apartments(user_id):
     if not apartments:
         return jsonify({"error": "No hay apartamentos para este usuario"}), 404
 
-    return jsonify({"msg":"ok", 
-                    "apartments":[apartment.serialize() for apartment in apartments]}), 200
+    return jsonify({"msg": "ok",
+                    "apartments": [apartment.serialize() for apartment in apartments]}), 200
+
+
 
 @users_api.route('/<int:user_id>/apartments/notrented', methods=["GET"])
 @jwt_required()
@@ -199,11 +206,11 @@ def get_user_not_rented_apartments(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
-    
-    not_rented_apartments = Apartment.query.filter(Apartment.owner_id == user_id, Apartment.is_rent == False).all()
 
-    return jsonify({"apartments":[apartment.serialize() for apartment in not_rented_apartments]}), 200
+    not_rented_apartments = Apartment.query.filter(
+        Apartment.owner_id == user_id, Apartment.is_rent == False).all()
 
+    return jsonify({"apartments": [apartment.serialize() for apartment in not_rented_apartments]}), 200
 
 
 @users_api.route('/<int:user_id>/apartments/count', methods=["GET"])
@@ -217,8 +224,9 @@ def get_user_apartments_count(user_id):
     count = len(apartments)
     if not apartments:
         return jsonify({"error": "No hay apartamentos para este usuario"}), 404
-    return jsonify({"total":count}), 200
+    return jsonify({"total": count}), 200
 
+"""CONTRACTS ENDPOINT"""
 
 
 @users_api.route('/<int:user_id>/contracts/count', methods=["GET"])
@@ -244,25 +252,26 @@ def get_user_contracts(user_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     contracts = user.contracts
-    
+
     if not contracts:
         return jsonify({"error": "No hay contratos para este usuario"}), 404
-    return jsonify({"msg":"ok",
-        "contracts":[contracts.serialize() for contracts in contracts]}), 200
+    return jsonify({"msg": "ok",
+                    "contracts": [contracts.serialize() for contracts in contracts]}), 200
+
 
 @users_api.route('/<int:user_id>/contracts/assoc', methods=["GET"])
 @jwt_required()
 def get_contracts_by_owner(user_id):
     owner = User.query.options(
         joinedload(User.contracts)
-            .joinedload(Contract.association)
-            .joinedload(AssocTenantApartmentContract.tenant),
+        .joinedload(Contract.association)
+        .joinedload(AssocTenantApartmentContract.tenant),
         joinedload(User.contracts)
-            .joinedload(Contract.association)
-            .joinedload(AssocTenantApartmentContract.apartment),
+        .joinedload(Contract.association)
+        .joinedload(AssocTenantApartmentContract.apartment),
         joinedload(User.contracts)
-            .joinedload(Contract.association)
-            .joinedload(AssocTenantApartmentContract.contract)
+        .joinedload(Contract.association)
+        .joinedload(AssocTenantApartmentContract.contract)
     ).filter_by(id=user_id).first()
 
     if not owner:
@@ -273,7 +282,7 @@ def get_contracts_by_owner(user_id):
     for contrato in owner.contracts:
         contrato_dict = contrato.serialize()
         asociaciones = []
-    
+
         for assoc in contrato.association:
             if assoc.tenant and assoc.tenant.role == Role.INQUILINO:
                 asociaciones.append({
@@ -288,7 +297,29 @@ def get_contracts_by_owner(user_id):
 
     return jsonify(contratos_data), 200
 
+"""ISSUES ENDPOINT"""
+
+@users_api.route('/<int:user_id>/issues', methods=["GET"])
+@jwt_required()
+def get_user_issues(user_id):
+    issues = (
+        db.session.query(Issue)
+        .join(Issue.apartment)  
+        .filter(Apartment.owner_id == user_id)
+        .options(joinedload(Issue.apartment)) 
+        .all()
+    )
+
+    return jsonify({
+        "msg": "ok",
+        "issues": [issue.serialize_with_relations() for issue in issues]
+    }), 200
+
+
+
 """VALIDATION ENDPOINT"""
+
+
 @users_api.route('/private', methods=['GET'])
 @jwt_required()
 def private_route():
@@ -296,9 +327,12 @@ def private_route():
     user = User.query.get(user_id)
 
     return jsonify({
-        "msg":True}), 200
+        "msg": True}), 200
+
 
 """LOGIN ENDPOINT"""
+
+
 @users_api.route('/login', methods=["POST"])
 def sing_in():
     data_request = request.get_json()
@@ -323,7 +357,7 @@ def sing_in():
         db.session.rollback()
         return jsonify({"error": "Error en el servidor"}), 500
 
-
+"""RESET PASSWORD END POINT"""
 
 @users_api.route('/forgot-password', methods=['POST'])
 def forgot_password():
@@ -334,6 +368,12 @@ def forgot_password():
         return jsonify({"message": "El email es necesario"}), 404
 
     user = User.query.filter_by(email=email).first()
+
+    if user:
+        print(
+            f"Usuario encontrado para el email '{email}': {user.serialize()}")
+    else:
+        print(f"No se encontró usuario para el email: {email}")
 
     if not user:
         print(
@@ -347,12 +387,12 @@ def forgot_password():
 
     frontend_url = current_app.config.get("FRONTEND_URL")
     reset_link = f"{frontend_url}/reset-password?token={reset_token}"
-
+    print(reset_link)
     try:
         html_body = render_template('reset_password_email.html',
                                     reset_link=reset_link,
                                     current_year=datetime.now().year)
-        
+
         msg = Message('Restablece tu contraseña - InmuGestion',
                       sender=os.getenv("MAIL_USERNAME"),
                       recipients=[email],
@@ -379,7 +419,8 @@ def reset_password():
         claims = get_jwt()
 
         if claims.get("forgot_password") and claims.get("email") == user.email:
-            user.password = bcrypt.generate_password_hash(new_password).decode('utf-8') 
+            user.password = bcrypt.generate_password_hash(
+                new_password).decode('utf-8')
             db.session.commit()
             return jsonify({"message": "Contraseña restablecida"}), 200
         else:
@@ -403,10 +444,9 @@ def register_tenant_initiate():
     national_id = data_request.get("national_id")
     account_number = data_request.get("account_number")
 
-
     if not email or not first_name:
         return jsonify({"error": "Nombre y email del inquilino son obligatorios"}), 400
-    
+
     if '@' not in email:
         return jsonify({"error": "Formato de email inválido"}), 400
 
@@ -417,7 +457,8 @@ def register_tenant_initiate():
         return jsonify({"error": "Ya existe un usuario con este email"}), 409
 
     temporary_password = str(uuid.uuid4())
-    hashed_temporary_password = bcrypt.generate_password_hash(temporary_password).decode('utf-8')
+    hashed_temporary_password = bcrypt.generate_password_hash(
+        temporary_password).decode('utf-8')
 
     new_tenant = User(
         first_name=first_name,
@@ -445,7 +486,6 @@ def register_tenant_initiate():
         frontend_url = current_app.config.get("FRONTEND_URL")
         setup_password_link = f"{frontend_url}/set-password?token={setup_password_token}"
 
-        
         html_body = render_template('tenant_welcome_email.html',
                                     first_name=new_tenant.first_name,
                                     setup_password_link=setup_password_link)
@@ -462,7 +502,7 @@ def register_tenant_initiate():
         mail.send(msg)
 
         return jsonify({"msg": "Inquilino registrado exitosamente. Se ha enviado un email para configurar su contraseña.",
-                        "tenant":new_tenant.serialize()}), 201
+                        "tenant": new_tenant.serialize()}), 201
 
     except Exception as e:
         db.session.rollback()
@@ -489,9 +529,10 @@ def set_tenant_password():
 
         if not claims.get("setup_password") or claims.get("email") != tenant.email:
             return jsonify({"message": "Token inválido o no autorizado para esta operación."}), 401
-        
-        tenant.password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-        
+
+        tenant.password = bcrypt.generate_password_hash(
+            new_password).decode('utf-8')
+
         db.session.commit()
         return jsonify({"message": "Contraseña configurada exitosamente. Ya puedes iniciar sesión."}), 200
 
@@ -499,3 +540,82 @@ def set_tenant_password():
         db.session.rollback()
         print(f"Error al configurar contraseña del inquilino: {e}")
         return jsonify({"message": "Error en el servidor al configurar la contraseña, intenta más tarde."}), 500
+
+
+@users_api.route('/<int:user_id>/apartments', methods=["GET"])
+@jwt_required()
+def get_user_apartment(user_id):
+
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=user_id).first()
+    if not assoc:
+        return jsonify({"error": "No hay asociaciones de inquilino para este usuario"}), 404
+    apartment_id = assoc.apartment_id
+    if not apartment_id:
+        return jsonify({"error": "No hay apartamentos asociados a este inquilino"}), 404
+    
+    apartment = Apartment.query.get(apartment_id)
+    if not apartment:
+        return jsonify({"error": "Apartamento no encontrado"}), 404
+    
+    return jsonify({ "apartment": apartment.serialize()}), 200
+
+
+@users_api.route('/<int:user_id>/contracts', methods=["GET"])
+@jwt_required()
+def get_user_contract(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+    
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=user_id).first()
+    if not assoc:
+        return jsonify({"error": "No hay asociaciones de inquilino para este usuario"}), 404
+    
+    contract_id = assoc.contract_id
+    if not contract_id:
+        return jsonify({"error": "No hay contratos asociados a este inquilino"}), 404
+    
+    contract = Contract.query.get(contract_id)  
+    if not contract:
+        return jsonify({"error": "Contrato no encontrado"}), 404
+    
+    return jsonify({"contract": contract.serialize()}), 200
+
+
+@users_api.route('/tenant_apartment', methods=["GET"]) 
+@jwt_required()
+def get_current_tenant_apartment():
+    current_user_id = get_jwt_identity()
+
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=current_user_id)\
+                                           .options(db.joinedload(AssocTenantApartmentContract.apartment))\
+                                           .first()
+    
+    if not assoc:
+        return jsonify({"message": "No hay una vivienda asignada a este inquilino."}), 404
+        
+    if not assoc.apartment:
+        return jsonify({"message": "No hay una vivienda válida asociada a esta asignación."}), 404
+        
+    return jsonify({ "apartment": assoc.apartment.serialize()}), 200
+
+
+@users_api.route('/tenant_contract', methods=["GET"])
+@jwt_required()
+def get_current_tenant_contract():
+    current_user_id = get_jwt_identity()
+    assoc = AssocTenantApartmentContract.query.filter_by(tenant_id=current_user_id)\
+                                           .options(db.joinedload(AssocTenantApartmentContract.contract))\
+                                           .first()
+    
+    if not assoc:
+        return jsonify({"message": "No hay un contrato asignado a este inquilino."}), 404
+        
+    if not assoc.contract:
+        return jsonify({"message": "No hay un contrato válido asociado a esta asignación."}), 404
+        
+    return jsonify({"contract": assoc.contract.serialize()}), 200

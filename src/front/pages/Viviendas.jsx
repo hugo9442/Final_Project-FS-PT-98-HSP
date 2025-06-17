@@ -96,13 +96,10 @@ const Viviendas = () => {
                           key={item.id}
                           className="list-group-item d-flex justify-content-between">
                           <div className="contratitem">
-                            <p>Dirección: {item.address}, CP: {item.postal_code},  Ciudad: {item.city}, Parking: {item.parking_slot}, Estado: {alquilado}</p>
-                              
-
+                            <p><strong>Dirección:</strong> {item.address}, <strong>CP:</strong> {item.postal_code},  <strong>Ciudad:</strong> {item.city}, <strong>Parking:</strong> {item.parking_slot}, <strong>Estado:</strong> {alquilado}</p>
+                            
                           </div>
-                          <button className="btn btn-success">
-                            Consultar incidencias
-                          </button>
+                          
                         </li>
                       );
                     })}{(!store.apartments || store.apartments.length === 0) && (
@@ -119,6 +116,7 @@ const Viviendas = () => {
                       type: "vista2",
                       value: "",
                     })
+                    
                   }}>Añadir Vivienda</button>
               </div>
              <div className="form" style={{ display: `${store.vista2}` }}>
@@ -174,20 +172,6 @@ const Viviendas = () => {
                 }
               />
             </div>
-            <div className="mb-3">
-              <label htmlFor="is_rent" className="form-label">
-                Esta Arrendado
-              </label>
-              <input
-                type="checkbox"
-                className="form-control"
-                id="is_rent"
-                checked={store.is_rent}
-                onChange={(e) =>
-                  dispatch({ type: "is_rent", value: e.target.checked })
-                }
-              />
-            </div>
             <button className="btn btn-success" onClick={Capratment}>
               Añadir vivienda
             </button>
@@ -202,7 +186,7 @@ const Viviendas = () => {
                   value: "none",
                 })
                 fetchApartments()
-              }}>Salir</button>
+              }}>Ver Viviendas</button>
             </div>
             </div>
           </div>

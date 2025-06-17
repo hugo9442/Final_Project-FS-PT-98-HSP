@@ -17,17 +17,20 @@
 }
 
 .mi-div {
-  width: 0; /* Inicialmente oculto */
-  overflow: hidden; /* Oculta el texto mientras está colapsado */
-  white-space: nowrap; /* Evita saltos de línea */
-  transition: width 0.5s ease; /* Animación del ancho */
+  width: 0; 
+  overflow: hidden;
+  white-space: nowrap;
+  transition: width 0.5s ease; 
   display: none;
+ 
+
 }
 .contratitem {
   display: flex;
-  justify-content:right;
+  justify-content:flex-start;
   align-items:start;
   transition: margin-left 0.5s ease; /* Animación del margen */
+
 }
 .contenedor:hover .mi-div {
   width: 50px; /* Ancho al expandirse */
@@ -35,7 +38,10 @@
 }
 
 .contenedor:hover .contratitem {
-  margin-left: 10px; /* Empuja el div rojo hacia la derecha */
+  margin-left: 10px; 
+}
+.contenedor{
+  background-color: blue;
 }
 .tenantContracts{
   justify-content: space-between;
@@ -65,4 +71,13 @@
     color: #ffffff;
     font-weight: bold;
     box-shadow: inset 3px 0 0 #fff;
+}
+.formIncidencia{
+ display: flex;
+ flex-direction: column;
+}
+.formIncidenciadata{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
