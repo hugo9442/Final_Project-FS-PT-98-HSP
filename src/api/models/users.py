@@ -6,9 +6,9 @@ from typing import List, TYPE_CHECKING
 from enum import Enum as PyEnum
 
 class Role(PyEnum):
-    PROPIETARIO = 'propietario'
-    INQUILINO = 'inquilino'
-    ADMIN = 'admin'
+    PROPIETARIO = 'PROPIETARIO'
+    INQUILINO = 'INQUILINO'
+    ADMIN = 'ADMIN'
 
 role_type = Enum(
     Role, 

@@ -19,13 +19,12 @@ class Issue(db.Model):
     status: Mapped[str] = mapped_column(String(250), nullable=False)
     description: Mapped[str] = mapped_column(String(250), nullable=False)
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
-    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    end_date: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     apartment_id: Mapped[int] = mapped_column(ForeignKey('apartments.id'), nullable=False)
     apartment: Mapped['Apartment'] = relationship(
          back_populates='issues')
-    actions: Mapped['Action'] = relationship(
-         back_populates='issue'
-         )
+    actions: Mapped[List['Action']] = relationship('Action', back_populates='issue', cascade='all, delete-orphan')
+         
 
     def serialize(self):
         return {
@@ -43,5 +42,5 @@ class Issue(db.Model):
     def serialize_with_relations(self):
         data = self.serialize()
         data['apartment'] = self.apartment.serialize()
-        data['action'] = self.actions.serialize() if self.actions else {}
+        data['actions'] = [action.serialize() for action in self.actions]
         return data

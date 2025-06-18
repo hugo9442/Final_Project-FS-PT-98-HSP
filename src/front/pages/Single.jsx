@@ -1,36 +1,117 @@
-// Import necessary hooks and components from react-router-dom and other libraries.
-import { Link, useParams } from "react-router-dom";  // To use link for navigation and useParams to get URL parameters
-import PropTypes from "prop-types";  // To define prop types for this component
-import useGlobalReducer from "../hooks/useGlobalReducer";  // Import a custom hook for accessing the global state
+import { Link, useParams } from "react-router-dom";
+import PropTypes from "prop-types";
+import useGlobalReducer from "../hooks/useGlobalReducer";
+import React, { useEffect, useState } from "react";
+import { format } from 'date-fns';
+import MenuLateral from "../components/MenuLateral";
+import { apartments } from "../fecht_apartment.js"
+import NewActionForm from "../components/NewActionForm.jsx";
 
-// Define and export the Single component which displays individual item details.
+
 export const Single = props => {
-  // Access the global state using the custom hook.
-  const { store } = useGlobalReducer()
+  const { theId } = useParams();
+  const { store, dispatch } = useGlobalReducer();
+  const [showForm, setShowForm] = useState(null);
 
-  // Retrieve the 'theId' URL parameter using useParams hook.
-  const { theId } = useParams()
-  const singleTodo = store.todos.find(todo => todo.id === parseInt(theId));
+  const handlegetIssuesActionsByapartmetId = async () => {
+    try {
+      const data = await apartments.getIssuesActionsByApertmentId(parseInt(theId), store.token);
+      if (!data.error) {
+        dispatch({ type: "add_singleIssues", value: data });
+      }
+    } catch (error) {
+      console.error("Error fetching issues/actions:", error);
+    }
+  };
+
+  useEffect(() => {
+    handlegetIssuesActionsByapartmetId();
+  }, []);
 
   return (
-    <div className="container text-center">
-      {/* Display the title of the todo element dynamically retrieved from the store using theId. */}
-      <h1 className="display-4">Todo: {singleTodo?.title}</h1>
-      <hr className="my-4" />  {/* A horizontal rule for visual separation. */}
+    <>
+      <div className="container-fluid mt-4">
+        <div className="row">
 
-      {/* A Link component acts as an anchor tag but is used for client-side routing to prevent page reloads. */}
-      <Link to="/">
-        <span className="btn btn-primary btn-lg" href="#" role="button">
-          Back home
-        </span>
-      </Link>
-    </div>
+          
+
+          <div className="col-md-9">
+            <div className="p-4 border rounded bg-light">
+              <h2>Gestión de Actuaciones</h2>
+              <div className="form mt-2">
+                <h1>Vivienda</h1>
+                <p><strong>Dirección:</strong> {store.singleIssues.address}, <strong>CP:</strong> {store.singleIssues.postal_code}, <strong>Ciudad:</strong> {store.singleIssues.city}</p>
+
+                <ul className="list-group mt-2">
+                  <h2>Incidencias</h2>
+                  {
+                    store && store.singleIssues.issues && store.singleIssues.issues.map((item) => {
+                      const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "long",
+                        year: "numeric"
+                      });
+
+                      return (
+                        <li
+                          key={item.issue_id}
+                          className="list-group-item d-flex flex-column contenedor">
+                          <div className="contratitem">
+                            <p><strong>Incidencia:</strong> {item.title} <strong>Fecha de apertura:</strong> {startDate}, <strong>Estado:</strong> {item.status}</p>
+                            <p><strong>Descripción:</strong> {item.description}</p>
+                          </div>
+
+                          <h5 className="mt-3">Actuaciones</h5>
+                          <ul className="list-group">
+                            { item.actions && item.actions.map((action) =>{  
+                            const splitBill = action.bill_image ? action.bill_image.split("/").pop() : 'Sin documento'; 
+                            return (
+                              <li key={action.action_id} className="list-group-item">
+                                <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor}<strong>, Estado:</strong> {action.status}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")}</p>
+                                <p><strong>Importe:</strong> {action.bill_amount}€, <strong>Ver Factura</strong> {splitBill}   </p>
+                                <p><strong>Descripción:</strong> {action.description}</p>
+                              </li>
+                            )})}
+                          </ul>
+
+                          <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => setShowForm(item.issue_id)}>Añadir actuación</button>
+                          {showForm === item.issue_id && (
+                            <NewActionForm
+                              issueId={item.issue_id}
+                              token={store.token}
+                              onSuccess={() => {
+                                setShowForm(null);
+                                handlegetIssuesActionsByapartmetId();
+                              }}
+                              onClose={() => setShowForm(false)}
+                            />
+                          )}
+                        </li>
+                      );
+                    })
+                  }
+                </ul>
+
+                <button className="btn btn-success mi-button mt-2" style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong"
+                }}
+                  onClick={() => {
+                    dispatch({ type: "vista", value: "" });
+                    dispatch({ type: "vista2", value: "none" });
+                  }}>
+                  <strong>Abrir Nueva Incidencia</strong>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 
-// Use PropTypes to validate the props passed to this component, ensuring reliable behavior.
 Single.propTypes = {
-  // Although 'match' prop is defined here, it is not used in the component.
-  // Consider removing or using it as needed.
   match: PropTypes.object
 };

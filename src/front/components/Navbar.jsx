@@ -2,14 +2,17 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useNavigate } from "react-router-dom";
+
 const Navbar = () => {
   const { store, dispatch } = useGlobalReducer();
   const history = useNavigate();
   const handleNavigatePropietarioIndex = () => history("/propietarioindex");
-  const handleNavigateAcceso=()=>history("/acceso")
+  const handleNavigateAcceso=()=>history("/Acceso")
+
+  
   const accessToPropietarioIndex=()=>{
     
-    if (store.token.length>0){
+    if (store.token){
         handleNavigatePropietarioIndex()
     }else {handleNavigateAcceso()}
   }

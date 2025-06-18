@@ -13,7 +13,7 @@ class Apartment(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     address: Mapped[str] = mapped_column(String(255),nullable=False)
-    postal_code: Mapped[str] = mapped_column(Integer, nullable=False)
+    postal_code: Mapped[str] = mapped_column(String(30), nullable=False)
     city: Mapped[str] = mapped_column(String(255), nullable=False)
     parking_slot: Mapped[str] = mapped_column(String(255), nullable=False)
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)
@@ -42,6 +42,7 @@ class Apartment(db.Model):
     
     def serialize_with_relations(self):
         data = self.serialize()
-        data['user'] = self.user.serialize()
-        data['issues'] = self.issues.serialize() if self.issues else {}
+        data['owner'] = self.owner.serialize() if self.owner else None
+        data['issues'] = [issue.serialize() for issue in self.issues]
+        data['contracts'] = [assoc.serialize() for assoc in self.association]  
         return data

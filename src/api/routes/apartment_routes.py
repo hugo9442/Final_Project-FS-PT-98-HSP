@@ -7,6 +7,34 @@ apartments_api = Blueprint('apartments_api', __name__, url_prefix='/apartments')
 
 CORS(apartments_api)
 
+@apartments_api.route('/<int:id>/issues-actions', methods=['GET'])
+@jwt_required()
+def get_apartment_issues_and_actions(id):
+    try:
+        apartment = Apartment.query.get(id)
+        if not apartment:
+            return jsonify({"error": "Apartment not found"}), 404
+
+        # Serializa la información completa del apartamento
+        apartment_data = apartment.serialize()
+
+        # Serializa cada issue con sus actions
+        issues_data = []
+        for issue in apartment.issues:
+            issue_data = issue.serialize()
+            issue_data["actions"] = [action.serialize() for action in list(issue.actions)]
+            issues_data.append(issue_data)
+
+        # Agrega los issues al objeto apartment
+        apartment_data["issues"] = issues_data
+
+        return jsonify(apartment_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+
+
+
 @apartments_api.route('/create', methods=['POST'])
 @jwt_required()
 def create_apartment():
@@ -27,7 +55,7 @@ def create_apartment():
         new_apartment = Apartment(**body)
         db.session.add(new_apartment)
         db.session.commit()
-        return jsonify({"apartments":new_apartment.serialize(),
+        return jsonify({"apartments":[new_apartment.serialize()],
                         "msg":"La vivienda se ha registrado con exito"}), 201
     except Exception as e:
         db.session.rollback()
@@ -43,6 +71,8 @@ def get_apartment(id):
         return jsonify(apartment.serialize()), 200
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
+    
+
     
 @apartments_api.route('/', methods=['GET'])
 @jwt_required()
