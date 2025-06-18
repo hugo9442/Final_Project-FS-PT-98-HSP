@@ -1,5 +1,7 @@
 from flask import request, jsonify, Blueprint, current_app, url_for, send_from_directory, abort, send_file
-from api.models import db, Contract
+from api.models import db, Contract, AssocTenantApartmentContract
+from api.models.users import Role
+from sqlalchemy.orm import joinedload
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from datetime import datetime
@@ -101,28 +103,25 @@ def download_contract(contract_id):
 @jwt_required()
 def create_contract():
     # Debug 1: Verificar llegada de datos
-    print("\n=== INICIO DE SOLICITUD ===")
-    print("Headers:", request.headers)
-    print("Form data:", request.form)
-    print("Files recibidos:", request.files)
+  
     
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf'}
 
     # Debug 2: Verificación de archivo
     if 'document' not in request.files:
-        print("ERROR: No se encontró el campo 'document' en request.files")
+        
         return jsonify({"error": "No file part"}), 400
         
     file = request.files['document']
-    print("Archivo recibido - Nombre:", file.filename, "Tipo:", file.content_type)
+   
     
     if file.filename == '':
-        print("ERROR: Nombre de archivo vacío")
+       
         return jsonify({"error": "No selected file"}), 400
         
     if not (file and allowed_file(file.filename)):
-        print("ERROR: Archivo no permitido - Extensión inválida")
+       
         return jsonify({"error": "Solo se permiten archivos PDF"}), 400
 
     # Generación de nombre único
@@ -132,24 +131,17 @@ def create_contract():
     print("Nombre único generado:", unique_filename)
     
     try:
-        # Debug 3: Verificación de variables R2
-        print("\nConfiguración R2:")
-        print("Bucket:", os.getenv("R2_BUCKET_NAME"))
-        print("Endpoint:", os.getenv("R2_ENDPOINT_URL"))
-        print("Clave de acceso:", bool(os.getenv("R2_ACCESS_KEY_ID")))
-        
-        # Debug 4: Verificar contenido del archivo
+
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
-        print("Tamaño del archivo:", file_size, "bytes")
+    
         
         if file_size == 0:
             raise ValueError("El archivo está vacío")
 
-        # Subida a R2 con verificación
+        
         s3 = get_r2_client()
-        print("\nIniciando subida a R2...")
         s3.upload_fileobj(
             file,
             os.getenv("R2_BUCKET_NAME"),
@@ -159,19 +151,10 @@ def create_contract():
                 'ACL': 'private'  # Cambiar a 'public-read' si necesitas acceso público
             }
         )
-        print("Subida a R2 completada con éxito")
 
-        # Generación de URL
+    
         file_url = f"{os.getenv('R2_PUBLIC_URL')}/{unique_filename}"
-        print("URL generada:", file_url)
-        
-        # Debug 5: Verificación de datos del formulario
-        print("\nDatos del contrato:")
-        print("Start Date:", request.form.get('start_date'))
-        print("End Date:", request.form.get('end_date'))
-        print("Owner ID:", request.form.get('owner_id'))
-
-        # Creación del contrato
+                
         new_contract = Contract(
             start_date=datetime.fromisoformat(request.form['start_date']),
             end_date=datetime.fromisoformat(request.form['end_date']),
@@ -181,7 +164,7 @@ def create_contract():
         
         db.session.add(new_contract)
         db.session.commit()
-        print("Contrato guardado en base de datos")
+    
 
         return jsonify({
             "msg": "El contrato ha sido registrado satisfactoriamente",
@@ -221,3 +204,39 @@ def delete_contract(contract_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error in the server"}), 500
+
+@contracts_api.route('/by_apartment/<int:apartment_id>', methods=["GET"])
+@jwt_required()
+def get_contracts_by_apartment(apartment_id):
+    # Buscar asociaciones con joinedload para acceder a tenant, apartment, contract y contract.owner
+    asociaciones = AssocTenantApartmentContract.query.options(
+        joinedload(AssocTenantApartmentContract.contract).joinedload(Contract.owner),
+        joinedload(AssocTenantApartmentContract.tenant),
+        joinedload(AssocTenantApartmentContract.apartment)
+    ).filter_by(apartment_id=apartment_id).all()
+
+    if not asociaciones:
+        return jsonify({"error": "No hay asociaciones para este apartamento"}), 404
+
+    contratos_dict = {}
+
+    for assoc in asociaciones:
+        contrato = assoc.contract
+        contrato_id = contrato.id
+
+        # Si aún no hemos agregado este contrato, lo inicializamos
+        if contrato_id not in contratos_dict:
+            contratos_dict[contrato_id] = contrato.serialize()
+            contratos_dict[contrato_id]["owner"] = contrato.owner.serialize() if contrato.owner else None
+            contratos_dict[contrato_id]["asociaciones"] = []
+
+        # Agregamos cada asociación válida (con inquilino)
+        if assoc.tenant and assoc.tenant.role == Role.INQUILINO:
+            contratos_dict[contrato_id]["asociaciones"].append({
+                "assoc_id": assoc.id,
+                "tenant": assoc.tenant.serialize(),
+                "apartment": assoc.apartment.serialize() if assoc.apartment else None,
+                "contract": contrato.serialize()
+            })
+
+    return jsonify(list(contratos_dict.values())), 200

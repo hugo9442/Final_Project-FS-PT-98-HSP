@@ -11,14 +11,14 @@ const Navbar = () => {
 		}}
 		>
 
-			<a href="/PropietarioIndex" className="ms-5">
+		{/*<a href="/PropietarioIndex" className="ms-5">
 				<img
 					src="src/front/assets/img/LogoTrabajoFinal.png"
 					alt="Logo"
 					className="navbar-brand"
 					style={{ width: "70px", height: "70px" }}
 				/>
-			</a>
+			</a>*/}
 
 			<div className="d-flex gap-3">
 				<Link to="/PropietarioIndex" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
