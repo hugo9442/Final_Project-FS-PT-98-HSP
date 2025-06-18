@@ -1,6 +1,6 @@
 import React from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { apartments } from "../fecht_apartment.js";
+//import { apartments } from "../fecht_apartment.js";
 import { Asociations } from "../fetch_asociations.js";
 import { contracts } from "../fecht_contract.js";
 import { useState } from "react";
@@ -90,7 +90,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
         } else {
             setIsLoading(true); // Activar spinner al iniciar la acción
             try {
-                await handleCreatenant();;
+                await handleCreatenant();
             } catch (error) {
                 console.error("Error en Crent:", error);
             } finally {

@@ -147,7 +147,7 @@ const Alquileres = () => {
                   <div className="text-center p-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div><p className="mt-3">Cargando contratos...</p></div>
                 ) : error ? (
                   <div className="alert alert-danger text-center p-3">{error}</div>
-                ) : store.contracts && store.contracts.length > 0 ? (
+                ) : store.asociation && store.asociation.length > 0 ? (
                   <div className="row row-cols-1 row-cols-md-3  row-cols-lg-3 g-3">
                     {store.asociation.map((item) => {
 
@@ -183,7 +183,7 @@ const Alquileres = () => {
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
                               </p>
                               <p className="card-text mb-1">
-                                <strong>Direccion:</strong> {item.asociaciones[0].apartment.address}, <strong>CP:</strong> {item.asociaciones[0].apartment?.postal_code}, <strong>Ciudad:</strong> {item.asociaciones[0].apartment?.city}
+                                <strong>Direccion:</strong> {item.asociaciones[0].apartment?.address}, <strong>CP:</strong> {item.asociaciones[0].apartment?.postal_code}, <strong>Ciudad:</strong> {item.asociaciones[0].apartment?.city}
                               </p>
                               <p className="card-text mb-3">
                                 <strong>Documento:</strong> {splitDocument}
@@ -229,7 +229,7 @@ const Alquileres = () => {
                   <div className="text-center p-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div><p className="mt-3">Cargando contratos...</p></div>
                 ) : error ? (
                   <div className="alert alert-danger text-center p-3">{error}</div>
-                ) : store.contracts && store.contracts.length > 0 ? (
+                ) : store.asociation && store.asociation.length > 0 ? (
                   <div className="row row-cols-1 row-cols-md-2 row-cols-3 row-cols-lg-2 g-3">
                     {store.asociation.map((item) => {
 
@@ -264,7 +264,7 @@ const Alquileres = () => {
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
                               </p>
                               <p className="card-text mb-1">
-                                <strong>Direccion:</strong> {item.asociaciones[0].apartment.address}, <strong>CP:</strong> {item.asociaciones[0].apartment?.postal_code}, <strong>Ciudad:</strong> {item.asociaciones[0].apartment?.city}
+                                <strong>Direccion:</strong> {item.asociaciones[0].apartment?.address}, <strong>CP:</strong> {item.asociaciones[0].apartment?.postal_code}, <strong>Ciudad:</strong> {item.asociaciones[0].apartment?.city}
                               </p>
                               <p className="card-text mb-3">
                                 <strong>Documento:</strong> {splitDocument}

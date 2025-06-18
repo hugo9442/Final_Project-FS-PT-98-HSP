@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 const Incidencias = () => {
   const { store, dispatch } = useGlobalReducer();
   const [itpartment, setItapartment] = useState()
+
+  
   const fetchApartments = async () => {
     try {
 

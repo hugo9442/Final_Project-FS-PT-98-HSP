@@ -55,7 +55,7 @@ const NewApartmentForm = ({ onSuccess, onCancel }) => {
         <input type="text" className="form-control" id="city" onChange={(e) => dispatch({ type: "city", value: e.target.value })} />
       </div>
       <div className="mb-3">
-        <label htmlFor="parking_slot" className="form-label">Cochera</label>
+        <label htmlFor="parking_slot" className="form-label">Plaza de Garage</label>
         <input type="text" className="form-control" id="parking_slot" onChange={(e) => dispatch({ type: "parking_slot", value: e.target.value })} />
       </div>
       <button className="btn btn-success me-2" onClick={handleCreateApartment}>Guardar</button>

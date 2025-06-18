@@ -5,9 +5,10 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
 import { differenceInDays } from 'date-fns';
 import { Asociations } from "../fetch_asociations.js";
-import { contracts } from "../fecht_contract.js";
 import { object } from "prop-types";
 import NewTenantContractForm from "../components/NewTenantContractForm.jsx";
+
+
 const Inquilinos = () => {
   const [itemcontract, setItemcontract] = useState()
   const [itpartment, setItapartment] = useState()
@@ -46,11 +47,12 @@ const Inquilinos = () => {
     } catch (error) {
     }
   };
-
-  useEffect(() => {
-
+useEffect(() => {
+  if (store.todos?.id && store.token) {
     fetchData();
-  }, []);
+  }
+}, [store.todos, store.token])
+ 
 
   const handleCreateRent = async () => {
     try {
@@ -199,7 +201,6 @@ const Inquilinos = () => {
                     <NewTenantContractForm
                       onSuccess={() => {
                         setShowForm(false);
-                        fetchApartments();
                         setShowbotton(true);
                       }}
                       onCancel={() => {setShowForm(false), setShowbotton(true)}}

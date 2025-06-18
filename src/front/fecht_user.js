@@ -311,7 +311,7 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
              "role":"INQUILINO"
            
         };
-        console.log(user)
+       
         try {
             const request = await fetch(`${Url}/create/tenant`, {
                 method: "POST",
@@ -343,8 +343,7 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
              "role":"INQUILINO"
            
         };
-        console.log(tenantData)
-        console.log(token)
+      
         try {
             const request = await fetch(`${Url}/register-tenant-initiate`, {
                 method: "POST",
