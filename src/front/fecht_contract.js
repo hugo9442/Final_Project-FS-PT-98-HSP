@@ -3,7 +3,7 @@ const Url =
 
 export const contracts = {
   create_contract: async (start, end, document, owner_id, token) => {
-    console.log("Subiendo contrato a Cloudflare R2...");
+    
 
     if (!document || !document.name.toLowerCase().endsWith(".pdf")) {
       console.error("Error: Solo se permiten archivos PDF");
@@ -50,6 +50,23 @@ export const contracts = {
       return error;
     }
   },
+   getAssocByApertmentId: async (id,token) => {
+        try {
+            const request = await fetch(`${Url}/by_apartment/${id}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const response = await request.json();
+            console.log(response)
+            return response;
+        } catch (error) {
+            console.error("Error al Obtener Incidencias y Actuaciones:", error);
+            return { error: "Error al conectar con la API" };
+        }
+    },
   downloadcontract: async (id, token) => {
     try {
       const request = await fetch(`${Url}/download/${id}`, {

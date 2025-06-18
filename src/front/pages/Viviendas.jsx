@@ -4,29 +4,33 @@ import { users } from "../fecht_user.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import MenuLateral from "../components/MenuLateral";
 import { useState, useEffect } from "react";
-
+import NewApartmentForm from "../components/NewApartmentForm.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Viviendas = () => {
-
+  const [showForm, setShowForm] = useState(false);
   const { store, dispatch } = useGlobalReducer();
+  const [item, setItem] = useState()
+  const navigate=useNavigate()
 
-    const [item, setItem] = useState()
+
   
-    const fetchApartments = async () => {
-      try {
-  
-        const data = await users.getUserApartments(store.todos.id, store.token);
-        if (data.msg==="ok") {
-          dispatch({ type: "add_apartments", value: data.apartments });
-        }
-      } catch (error) {
-        
+
+  const fetchApartments = async () => {
+    try {
+
+      const data = await users.getUserApartments(store.todos.id, store.token);
+      if (data.msg === "ok") {
+        dispatch({ type: "add_apartments", value: data.apartments });
       }
-    };
-     
- useEffect(()=>{
-   fetchApartments()
- }, [])
+    } catch (error) {
+
+    }
+  };
+
+  useEffect(() => {
+    fetchApartments()
+  }, [])
 
 
 
@@ -65,129 +69,66 @@ const Viviendas = () => {
       return error;
     }
   };
+  
 
   const Capratment = async () => {
     await handleCreatapartment();
   };
+  const getDaysBadgeClass = (alquilado) => {
+    if (alquilado==="Pendiente de Alquilar"){ return 'bg-danger text-white'};
+    if (alquilado==="Alquilado") {return 'bg-info text-black'};
+    return 'bg-success text-white';
+  };
+ 
 
-  console.log(store)
 
   return (
     <>
       <div className="container-fluid mt-4">
         <div className="row">
-          {/* Menú lateral */}
-          <MenuLateral setActiveOption={() => { }} />
-
-          {/* Contenido principal */}
+         
           <div className="col-md-9">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Viviendas</h2>
               <p>
                 Aquí puedes visualizar, cargar o gestionar viviendas activas.
               </p>
-              <div className="map" style={{ display: `${store.vista}` }}>
+              <div className="map">
                 <ul className="list-group">
                   {
                     store && store.apartments.map((item) => {
+                       
                       const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       return (
                         <li
                           key={item.id}
-                          className="list-group-item d-flex justify-content-between">
-                          <div className="contratitem">
-                            <p><strong>Dirección:</strong> {item.address}, <strong>CP:</strong> {item.postal_code},  <strong>Ciudad:</strong> {item.city}, <strong>Parking:</strong> {item.parking_slot}, <strong>Estado:</strong> {alquilado}</p>
-                            
+                          className="list-group-item d-flex justify-content-between" >
+                           
+                          <div className="contratitem" onClick={()=>{navigate('/Viviendasassoc/'+item.id)}}  style={{ cursor: "pointer" }}>
+                            <p><strong>Dirección:</strong> {item.address}, <strong>CP:</strong> {item.postal_code}, <strong>Ciudad:</strong> {item.city}, <strong>Parking:</strong> {item.parking_slot},    <span className={`badge ${getDaysBadgeClass(alquilado)}`}>{alquilado}</span> </p> 
+                           
                           </div>
-                          
+
                         </li>
                       );
                     })}{(!store.apartments || store.apartments.length === 0) && (
                       <h1>Todavía no has registrado ninguna vivienda</h1>
                     )}
                 </ul>
-                <button className="btn btn-success mt-2"
-                  onClick={(e) => {
-                    dispatch({
-                      type: "vista",
-                      value: "none",
-                    })
-                    dispatch({
-                      type: "vista2",
-                      value: "",
-                    })
-                    
-                  }}>Añadir Vivienda</button>
+                {showForm && (
+                  <NewApartmentForm
+                    onSuccess={() => {
+                      setShowForm(false);
+                      fetchApartments();
+                    }}
+                    onCancel={() => setShowForm(false)}
+                  />
+                )}
+                <button className="btn btn-success mt-2" onClick={() => setShowForm(true)}>
+                  Añadir Vivienda
+                </button>
+
               </div>
-             <div className="form" style={{ display: `${store.vista2}` }}>
-              <div className="mb-3">
-              <label htmlFor="address" className="form-label">
-                Direccion
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="address"
-                onChange={(e) =>
-                  dispatch({ type: "address", value: e.target.value })
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="postal_code" className="form-label">
-                Codigo Postal
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="postal_code"
-                onChange={(e) =>
-                  dispatch({ type: "postal_code", value: e.target.value })
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="city" className="form-label">
-                Ciudad
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="city"
-                onChange={(e) =>
-                  dispatch({ type: "city", value: e.target.value })
-                }
-              />
-            </div>
-            <div className="mb-3">
-              <label htmlFor="parking_slot" className="form-label">
-                Cochera
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="parking_slot"
-                onChange={(e) =>
-                  dispatch({ type: "parking_slot", value: e.target.value })
-                }
-              />
-            </div>
-            <button className="btn btn-success" onClick={Capratment}>
-              Añadir vivienda
-            </button>
-            <button className="btn btn-success mi-button"
-              onClick={() => {
-                dispatch({
-                  type: "vista",
-                  value: "",
-                })
-                dispatch({
-                  type: "vista2",
-                  value: "none",
-                })
-                fetchApartments()
-              }}>Ver Viviendas</button>
-            </div>
             </div>
           </div>
         </div>

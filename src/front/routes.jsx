@@ -18,29 +18,34 @@ import Inquilinos from "./pages/Inquilinos";
 import Viviendas from "./pages/Viviendas";
 import { PrivateRoutes } from "./pages/Privateroute";
 import Alquileres from "./pages/Alquileres";
+import ViviendasAssoc from "./pages/ViviendasAssoc";
+
+
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
 
+      <Route index element={<Home />} /> {/* Página raíz */}
       <Route path="/acceso" element={<Acceso />} />
       <Route path="/reset-password" element={<Acceso />} />
       <Route path="/forgot-password" element={<Acceso />} />
       <Route path="/set-password" element={<Acceso />} />
-      <Route index element={<Home />} /> {/* Página raíz */}
       <Route path="/servicios" element={<Servicios />} />
       <Route path="/contact" element={<Contact />} />
+
       <Route element={<PrivateRoutes />}>
-      <Route path="/alquileres" element={<Alquileres />} />
-        <Route path="/demo" element={<Demo />} />
-        <Route path="/single/:theId" element={<Single />} />
         <Route path="/propietarioindex" element={<PropietarioIndex />} />
+        <Route path="/Viviendas" element={<Viviendas />} />
+        <Route path="/alquileres" element={<Alquileres />} />
         <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
-        <Route path="/Contrato" element={<Contrato />} />
+        <Route path="/single/:theId" element={<Single />} />
         <Route path="/Incidencias" element={<Incidencias />} />
         <Route path="/Inquilinos" element={<Inquilinos />} />
-        <Route path="/Viviendas" element={<Viviendas />} />
-
+        <Route path="/viviendasassoc/:theId" element={<ViviendasAssoc />} />
+        <Route path="/Contrato" element={<Contrato />} />
       </Route>
+
     </Route>
   ),
   {

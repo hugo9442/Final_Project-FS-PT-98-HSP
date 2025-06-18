@@ -15,7 +15,7 @@ const PropietarioIndex = () => {
   const [totalViviendas, setTotalViviendas] = useState();
   const [totalContratos, setTotalContratos] = useState();
   const [totalIncidencias, setTotalIncidencias] = useState();
-
+console.log(activeOption)
   const { store, dispatch } = useGlobalReducer();
 
   const navigate = useNavigate();
@@ -66,24 +66,19 @@ const PropietarioIndex = () => {
   }, []);
 
   
-  
-console.log(store)
 
-  const renderContent = () => {
-    switch (activeOption) {
-      case "contrato":
-    
-      default:
+
+  const renderContent = () => { };
+  
         return (
-                <div className="text-center w-100"> 
+                <div className="container-fluid mt-4"> 
+                <div className="row">
+      
+          <div className="col-md-9">
+            <div className="p-4 border rounded bg-light">
                     <h2 className="mb-4">Bienvenido, propietario</h2> 
                     <p className="mb-4">Gestiona tu inmueble desde este panel.</p>
 
-                    <div className="d-flex justify-content-center flex-wrap gap-3 mb-5"> 
-                        <button className="btn btn-primary btn-lg">Registra Inquilino</button>
-                        <button className="btn btn-primary btn-lg">Registra Vivienda</button>
-                        <button className="btn btn-primary btn-lg">Registra Incidencia</button>
-                    </div>
 
                     <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5 mx-auto" style={{ maxWidth: '800px' }} data-bs-ride="carousel"> 
                         <div className="carousel-indicators">
@@ -164,12 +159,17 @@ console.log(store)
                             </div>
                         </div>
                     </div>
-                </div>
-            );
-    }
-  };
+ </div>
+ </div>
+</div>
 
-  return (
+                </div>
+               
+            );
+   
+ 
+
+ return (
 
     <div className="container-fluid mt-3 px-3">
       <div className="row">
@@ -181,49 +181,11 @@ console.log(store)
             {renderContent()}
           </div>
 
-          {activeOption === null && (
-            <div className="row mt-4">
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                    <h1 className="display-4">{totalViviendas}</h1>
-                    <p className="lead mb-0">Total de Viviendas</p>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">Gestión completa de tus Viviendas.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                    <h1 className="display-4">{totalContratos}</h1>
-                    <p className="lead mb-0">Total de Contratos Activos</p>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">Consulta y edición de viviendas.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                    <h1 className="display-4">{totalIncidencias}</h1>
-                    <p className="lead mb-0">Total de Incidencias Abiertas</p>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">Revisión de problemas y reportes.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+        
         </div>
       </div>
     </div>
-  );
+  )
 
 
 };

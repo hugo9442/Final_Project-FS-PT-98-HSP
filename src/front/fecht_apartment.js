@@ -1,6 +1,7 @@
 const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/apartments";
 
 export const apartments = {
+
   create_apartment: async (
     address,
     postal_code,
@@ -51,5 +52,23 @@ export const apartments = {
             console.error("Error al obtener la vivienda del inquilino:", error);
             return { error: "Error al conectar con la API" };
         }
-    }
+    },
+    
+    getIssuesActionsByApertmentId: async (id,token) => {
+        try {
+            const request = await fetch(`${Url}/${id}/issues-actions`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const response = await request.json();
+            return response;
+        } catch (error) {
+            console.error("Error al Obtener Incidencias y Actuaciones:", error);
+            return { error: "Error al conectar con la API" };
+        }
+    },
+    
 };
