@@ -35,6 +35,8 @@ export const initialStore = () => {
     tenant: [],
     contracts: [],
     issues: [],
+    singleIssues:[],
+    AssocByApertmentId:[],
     forgotPasswordVisibility: "none",
     resetPasswordVisibility: "none",
     tenantSetPasswordVisibility: "none",
@@ -43,15 +45,20 @@ export const initialStore = () => {
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
-    case "set_hello":
+    case "add_singleIssues":
       return {
         ...store,
-        message: action.payload,
+        singleIssues: action.value,
       };
     case "addcontract":
       return {
         ...store,
         contract: action.value,
+      };
+       case "addAssocByApertmentId":
+      return {
+        ...store,
+        AssocByApertmentId: action.value,
       };
     case "address":
       return {

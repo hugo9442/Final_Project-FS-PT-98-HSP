@@ -1,4 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { 
   faHouseChimney, 
   faFileSignature, 
@@ -17,7 +18,8 @@ library.add(
   faTriangleExclamation, 
   faGaugeHigh, 
   faUser,
-  faRightFromBracket
+  faRightFromBracket,
+  faBars
 );
 
 export const iCons=()=>{
@@ -27,5 +29,6 @@ export const iCons=()=>{
   faTriangleExclamation, 
   faGaugeHigh, 
   faUser,
-  faRightFromBracket
+  faRightFromBracket,
+  faBars
 }

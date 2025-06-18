@@ -266,7 +266,7 @@ const LoginSection = () => {
     }
   };
 
-  console.log(store)
+
   return (
     <div>
       <section

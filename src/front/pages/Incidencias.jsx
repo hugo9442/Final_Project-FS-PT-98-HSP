@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 const Incidencias = () => {
   const { store, dispatch } = useGlobalReducer();
   const [itpartment, setItapartment] = useState()
+
+  
   const fetchApartments = async () => {
     try {
 
@@ -36,9 +38,11 @@ const Incidencias = () => {
 
   };
 
-  useEffect(() => {
-    fetchApartments()
-  }, [])
+useEffect(() => {
+  if (store.todos?.id && store.token) {
+    fetchApartments();
+  }
+}, [store.todos, store.token])
 
 
   const handlesIssues = async () => {
@@ -47,7 +51,7 @@ const Incidencias = () => {
         store.priority, store.type, store.contract_start_date, store.contract_end_date, store.token)
       if (data.msg) {
         swal({ title: "ÉXITO", text: `${data.msg}`, icon: "success" });
-        dispatch({ type: "add_issues", value: data.issues })
+        //dispatch({ type: "add_issues", value: data.issues })
       } else {
         swal({
           title: "ERROR",
@@ -91,13 +95,14 @@ const Incidencias = () => {
     <>
       <div className="container-fluid mt-4">
         <div className="row">
-          {/* Menú lateral */}
-          <MenuLateral setActiveOption={() => { }} />
+          {/* Menú lateral  <MenuLateral setActiveOption={() => { }} />*/}
+         
 
           {/* Contenido principal */}
           <div className="col-md-9">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Incidencias</h2>
+              <h5>Seleccione una Vivienda para añadir una Incidencia</h5>
               <div className="map" style={{ display: `${store.vista}` }}>
                 <ul className="list-group">
                   {
@@ -213,7 +218,7 @@ const Incidencias = () => {
                   onClick={Cissue}><strong>Crear Incidencia</strong></button>
                 <button className="btn btn-success mt-2 mi-button" style={{
                   color: "black",
-                  backgroundColor: 'rgba(138, 223, 251, 0.8)'
+                  backgroundColor: 'rgba(228, 230, 231, 0.8)'
                 }}
                   onClick={(e) => {
                     dispatch({
@@ -224,7 +229,7 @@ const Incidencias = () => {
                       type: "vista2",
                       value: "",
                     })
-                  }}><strong >Volver a Incidencias</strong></button>
+                  }}><strong >Cancelar</strong></button>
               </div>
               <div className="form mt-2" style={{ display: `${store.vista2}`,
                           maxHeight: "600px",
@@ -245,10 +250,9 @@ const Incidencias = () => {
                       return (
                         
                           <li
-                            key={item.apartment_id}
+                            key={item.issue_id}
                             className="list-group-item d-flex  contenedor">
-                            <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input"
-                              type="checkbox" value="" id="checkDefault" onClick={(e) => { setItapartment(item.id) }} /></div>
+                          
                             <div className="contratitem">
                               <p><strong>Dirección: </strong>{item.apartment.address}, <strong>CP:</strong> {item.apartment.postal_code}, <strong>Ciudad:</strong> {item.apartment.city}, <strong>Estado:</strong> {alquilado}</p>
                               <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> {item.status}</p>

@@ -13,7 +13,7 @@ class Apartment(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     address: Mapped[str] = mapped_column(String(255),nullable=False)
-    postal_code: Mapped[str] = mapped_column(Integer, nullable=False)
+    postal_code: Mapped[str] = mapped_column(String(30), nullable=False)
     city: Mapped[str] = mapped_column(String(255), nullable=False)
     parking_slot: Mapped[str] = mapped_column(String(255), nullable=False)
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)

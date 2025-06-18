@@ -1,5 +1,7 @@
 from flask import request, jsonify, Blueprint, current_app, url_for, send_from_directory, abort, send_file
-from api.models import db, Contract
+from api.models import db, Contract, AssocTenantApartmentContract
+from api.models.users import Role
+from sqlalchemy.orm import joinedload
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from datetime import datetime
@@ -202,3 +204,39 @@ def delete_contract(contract_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error in the server"}), 500
+
+@contracts_api.route('/by_apartment/<int:apartment_id>', methods=["GET"])
+@jwt_required()
+def get_contracts_by_apartment(apartment_id):
+    # Buscar asociaciones con joinedload para acceder a tenant, apartment, contract y contract.owner
+    asociaciones = AssocTenantApartmentContract.query.options(
+        joinedload(AssocTenantApartmentContract.contract).joinedload(Contract.owner),
+        joinedload(AssocTenantApartmentContract.tenant),
+        joinedload(AssocTenantApartmentContract.apartment)
+    ).filter_by(apartment_id=apartment_id).all()
+
+    if not asociaciones:
+        return jsonify({"error": "No hay asociaciones para este apartamento"}), 404
+
+    contratos_dict = {}
+
+    for assoc in asociaciones:
+        contrato = assoc.contract
+        contrato_id = contrato.id
+
+        # Si aún no hemos agregado este contrato, lo inicializamos
+        if contrato_id not in contratos_dict:
+            contratos_dict[contrato_id] = contrato.serialize()
+            contratos_dict[contrato_id]["owner"] = contrato.owner.serialize() if contrato.owner else None
+            contratos_dict[contrato_id]["asociaciones"] = []
+
+        # Agregamos cada asociación válida (con inquilino)
+        if assoc.tenant and assoc.tenant.role == Role.INQUILINO:
+            contratos_dict[contrato_id]["asociaciones"].append({
+                "assoc_id": assoc.id,
+                "tenant": assoc.tenant.serialize(),
+                "apartment": assoc.apartment.serialize() if assoc.apartment else None,
+                "contract": contrato.serialize()
+            })
+
+    return jsonify(list(contratos_dict.values())), 200

@@ -17,20 +17,17 @@
 }
 
 .mi-div {
-  width: 0; 
+  width: 0;
   overflow: hidden;
   white-space: nowrap;
-  transition: width 0.5s ease; 
+  transition: width 0.5s ease;
   display: none;
- 
-
 }
 .contratitem {
   display: flex;
-  justify-content:flex-start;
-  align-items:start;
+  justify-content: flex-start;
+  align-items: start;
   transition: margin-left 0.5s ease; /* Animación del margen */
-
 }
 .contenedor:hover .mi-div {
   width: 50px; /* Ancho al expandirse */
@@ -38,46 +35,52 @@
 }
 
 .contenedor:hover .contratitem {
-  margin-left: 10px; 
+  margin-left: 10px;
 }
-.contenedor{
+.contenedor {
   background-color: blue;
 }
-.tenantContracts{
+.tenantContracts {
   justify-content: space-between;
-  display:flex;
-  flex-direction:row
-}
-.mi-button{
-    margin-left: 20px;
+  display: flex;
+  flex-direction: row;
 }
 
+
 .sidebar-private {
-    background-color: rgba(100, 200, 255, 0.9);
+  background-color: rgba(100, 200, 255, 0.9);
 }
 
 .sidebar-private .nav-link {
-    color: rgba(255, 255, 255, 0.85);
-    padding-left: 1.5rem;
+  color: rgba(255, 255, 255, 0.85);
+  padding-left: 1.5rem;
 }
 
 .sidebar-private .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .sidebar-private .nav-link.active-sidebar-link {
-    background-color: rgba(255, 255, 255, 0.35);
-    color: #ffffff;
-    font-weight: bold;
-    box-shadow: inset 3px 0 0 #fff;
+  background-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  font-weight: bold;
+  box-shadow: inset 3px 0 0 #fff;
 }
-.formIncidencia{
- display: flex;
- flex-direction: column;
+.formIncidencia {
+  display: flex;
+  flex-direction: column;
 }
-.formIncidenciadata{
+.formIncidenciadata {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+.mi_alquiler:hover {
+  transform: translateY(
+    -8px
+  ); /* Desplaza la tarjeta ligeramente hacia arriba */
+  filter: drop-shadow(0px 5px 10px #000000);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important; /* Sombra más pronunciada */
+  transition: all 0.3s ease-in-out;
 }

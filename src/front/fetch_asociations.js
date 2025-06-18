@@ -26,6 +26,7 @@ export const Asociations = {
       return error;
     }
   },
+
   updateasociation:async (apartment_id, id, token) => {
     let asociate = {
   "association": {
@@ -38,6 +39,33 @@ export const Asociations = {
   
     try {
       const request = await fetch(`${Url}/update-association-apartment/${id}/${apartment_id}`, {
+        method: "PUT",
+        headers: {
+          "content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(asociate),
+      });
+      const response = await request.json();
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  },
+  updateasociationdeleterent:async ( assoc_id, apartment_id, token) => {
+    let asociate = {
+  "association": {
+    "is_active": false
+  },
+  "apartment": {
+    "is_rent": false
+  }
+}
+  console.log(asociate)
+    try {
+      const request = await fetch(`${Url}/delete-association-apartment/${assoc_id}/${apartment_id}`, {
         method: "PUT",
         headers: {
           "content-Type": "application/json",

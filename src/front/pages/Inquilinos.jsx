@@ -5,14 +5,17 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
 import { differenceInDays } from 'date-fns';
 import { Asociations } from "../fetch_asociations.js";
-import { contracts } from "../fecht_contract.js";
 import { object } from "prop-types";
+import NewTenantContractForm from "../components/NewTenantContractForm.jsx";
+
 
 const Inquilinos = () => {
   const [itemcontract, setItemcontract] = useState()
   const [itpartment, setItapartment] = useState()
   const { store, dispatch } = useGlobalReducer();
-   const [isLoading, setIsLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [showBotton, setShowbotton] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
 
 
@@ -44,11 +47,12 @@ const Inquilinos = () => {
     } catch (error) {
     }
   };
-
-  useEffect(() => {
-
+useEffect(() => {
+  if (store.todos?.id && store.token) {
     fetchData();
-  }, []);
+  }
+}, [store.todos, store.token])
+ 
 
   const handleCreateRent = async () => {
     try {
@@ -79,97 +83,27 @@ const Inquilinos = () => {
   }
 
   const Crent = async () => {
-    setIsLoading(true); // Activar spinner al iniciar la acción
+    if (itemcontract && itemcontract){
+     setIsLoading(true); // Activar spinner al iniciar la acción
     try {
       await handleCreateRent();
     } catch (error) {
       console.error("Error en Crent:", error);
     } finally {
       setIsLoading(false); // Desactivar spinner cuando termine (éxito o error)
-    }
-  };
-
-  const handleCreatenant = async () => {
-    let createdTenantId = null;
-    let createdContractId = null;
-
-    try {
-      // Paso 1: Crear inquilino
-      const tenantResult = await users.sendTenantInvite(
-        store.firstname,
-        store.lastname,
-        store.email,
-        store.phone,
-        store.national_id,
-        store.aacc,
-        store.token
-      );
-
-      if (tenantResult.error) throw new Error(tenantResult.error);
-      createdTenantId = tenantResult.tenant.id;
-      await dispatch({ type: "add_tenant", value: tenantResult.tenant });
-
-      // Paso 2: Crear contrato
-      const contractResult = await contracts.create_contract(
-        store.contract_start_date,
-        store.contract_end_date,
-        store.contract,
-        store.todos.id,
-        store.token
-      );
-
-      if (contractResult.error) throw new Error(contractResult.error);
-      createdContractId = contractResult.contract.id;
-      await dispatch({ type: "add_contracts", value: contractResult.contract });
-
-      // Paso 3: Crear asociación
-      const asociationResult = await Asociations.createAsociation(
-        createdTenantId,
-        createdContractId,
-        store.token
-      );
-
-      if (asociationResult.error) throw new Error(asociationResult.error);
-
-      const asociationload = await users.get_asociation(
-        store.todos.id,
-        store.token
-      );
-
-      if (asociationload.error) throw new Error(asociationload.error);
-
-      await dispatch({ type: "add_asociation", value: asociationload });
-      swal({ title: "ÉXITO", text: "Operaciones completadas", icon: "success" });
-
-    } catch (error) {
-      // 🔁 ROLLBACK
-      if (createdContractId) {
-        await contracts.delete_contract(createdContractId, store.token).catch(() => { });
-      }
-      if (createdTenantId) {
-        await users.delete_tenant(createdTenantId, store.token).catch(() => { });
-      }
-
-      swal({ title: "ERROR", text: error.message, icon: "error" });
-    }
-  };
-
-
-  const Ctenant = async () => {
-    if (store.firstname === "" || store.lastname === "" || store.email === "" || store.phone === "" || store.national_id === "" || store.aacc === ""
-      || store.contract_start_date === "" || store.contract_end_date === "" || store.contract === "") {
-      swal({
+    }  
+    }else {
+       swal({
         title: "ERROR",
-        text: "No puede haber ningún campo vacio",
-        icon: "warning",
+        text: "Hay que seleccionar una vivienda y un contrato para crear un alquiler",
+        icon: "error",
         buttons: true,
+        dangerMode: true,
       });
-    } else {
-      await
-        handleCreatenant();
     }
-
+   
   };
+
 
   console.log(store)
   return (
@@ -178,206 +112,20 @@ const Inquilinos = () => {
 
       <div className="container-fluid mt-4">
         <div className="row">
-          {/* Menú lateral */}
-          <MenuLateral setActiveOption={() => { }} />
-
-          {/* Contenido principal */}
           <div className="col-md-9">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Inquilinos</h2>
               <p>Aquí puedes visualizar, cargar o gestionar inquilinos activos.</p>
-              <div className="tenantContracts" style={{ display: `${store.vista2}` }}>
-                <div className="map" >
-                  <div className="form-outline mb-1 " >
-                    <label
-                      className="form-label"
-                      htmlFor="firsth"
-                    >
-                      "First name"
-                    </label>
-                    <input
-                      style={{ height: "10px" }}
-                      type="text"
-                      id="firsth"
-                      className="form-control form-control-lg"
-                      onChange={(e) =>
-                        dispatch({
-                          type: "addFirtsname",
-                          value: e.target.value,
-                        })
-                      }
-                    />
 
+              <div className="map" >
+                {isLoading && (
+                  <div className="text-center p-5">
+                    <div className="spinner-border text-primary" role="status"> 
+                      <span className="visually-hidden">Cargando...</span>
+                    </div>
+                    <p className="mt-3">Cargando contratos...</p>
                   </div>
-
-                  <div className="form-outline mb-1">
-                    <label
-                      className="form-label"
-                      htmlFor="lasth"
-                    >
-                      "Last name"
-                    </label>
-                    <input
-
-                      type="text"
-                      id="lasth"
-                      className="form-control form-control-lg"
-                      onChange={(e) =>
-                        dispatch({
-                          type: "addLastname",
-                          value: e.target.value,
-                        })
-                      }
-                    />
-
-                  </div>
-
-                  <div className="form-outline mb-1">
-                    <label
-                      className="emailh"
-                      htmlFor="form2Example3"
-                    >
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="emailh"
-                      className="form-control form-control-lg"
-                      onChange={(e) =>
-                        dispatch({
-                          type: "addEmail",
-                          value: e.target.value,
-                        })
-                      }
-                    />
-
-                  </div>
-
-
-                  <div className="form-outline mb-1">
-                    <label
-                      className="form-label"
-                      htmlFor="phoneh"
-                    >
-                      Telefono
-                    </label>
-                    <input
-                      type="text"
-                      id="phoneh"
-                      className="form-control form-control-lg"
-                      onChange={(e) =>
-                        dispatch({
-                          type: "addPhone",
-                          value: e.target.value,
-                        })
-                      }
-                    />
-
-                  </div>
-
-                  <div className="form-outline mb-1">
-                    <label
-                      className="form-label"
-                      htmlFor="nidh"
-                    >
-                      "DNI"
-                    </label>
-                    <input
-                      type="text"
-                      id="nidh"
-                      className="form-control form-control-lg"
-                      onChange={(e) =>
-                        dispatch({
-                          type: "addNid",
-                          value: e.target.value,
-                        })
-                      }
-                    />
-
-                  </div>
-
-                  <div className="form-outline mb-1">
-                    <label
-                      className="form-label"
-                      htmlFor="aacch"
-                    >
-                      "Account Number"
-                    </label>
-                    <input
-                      type="text"
-                      id="aacch"
-                      className="form-control form-control-lg"
-                      onChange={(e) => dispatch({ type: "Aaccadd", value: e.target.value })}
-
-                    />
-
-                  </div>
-                  <button className="btn btn-info" onClick={Ctenant}>
-                    Añadir Inqulino
-                  </button>
-                  <button className="btn btn-info mi-button"
-                    onClick={() => {
-                      dispatch({
-                        type: "vista",
-                        value: "",
-                      })
-                      dispatch({
-                        type: "vista2",
-                        value: "none",
-                      })
-                      fetchData()
-                    }}>Registra el Alquiler</button>
-                </div>
-                <div className="form" >
-                  <div className="mb-3">
-                    <label htmlFor="start_day" className="form-label">
-                      Fecha de inicio
-                    </label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="start_day"
-                      onChange={(e) =>
-                        dispatch({ type: "addstart_date", value: e.target.value })}
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="start_day" className="form-label">
-                      Fecha de Fin
-                    </label>
-                    <input
-                      type="date"
-                      className="form-control"
-                      id="end_day"
-                      onChange={(e) =>
-                        dispatch({ type: "addend_date", value: e.target.value })}
-                    />
-                  </div>
-
-                  <div className="mb-3">
-                    <label htmlFor="pdfUpload" className="form-label">
-                      Sube tu contrato en PDF
-                    </label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      id="pdfUpload"
-                      accept="application/pdf"
-                      onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })}
-                    />
-                  </div>
-
-                </div>
-              </div>
-              <div className="map" style={{ display: `${store.vista}` }}>
-                 {isLoading && (
-        <div className="text-center p-5">
-          <div className="spinner-border text-primary" role="status">
-            <span className="visually-hidden">Cargando...</span>
-          </div>
-          <p className="mt-3">Cargando contratos...</p>
-        </div>
-      )}
+                )}
 
                 <div className="map" >
                   <h3>CONTRATOS PENDIENTES DE ASIGNAR VIVIENDA</h3>
@@ -399,7 +147,7 @@ const Inquilinos = () => {
                           return (
                             <li
                               key={item.asociaciones[0].assoc_id}
-                              className="list-group-item d-flex justify-content-between contenedor"
+                              className="list-group-item d-flex  contenedor"
                             >
                               <div className="mi-div p-3 mb-2 bg-info text-dark">
                                 <input
@@ -418,16 +166,14 @@ const Inquilinos = () => {
                             </li>
                           );
                         }
-                        return null; // Skip rendering if no matching asociaciones
+                        return null; 
                       })
-                      // Filter out null entries from the map
                       .filter(Boolean)
                     }
 
-                    {/* Fallback message if no items found */}
                     {store && store.asociation.every(item =>
                       item.asociaciones.every(asoc => asoc.apartment !== null)
-                    ) && <h3>No Disponemos de inquilinos sin vivienda asignada</h3>}
+                    ) && <h3>No disponemos de inquilinos sin vivienda asignada</h3>}
                   </ul>
 
                 </div>
@@ -439,7 +185,7 @@ const Inquilinos = () => {
                       return (
                         <li
                           key={item.id}
-                          className="list-group-item d-flex justify-content-between contenedor">
+                          className="list-group-item d-flex contenedor">
                           <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input" type="checkbox" value=""
                             id="checkDefault" onClick={(e) => { setItapartment(item.id) }} /></div>
                           <div className="contratitem">
@@ -451,29 +197,30 @@ const Inquilinos = () => {
                       <h3>Todas las viviendas están alquiladas</h3>
                     )}
                   </ul>
-
+                  {showForm && (
+                    <NewTenantContractForm
+                      onSuccess={() => {
+                        setShowForm(false);
+                        setShowbotton(true);
+                      }}
+                      onCancel={() => {setShowForm(false), setShowbotton(true)}}
+                    />
+                  )}
                 </div>
-
-                <button className="btn btn-info mt-2" onClick={Crent}>Crear Alquiler</button>
-                <button className="btn btn-info mt-2 mi-button"
-                  onClick={() => {
-                    dispatch({
-                      type: "vista",
-                      value: "none",
-                    })
-                    dispatch({
-                      type: "vista2",
-                      value: "",
-                    })
-                  }}>volver</button>
+                {showBotton &&( 
+                 
+                  <button className="btn btn-success mt-2" 
+                  onClick={() => {setShowForm(true),setShowbotton(false)}}>Añadir Inquilino y Contrato</button>
+                  
+                )}
+                <button className="btn btn-success mt-2"
+                style={{ marginLeft: "10px", display: showBotton ? "inline-block" : "none" }}
+                onClick={Crent}>Crear Alquiler</button> 
               </div>
             </div>
-
           </div>
         </div>
-
       </div>
-
     </>
   );
 };

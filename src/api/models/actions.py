@@ -18,8 +18,8 @@ class Action(db.Model):
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     description: Mapped[str] = mapped_column(String(350), nullable=False)
     contractor: Mapped[str] = mapped_column(String(255), nullable=False)
-    bill_amount: Mapped[int] = mapped_column(Integer, nullable=False)
-    bill_image: Mapped[str] = mapped_column(String(255), nullable=False)
+    bill_amount: Mapped[int] = mapped_column(Integer, nullable=True)
+    bill_image: Mapped[str] = mapped_column(String(255), nullable=True)
     issue_id: Mapped[int] = mapped_column(ForeignKey('issues.id'), nullable=False)
     issue: Mapped ['Issue'] = relationship(
          back_populates='actions'
@@ -27,8 +27,8 @@ class Action(db.Model):
 
     def serialize(self):
         return {
-            "action_id": self.action_id,
-            "issue_id": self.id,
+            "action_id": self.id,
+            "issue_id": self.issue_id,
             "status": self.status,
             "action_name": self.action_name,
             "start_date": self.start_date,

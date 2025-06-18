@@ -161,7 +161,7 @@ const Contrato = () => {
                       const diffDays = differenceInDays(contractEndDateObj, today);
                       
                       return (
-                        <div className="col" key={item.id}>
+                        <div className="col" key={item.id} >
                           <div className="card h-100 shadow-sm border">
                             <div className="card-body d-flex flex-column">
                               <div className="d-flex justify-content-between align-items-center mb-2">

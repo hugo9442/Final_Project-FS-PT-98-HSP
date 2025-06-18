@@ -287,6 +287,7 @@ def get_contracts_by_owner(user_id):
             if assoc.tenant and assoc.tenant.role == Role.INQUILINO:
                 asociaciones.append({
                     "assoc_id": assoc.id,
+                    "is_active":assoc.is_active,
                     "tenant": assoc.tenant.serialize(),
                     "apartment": assoc.apartment.serialize() if assoc.apartment else None,
                     "contract": assoc.contract.serialize()
