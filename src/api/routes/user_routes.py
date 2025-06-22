@@ -96,7 +96,7 @@ def create_user():
         phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
-        role=data_request["role"]
+        role=Role.PROPIETARIO
     )
 
     try:
@@ -163,7 +163,7 @@ def create_tenant():
         phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
-        role=data_request["role"]
+        role=Role.INQUILINO
     )
 
     try:
@@ -485,7 +485,7 @@ def register_tenant_initiate():
         )
 
         frontend_url = current_app.config.get("FRONTEND_URL")
-        setup_password_link = f"{frontend_url}/set-password?token={setup_password_token}"
+        setup_password_link = f"{frontend_url}set-password?token={setup_password_token}"
 
         html_body = render_template('tenant_welcome_email.html',
                                     first_name=new_tenant.first_name,

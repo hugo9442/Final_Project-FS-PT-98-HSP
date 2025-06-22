@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .users import User
     from .assoc_tenants_apartments_contracts import AssocTenantApartmentContract
     from .issues import Issue
+    from .documents import Document
 
 class Apartment(db.Model):
     __tablename__ = 'apartments'
@@ -27,6 +28,9 @@ class Apartment(db.Model):
     association: Mapped[List["AssocTenantApartmentContract"]] = relationship(
          back_populates='apartment'
     )
+    documents:Mapped[List['Document']] = relationship(
+        back_populates='apartment'
+    )
 
 
     def serialize(self):
@@ -44,5 +48,6 @@ class Apartment(db.Model):
         data = self.serialize()
         data['owner'] = self.owner.serialize() if self.owner else None
         data['issues'] = [issue.serialize() for issue in self.issues]
-        data['contracts'] = [assoc.serialize() for assoc in self.association]  
+        data['contracts'] = [assoc.serialize() for assoc in self.association]
+        data['documents'] = [document.serialize() for document in self.documents]
         return data

@@ -1,4 +1,4 @@
-const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/users"
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users"
 
   export const users = {
 
@@ -10,9 +10,8 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
              "password": `${pass}`,
              "phone":`${phone}`,
              "national_id":`${national_id}`,
-             "account_number":`${aacc}`,
-             "role":"PROPIETARIO"
-           
+             "account_number":`${aacc}`
+             
         };
         
         console.log(user)
@@ -43,8 +42,8 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
              "password": `${pass}`,
              "phone":`${phone}`,
              "national_id":`${national_id}`,
-             "account_number":`${aacc}`,
-             "role":"INQUILINO"
+             "account_number":`${aacc}`
+             
            
         };
         console.log(user)
@@ -299,38 +298,7 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
             return { message: "Error de conexión. Intenta más tarde.", success: false };
         }
     },
-    createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc, token) => {
-        let user = {
-             "first_name":`${firstname}`,
-             "last_name":`${lastname}`,
-             "email": `${email}`, 
-             "password": `${pass}`,
-             "phone":`$ {phone}`,
-             "national_id":`${national_id}`,
-             "account_number":`${aacc}`,
-             "role":"INQUILINO"
-           
-        };
-       
-        try {
-            const request = await fetch(`${Url}/create/tenant`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer  ${token}`
-                },
-                
-                body: JSON.stringify(user)
-            })
-            const response = await request.json();
-            console.log(response)
-            return response
-        } catch (error) {
-            console.log(error)
-            return error
-
-        }
-    },
+ 
 
     sendTenantInvite: async (firstname, lastname, email, phone, national_id, aacc, token) => {
          let tenantData= {
@@ -339,9 +307,7 @@ const Url = "https://miniature-sniffle-7vpgxp6x9g5vfwx97-3001.app.github.dev/use
              "email": `${email}`, 
              "phone":`${phone}`,
              "national_id":`${national_id}`,
-             "account_number":`${aacc}`,
-             "role":"INQUILINO"
-           
+             "account_number":`${aacc}`
         };
       
         try {

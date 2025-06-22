@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
 from api.models import db
-from api.routes import apartments_api, users_api, contracts_api, issues_api, actions_api, asociates_api
+from api.routes import apartments_api, users_api, contracts_api, issues_api, actions_api, asociates_api, documents_api
 from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
@@ -40,8 +40,7 @@ app.url_map.strict_slashes = False
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace(
-        "postgres://", "postgresql://")
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 
@@ -77,7 +76,7 @@ app.register_blueprint(contracts_api)
 app.register_blueprint(issues_api)
 app.register_blueprint(actions_api)
 app.register_blueprint(asociates_api)
-
+app.register_blueprint(documents_api)
 
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER') 
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))

@@ -67,9 +67,7 @@ const LoginSection = () => {
           buttons: true,
           dangerMode: true,
         });
-        if(store.todos.role==="inquilino"){
 
-        }
       }
       if (data.error) {
         swal({
