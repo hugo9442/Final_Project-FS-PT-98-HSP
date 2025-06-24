@@ -29,7 +29,7 @@ const ViviendasAssoc = () => {
 
       const data = await contracts.getAssocByApertmentId(parseInt(theId), store.token);
 
-      await dispatch({ type: "addAssocByApertmentId", value: data });
+       dispatch({ type: "addAssocByApertmentId", value: data });
 
     } catch (error) {
     }
@@ -46,7 +46,7 @@ const ViviendasAssoc = () => {
   };
 
   useEffect(() => {
-    console.log("useEffect ejecutado");
+
     if (theId && store.token) {
       fetchData();
     }
@@ -84,7 +84,7 @@ const ViviendasAssoc = () => {
     year: "numeric"
   }) : 'Fecha no Disponible'
   const splitDocument = store.AssocByApertmentId[0].document ? store.AssocByApertmentId[0].document.split("/").pop() : 'Sin documento';
-  console.log(splitDocument)
+
   const today = new Date();
   const contractEndDateObj = new Date(store.AssocByApertmentId[0].end_date);
   const diffDays = differenceInDays(contractEndDateObj, today);
@@ -108,7 +108,7 @@ const ViviendasAssoc = () => {
     return 'bg-success text-white';
   };
 
-  console.log("ok")
+
   return (
     <>
       <div className="container-fluid mt-4">
@@ -117,7 +117,7 @@ const ViviendasAssoc = () => {
           <div className="p-4 border rounded bg-light">
             <h2 className="mb-3">Datos de la Vivienda:</h2>
             <li className="list-group-item d-flex justify-content-between" >
-              <div className="contratitem" style={{ cursor: "pointer" }}>
+              <div className="contratitem" style={{textTransform:"capitalize"}}>
                 <p><strong>Dirección:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.address}, <strong>CP:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.postal_code}, <strong>Ciudad:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.city}, <strong>Parking:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.parking_slot},    <span className={`badge ${getalquilado(alquilado)}`}>{alquilado}</span> </p>
               </div>
 

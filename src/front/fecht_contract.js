@@ -123,5 +123,24 @@ export const contracts = {
             console.error("Error al obtener el contrato del inquilino:", error);
             return { error: "Error al conectar con la API" };
         }
-    }
+    },
+     get_asociationbyTenantId: async (id, token) => {
+        
+        try {
+            const request = await fetch(`${Url}/${id}/contracts/assoc/tenant`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+  
 };

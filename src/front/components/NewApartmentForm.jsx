@@ -41,7 +41,7 @@ const NewApartmentForm = ({ onSuccess, onCancel }) => {
   };
 
   return (
-    <div className="form">
+    <div className="form" style={{textTransform:"capitalize"}}>
       <div className="mb-3">
         <label htmlFor="address" className="form-label">Dirección</label>
         <input type="text" className="form-control" id="address" onChange={(e) => dispatch({ type: "address", value: e.target.value })} />

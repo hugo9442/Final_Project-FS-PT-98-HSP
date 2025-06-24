@@ -114,7 +114,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
                     </div>
                 )}
 
-                <div className="col-md-6">
+                <div className="col-md-6" style={{textTransform:"capitalize"}}>
                     <input type="text" id="firsth" placeholder="Nombre" className="form-control mb-2" 
                         onChange={(e) => dispatch({type: "addFirtsname", value: e.target.value,})} required />
                     <input type="text" id="lasth" placeholder="Apellidos" className="form-control mb-2"
@@ -124,11 +124,11 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
                 </div>
                 <div className="col-md-6">
                         <input type="email" id="emailh" placeholder="Email" className="form-control mb-2"
-                            onChange={(e) => dispatch({ type: "addEmail", value: e.target.value, })}required /> 
+                            onChange={(e) => dispatch({ type: "addEmail", value: e.target.value, })} required /> 
                         <input type="text" id="phoneh" placeholder="Teléfono" className="form-control mb-2 "
-                            onChange={(e) => dispatch({ type: "addPhone", value: e.target.value, })}required /> 
+                            onChange={(e) => dispatch({ type: "addPhone", value: e.target.value, })} required /> 
                         <input type="text" id="aacch" placeholder="Número de Cuenta" className="form-control mb-2"
-                            onChange={(e) => dispatch({ type: "Aaccadd", value: e.target.value })} /> 
+                            onChange={(e) => dispatch({ type: "Aaccadd", value: e.target.value })} required  /> 
                 </div>
             </div>
             <div className="form" >
@@ -136,19 +136,19 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
                 <div className="row">
                 <div className="col-md-6">
                 <div className="mb-3">
-                    <label htmlFor="start_day" className="form-label">Fecha de inicio </label>
+                    <label htmlFor="start_date" className="form-label">Fecha de inicio </label>
                     <input type="date" className="form-control" id="start_day"
-                        onChange={(e) => dispatch({ type: "addstart_date", value: e.target.value })} /> </div></div>
+                        onChange={(e) => dispatch({ type: "addstart_date", value: e.target.value })} required /> </div></div>
                         <div className="col-md-6">
                 <div className="mb-3">
-                    <label htmlFor="start_day" className="form-label"> Fecha de Fin </label>
+                    <label htmlFor="end_date" className="form-label"> Fecha de Fin </label>
                     <input type="date" className="form-control" id="end_day"
-                        onChange={(e) => dispatch({ type: "addend_date", value: e.target.value })} /> </div></div>
+                        onChange={(e) => dispatch({ type: "addend_date", value: e.target.value })} required /> </div></div>
                         <div className="col-md-12">
                 <div className="mb-3">
                     <label htmlFor="pdfUpload" className="form-label">Sube tu contrato en PDF </label>
                     <input type="file" className="form-control" id="pdfUpload" accept="application/pdf"
-                        onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })} /></div ></div>
+                        onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })} required/></div ></div>
 
                
                 </div>

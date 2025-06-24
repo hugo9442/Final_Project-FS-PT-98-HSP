@@ -25,7 +25,7 @@ const Navbar = () => {
             style={{
                 backgroundColor: "rgba(138, 223, 251, 0.8)",
                 boxShadow: "0 3px 25px rgba(0, 0, 0, 0.3)",
-                borderRadius: "13px",
+            
             }}
         >
             <div className="container-fluid">

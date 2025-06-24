@@ -3,153 +3,118 @@ import { useNavigate, Link, useLocation } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { differenceInDays } from 'date-fns';
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { apartments } from "../fecht_apartment.js"; 
-import { contracts } from "../fecht_contract.js";   
-import { Issues } from "../fecht_issues.js"; 
+import { contracts } from "../fecht_contract.js";
+import NewFormIssues from "../components/NewIssuesForm.jsx";
 
-const InquilinoIndex = () => { 
-    const [miViviendaInfo, setMiViviendaInfo] = useState(null);
-    const [miContratoInfo, setMiContratoInfo] = useState(null);
-    const [misIncidencias, setMisIncidencias] = useState([]);
+const InquilinoIndex = () => {
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);     
-
-    const { store } = useGlobalReducer();
+    const [error, setError] = useState(null);
+    const [showForm, setShowForm] = useState(false);
+    
+    const { store, dispatch } = useGlobalReducer();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const navItems = [
-        { "name": "Inicio", "path": "/inquilinoindex", "icon": "gauge-high" }, 
-        { "name": "Mi Vivienda", "path": "/inquilinoindex", "icon": "house-chimney" },
-        { "name": "Mi Contrato", "path": "/inquilinoindex", "icon": "file-signature" },
-        { "name": "Mis Incidencias", "path": "/inquilinoindex", "icon": "triangle-exclamation" },
-        { "name": "Perfil", "path": "/inquilinoindex", "icon": "user" },
-        { "name": "Salir", "path": "/acceso", "icon": "right-from-bracket" }
-    ];
+  
 
+    const fetchInquilinoData = async () => {
+        setLoading(true)
+        setError(null)
+
+        try {
+            const data = await contracts.get_asociationbyTenantId(store.todos.id, store.token);
+            console.log("Asociaciones recibidas:", data);
+            dispatch({ type: "addAssocByApertmentId", value: data });
+        } catch (error) {
+            console.error("Error al obtener asociaciones:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchInquilinoData = async () => {
-            setLoading(true);
-            setError(null);
+        if (store.todos.id && store.token) {
+            fetchInquilinoData();
+        }
 
-            if (!store.user || !store.token) {
-                console.log("Usuario o token no disponibles, no se cargan datos del inquilino.");
-                setLoading(false);
-                return;
-            }
+    }, [store.user, store.token]);
+    console.log(store)
+   
+    if (loading) return <div>Cargando...</div>;
+    if (error) return <div>Error: {error}</div>;
+    if (!store.AssocByApertmentId?.length) return <div>Bienvenid@, {store.todos.first_name} {store.todos.last_name}. No hemos podido cargar tus datos</div>;
+    const startDate = store.AssocByApertmentId[0]?.start_date
+        ? new Date(store.AssocByApertmentId[0].start_date).toLocaleDateString("es-ES", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        }) : 'Fecha no disponible';
+    const endDate = store.AssocByApertmentId[0]?.start_date ? new Date(store.AssocByApertmentId[0].end_date).toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+    }) : 'Fecha no Disponible'
+    const splitDocument = store.AssocByApertmentId[0].document ? store.AssocByApertmentId[0].document.split("/").pop() : 'Sin documento';
 
-            try {
-                const viviendaRes = await apartments.getApartmentByTenantId(store.token);
-                if (viviendaRes && !viviendaRes.error && viviendaRes.apartment) {
-                    setMiViviendaInfo(viviendaRes.apartment);
+    const today = new Date();
+    const contractEndDateObj = new Date(store.AssocByApertmentId[0].end_date);
+    const diffDays = differenceInDays(contractEndDateObj, today);
 
-                    if (viviendaRes.apartment.id) {
-                        const incidenciasRes = await Issues.getissuesByApartmentId(viviendaRes.apartment.id, store.token);
-                        if (incidenciasRes && !incidenciasRes.error && incidenciasRes.Issues) {
-                            setMisIncidencias(incidenciasRes.Issues);
-                        } else {
-                            setMisIncidencias([]);
-                        }
-                    } else {
-                        setMisIncidencias([]);
-                    }
-                } else {
-                    setMiViviendaInfo(null);
-                    setMisIncidencias([]);
-                }
+    const getDaysBadgeClass = (days) => {
+        if (days < 0) { return 'bg-danger text-white' };
+        if (days <= 30) { return 'bg-warning text-dark' };
+        if (days <= 90) { return 'bg-info text-white' };
+        return 'bg-success text-white';
+    };
 
-                const contratoRes = await contracts.getContractByTenantId(store.token);
-                if (contratoRes && !contratoRes.error && contratoRes.contract) {
-                    setMiContratoInfo(contratoRes.contract);
-                } else {
-                    setMiContratoInfo(null);
-                }
+    const getDaysStatusText = (days) => {
+        if (days < 0) return `Vencido hace ${Math.abs(days)} días`;
+        if (days === 0) return `Vence hoy`;
+        return `Faltan ${days} días`;
+    };
 
-            } catch (err) {
-                console.error("Error general al cargar datos del inquilino:", err);
-                setError("Hubo un problema al cargar tu información. Inténtalo de nuevo más tarde.");
-            } finally {
-                setLoading(false);
-            }
-        };
 
-        fetchInquilinoData();
-    }, [store.user, store.token, navigate]);
-
-    const renderMainContent = () => {
+    const renderMainContent = () => {};
         if (loading) {
             return <div className="text-center p-5"><div className="spinner-border text-primary" role="status"><span className="visually-hidden">Cargando...</span></div><p className="mt-3">Cargando tu información...</p></div>;
         }
         if (error) {
             return <div className="alert alert-danger text-center p-3">{error}</div>;
         }
-        const getContractDetails = (contract) => {
-            if (!contract || !contract.contract_start_date || !contract.contract_end_date) {
-                return {
-                    startDateFormatted: 'N/A',
-                    endDateFormatted: 'N/A',
-                    documentName: 'N/A',
-                    daysRemaining: 'N/A'
-                };
-            }
-
-            const startDate = new Date(contract.contract_start_date);
-            const endDate = new Date(contract.contract_end_date);
-            const today = new Date();
-
-            const startDateFormatted = format(startDate, 'dd MMMM yyyy', { locale: es });
-            const endDateFormatted = format(endDate, 'dd MMMM yyyy', { locale: es });
-            
-            const daysRemaining = differenceInDays(endDate, today);
-
-            const documentName = contract.document ? contract.document.split('/').pop() : 'Sin documento';
-
-            return {
-                startDateFormatted,
-                endDateFormatted,
-                documentName,
-                daysRemaining
-            };
-        };
-
-        const contractDetails = miContratoInfo ? getContractDetails(miContratoInfo) : null;
 
 
         return (
             <div className="text-center w-100 p-4">
-                <h2 className="mb-4">Bienvenido, inquilino</h2>
+                <h2 className="mb-4">Bienvenid@, {store.todos.first_name} {store.todos.last_name}   </h2>
                 <p className="mb-4">Aquí tienes un resumen de tu contrato, vivienda e incidencias.</p>
 
-                <div className="row justify-content-center g-4"> 
-                    <div className="col-lg-10 col-md-10 col-sm-12">
+                <div className="row justify-content-center g-4">
+                    <div className="col-lg-6 col-md-6 col-sm-12">
                         <div className="card h-100 shadow-lg border-primary">
                             <div className="card-header bg-primary text-white text-center">
                                 <h5 className="mb-0">Mi Contrato</h5>
                             </div>
                             <div className="card-body text-left">
-                                {contractDetails ? (
-                                    <>
-                                        <p className="card-text mb-1">
-                                            <strong>Inicio:</strong> {contractDetails.startDateFormatted}
-                                        </p>
-                                        <p className="card-text mb-1">
-                                            <strong>Fin:</strong> {contractDetails.endDateFormatted}
-                                        </p>
-                                        <p className="card-text mb-1">
-                                            <strong>Documento:</strong> {contractDetails.documentName}
-                                        </p>
-                                        <p className="card-text">
-                                            <strong>Días restantes:</strong> {contractDetails.daysRemaining}
-                                        </p>
-                                        <p className="card-text">
-                                            <strong>Renta Mensual:</strong> {miContratoInfo?.monthly_rent ? `${miContratoInfo.monthly_rent}€` : 'N/A'}
-                                        </p>
-                                    </>
-                                ) : (
-                                    <p className="card-text text-muted text-center">No tienes un contrato asignado o no se pudo cargar la información.</p>
-                                )}
+
+
+                                <p className="card-text mb-1">
+                                    <strong>Inicio:</strong>{startDate}
+                                </p>
+                                <p className="card-text mb-1">
+                                    <strong>Fin:</strong> {endDate}
+                                </p>
+                                <p className="card-text mb-1">
+                                    <strong>Documento:</strong> {splitDocument}
+                                </p>
+                                <p className="card-text">
+                                    <strong>Días restantes:</strong> {diffDays}
+                                </p>
+                                <p className="card-text">
+                                    <strong>Renta Mensual:</strong>
+                                </p>
+
+
                             </div>
                         </div>
                     </div>
@@ -160,26 +125,23 @@ const InquilinoIndex = () => {
                                 <h5 className="mb-0">Mi Vivienda</h5>
                             </div>
                             <div className="card-body">
-                                {miViviendaInfo ? (
-                                    <>
-                                        <p className="card-text mb-1"><strong>Dirección:</strong> {miViviendaInfo.address || 'N/A'}</p>
-                                        <p className="card-text mb-1"><strong>Ciudad:</strong> {miViviendaInfo.city || 'N/A'}</p>
-                                        <p className="card-text"><strong>C.P.:</strong> {miViviendaInfo.postal_code || 'N/A'}</p>
-                                    </>
-                                ) : (
-                                    <p className="card-text text-muted">No tienes una vivienda asignada o no se pudo cargar la información.</p>
-                                )}
+                                <p className="card-text mb-1" style={{textTransform:"capitalize"}}><strong>Dirección:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.address }</p>
+                                <p className="card-text mb-1"><strong>C.P.:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.postal_code }</p>
+                                <p className="card-text mb-1" style={{textTransform:"capitalize"}}><strong>Ciudad:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.city } </p>
+                                <p className="card-text mb-1"><strong>Plaza de Parking:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.parking_slot} </p>
+
+
                             </div>
                         </div>
                     </div>
 
                     <div className="col-lg-10 col-md-10 col-sm-12 mt-4">
                         <div className="card h-100 shadow-lg border-warning">
-                            <div className="card-header bg-warning text-dark text-center">
-                                <h5 className="mb-0">Mis Incidencias ({misIncidencias.length})</h5>
+                            <div className="card-header bg-warning text-dark">
+                                <h5 className="mb-0">Mis Incidencias ({store.AssocByApertmentId[0].asociaciones[0].apartment.issues.length})</h5>
                             </div>
                             <div className="card-body">
-                                {misIncidencias.length > 0 ? (
+                                {store.AssocByApertmentId[0].asociaciones[0].apartment.issues.length > 0 ? (
                                     <ul className="list-group list-group-flush text-left">
                                         {misIncidencias.map(inc => {
                                             const issuestartDate = inc.start_date ? format(new Date(inc.start_date), 'dd/MM/yyyy') : 'N/A';
@@ -203,14 +165,25 @@ const InquilinoIndex = () => {
                                 ) : (
                                     <p className="card-text text-muted text-center">No se encontraron incidencias activas para tu vivienda.</p>
                                 )}
-                                <button className="btn btn-outline-dark mt-3">Reportar Nueva Incidencia</button>
+                                   {showForm && (
+              <NewFormIssues
+                onSuccess={() => {
+                  setShowForm(false);
+                //  fetchApartments();
+                 // setShowbotton(true)
+                }}
+                onCancel={() => {setShowForm(false)}}
+              />
+            )}
+                                <button className="btn btn-outline-dark mt-3" onClick={() => {setShowForm(true)}}>Reportar Nueva Incidencia</button>
                             </div>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         );
-    };
+    
 
     return (
         <div className="container-fluid mt-3 px-3">

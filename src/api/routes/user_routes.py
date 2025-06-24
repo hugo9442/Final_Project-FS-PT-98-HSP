@@ -344,7 +344,7 @@ def sing_in():
     user = User.query.filter_by(email=data_request["email"]).first()
 
     if not user or not bcrypt.check_password_hash(user.password, data_request["password"]):
-        return jsonify({"msg": "El email o la contraseña es incorrecto"}), 401
+        return jsonify({"error": "El email o la contraseña es incorrecto"}), 401
 
     try:
 
@@ -469,7 +469,7 @@ def register_tenant_initiate():
         phone=phone,
         national_id=national_id,
         account_number=account_number,
-        role="INQUILINO"
+        role=Role.INQUILINO
     )
 
     claims = {"setup_password": True, "email": new_tenant.email}

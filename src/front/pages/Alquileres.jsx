@@ -32,7 +32,7 @@ const Alquileres = () => {
     try {
 
       const data = await users.getUserApartmentsNotRented(store.todos.id, store.token);
-      console.log
+      
       dispatch({ type: "add_apartments", value: data.apartments });
 
     } catch (error) {

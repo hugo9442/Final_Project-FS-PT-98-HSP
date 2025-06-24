@@ -79,8 +79,8 @@
 .mi_alquiler:hover {
   transform: translateY(
     -8px
-  ); /* Desplaza la tarjeta ligeramente hacia arriba */
+  ); 
   filter: drop-shadow(0px 5px 10px #000000);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important; /* Sombra más pronunciada */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2) !important; 
   transition: all 0.3s ease-in-out;
 }

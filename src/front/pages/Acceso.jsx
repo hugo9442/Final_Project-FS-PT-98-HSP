@@ -92,7 +92,7 @@ const LoginSection = () => {
   const handleLogingUser = async () => {
     try {
       const data = await users.loginguser(store.email, store.password);
-      console.log(data);
+      console.log(data.error);
 
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
@@ -101,10 +101,10 @@ const LoginSection = () => {
         handleNavigate() 
       }if(data.user.role==="INQUILINO"){
         navigate("/InquilinoIndex")
-      }else if (data.msg === "El mail o la contraseña es incorrecto") {
+      }if (data.error) {
         swal({
           title: "ERROR",
-          text: `${data.msg}`,
+          text: `${data.error}`,
           icon: "warning",
           buttons: true,
           dangerMode: true,
@@ -118,7 +118,7 @@ const LoginSection = () => {
           buttons: true,
         });
       }
-      return data;
+     // return data;
     } catch (error) { }
   };
 

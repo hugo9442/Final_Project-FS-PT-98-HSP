@@ -8,12 +8,13 @@ import { format, differenceInDays } from 'date-fns';
 import MenuLateral from "../components/MenuLateral";
 import { Issues } from "../fecht_issues.js";
 import { Link } from "react-router-dom";
+import NewFormIssues from "../components/NewIssuesForm.jsx";
 
 
 const Incidencias = () => {
   const { store, dispatch } = useGlobalReducer();
   const [itpartment, setItapartment] = useState()
-
+  const [showForm, setShowForm] = useState(false);
   
   const fetchApartments = async () => {
     try {
@@ -88,17 +89,14 @@ useEffect(() => {
   const Cissue = async () => {
     await handlesIssues()
   }
-  console.log(store)
+  
 
 
   return (
     <>
       <div className="container-fluid mt-4">
         <div className="row">
-          {/* Menú lateral  <MenuLateral setActiveOption={() => { }} />*/}
          
-
-          {/* Contenido principal */}
           <div className="col-md-9">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Incidencias</h2>
@@ -123,7 +121,7 @@ useEffect(() => {
                       <h1>Todavía no has registrado ninguna vivienda</h1>
                     )}
                 </ul>
-
+                
                 <div className="formIncidencia mt-2">
                   <h3 className="mt-2, mb-2">Formulario de Creación de Incidencia</h3>
                   <div className="formIncidenciadata">
