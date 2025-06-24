@@ -1,5 +1,5 @@
-from src.database import db
-from src.models.users import User, Role
+from src.api.models.database import db
+from src.api.models.users import User, Role
 from flask_bcrypt import generate_password_hash
 from src.app import app  # asegúrate de importar correctamente
 
