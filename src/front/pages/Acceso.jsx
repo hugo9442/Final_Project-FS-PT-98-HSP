@@ -97,7 +97,7 @@ const LoginSection = () => {
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user }); 
-      } if (data.user.role==="PROPIETARIO"){
+      } if (data.user.role==="ADMIN"){
         handleNavigate() 
       }if(data.user.role==="INQUILINO"){
         navigate("/InquilinoIndex")

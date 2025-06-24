@@ -1,11 +1,13 @@
 
 import os
+import threading
 from pathlib import Path
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from api.utils import APIException, generate_sitemap
-from api.models import db
+from api.models import db, User
+from api.models.users import Role
 from api.routes import apartments_api, users_api, contracts_api, issues_api, actions_api, asociates_api, documents_api
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -15,6 +17,7 @@ from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 from flask_cors import CORS
+from flask_bcrypt import generate_password_hash
 from api.extensions import mail
 
 env_path = Path(__file__).resolve().parent.parent / '.env'  # Sube dos niveles desde src/
@@ -113,7 +116,38 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0  # avoid cache memory
     return response
+def initialize_admin_user():
+    with app.app_context():
+        db.create_all()
 
+        # Solo crea el admin si no existe
+        if not User.query.filter_by(email="montoria@montoria.es").first():
+            admin = User(
+                first_name="Admin",
+                last_name="General",
+                email="montoria@montoria.es",
+                password= generate_password_hash("M0nt0r14@2025").decode('utf-8'),
+                phone="000000000",
+                national_id="00000000X",
+                account_number="ES0000000000000000",
+                role=Role.ADMIN
+            )
+            db.session.add(admin)
+            db.session.commit()
+            print("✔️ Admin creado")
+        else:
+            print("ℹ️ Admin ya existe")
+
+# ... (el resto de tu configuración existente)
+
+# Añade esto justo antes del if __name__ == '__main__':
+@app.before_request
+def _run_before_first_request():
+    if not hasattr(app, '_first_request_ran'):
+        with app.app_context():
+            initialize_admin_user()
+        app._first_request_ran = True
+    # Puedes añadir más inicializaciones aquí
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
