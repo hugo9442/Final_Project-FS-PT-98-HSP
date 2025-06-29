@@ -51,3 +51,10 @@ class Apartment(db.Model):
         data['contracts'] = [assoc.serialize() for assoc in self.association]
         data['documents'] = [document.serialize() for document in self.documents]
         return data
+    def serialize_with_owner_name(self):
+        data = self.serialize()
+        if self.owner:
+         data["owner_name"] = f"{self.owner.first_name} {self.owner.last_name}"
+        else:
+         data["owner_name"] = None
+        return data

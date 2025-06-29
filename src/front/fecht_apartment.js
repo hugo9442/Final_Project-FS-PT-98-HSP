@@ -53,7 +53,29 @@ export const apartments = {
             return { error: "Error al conectar con la API" };
         }
     },
-    
+    getApartmentsWithOwner: async (token) => {
+    try {
+        const response = await fetch(`${Url}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.msg || "Error al obtener los apartamentos");
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error("Error al obtener los apartamentos con propietario:", error);
+        return { error: "Error al conectar con la API" };
+    }
+},
     getIssuesActionsByApertmentId: async (id,token) => {
         try {
             const request = await fetch(`${Url}/${id}/issues-actions`, {

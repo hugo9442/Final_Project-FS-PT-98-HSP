@@ -2,11 +2,12 @@ const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/asoci
 
 export const Asociations = {
   
-  createAsociation: async (tenant_id, contract_id, token) => {
+  createAsociation: async (tenant_id, contract_id, renta, token) => {
     let asociate = {
       "tenant_id": tenant_id,
       "contract_id": contract_id,
-      "is_active": Boolean(true),
+      "renta": renta,
+      "is_active": Boolean(true)
     };
   
     try {
@@ -80,5 +81,44 @@ export const Asociations = {
       console.log(error);
       return error;
     }
+  },
+  get_full_asociates:async (token) => {
+ 
+    try {
+      const request = await fetch(`${Url}/full`, {
+        method: "GET",
+        headers: {
+          "content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+     
+      });
+      const response = await request.json();
+      console.log(response);
+      return response;
+    }catch (error) {
+    console.error("Error al obtener asociaciones completas:", error);
+    throw error; // para que puedas capturarlo desde el componente que llama
   }
+},
+get_associations_without_apartment:async (token) => {
+ 
+    try {
+      const request = await fetch(`${Url}/no-apartment`, {
+        method: "GET",
+        headers: {
+          "content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+     
+      });
+      const response = await request.json();
+      console.log(response);
+      return response;
+    }catch (error) {
+    console.error("Error al obtener asociaciones completas:", error);
+    throw error; // para que puedas capturarlo desde el componente que llama
+  }
+}
+  
 };

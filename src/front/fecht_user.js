@@ -46,7 +46,7 @@ const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users
              
            
         };
-        console.log(user)
+       
         try {
             const request = await fetch(`${Url}/create`, {
                 method: "POST",
@@ -108,6 +108,23 @@ const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users
         try {
             const request = await fetch(`${Url}/${id}`, {
                 method: "GET"
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+     getUser_all: async (token) => {
+        try {
+            const request = await fetch(`${Url}`, {
+                method: "GET",
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
             })
             const response = await request.json();
             console.log(response)
@@ -205,9 +222,42 @@ const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users
 
         }
     },
+    getApartmentsNotRented: async (token) => {
+        try {
+            const request = await fetch(`${Url}/apartments/notrented`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
      getUserIssue: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}/issues`, {
+                  method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    getUserIssueAll: async (token) => {
+        try {
+            const request = await fetch(`${Url}/issues`, {
                   method: "GET", 
                  headers: {
                     "Authorization": `Bearer  ${token}`
@@ -239,6 +289,8 @@ const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users
 
         }
     },
+
+    
     delete_tenant: async (id, token) => {
         try {
             const request = await fetch(`${Url}/${id}`, {

@@ -22,6 +22,7 @@
   white-space: nowrap;
   transition: width 0.5s ease;
   display: none;
+  background-image: var(--bs-gradient);
 }
 .contratitem {
   display: flex;

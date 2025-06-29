@@ -169,3 +169,24 @@ def delete_action(action_id):
         print(e)
         db.session.rollback()
         return jsonify({"error": "Error in the server"}), 500
+
+@actions_api.route('/<int:action_id>/close', methods=["PUT"])
+@jwt_required()
+def close_action(action_id):
+    action = Action.query.get(action_id)
+
+    if not action:
+        return jsonify({"error": "Actuación no encontrada"}), 404
+
+    if action.status.lower() == "cerrado":
+        return jsonify({"msg": "La incidencia ya está cerrada"}), 200
+
+    try:
+        action.status = "cerrado" 
+        db.session.commit()
+        return jsonify({"msg": "Incidencia actualizada a cerrada", "issue": action.serialize()}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Error al actualizar la actuación:", e)
+        return jsonify({"error": "Error en el servidor"}), 500

@@ -8,6 +8,7 @@ import { format, differenceInDays } from 'date-fns';
 import MenuLateral from "../components/MenuLateral";
 import { Issues } from "../fecht_issues.js";
 import { Link } from "react-router-dom";
+import { apartments } from "../fecht_apartment.js";
 import NewFormIssues from "../components/NewIssuesForm.jsx";
 
 
@@ -15,20 +16,23 @@ const Incidencias = () => {
   const { store, dispatch } = useGlobalReducer();
   const [itpartment, setItapartment] = useState()
   const [showForm, setShowForm] = useState(false);
-  
+
   const fetchApartments = async () => {
     try {
+      const data = await apartments.getApartmentsWithOwner(store.token);
+      console.log("apartmnets en viviendas", data)
 
-      const data = await users.getUserApartments(store.todos.id, store.token);
       if (data.msg === "ok") {
+        console.log(data.apartments)
         dispatch({ type: "add_apartments", value: data.apartments });
       }
     } catch (error) {
-
+      console.error("Error al cargar viviendas:", error);
     };
+
     try {
 
-      const data = await users.getUserIssue(store.todos.id, store.token);
+      const data = await users.getUserIssueAll(store.token);
       console.log(data)
       if (data.msg) {
         dispatch({ type: "add_issues", value: data.issues })
@@ -39,11 +43,11 @@ const Incidencias = () => {
 
   };
 
-useEffect(() => {
-  if (store.todos?.id && store.token) {
-    fetchApartments();
-  }
-}, [store.todos, store.token])
+  useEffect(() => {
+    if (store.todos?.id && store.token) {
+      fetchApartments();
+    }
+  }, [store.todos, store.token])
 
 
   const handlesIssues = async () => {
@@ -89,15 +93,25 @@ useEffect(() => {
   const Cissue = async () => {
     await handlesIssues()
   }
-  
+  const getDaysBadgeClass = (alquilado) => {
+    if (alquilado === "Pendiente de Alquilar") return "bg-danger text-white";
+    if (alquilado === "Alquilado") return "bg-info text-black";
+    return "bg-success text-white";
+  };
 
+  const getStatusBadgeClass = (status) => {
+    if (status !== "cerrado") return "bg-danger text-white";
+    if (status === "cerrado") return "bg-success text-black";
+    return "bg-success text-white";
+  };
+  console.log(store)
 
   return (
     <>
       <div className="container-fluid mt-4">
         <div className="row">
-         
-          <div className="col-md-9">
+
+          <div className="col-md-12">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Incidencias</h2>
               <h5>Seleccione una Vivienda para añadir una Incidencia</h5>
@@ -105,15 +119,15 @@ useEffect(() => {
                 <ul className="list-group">
                   {
                     store && store.apartments.map((item) => {
-
+                      const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       return (
                         <li
                           key={item.id}
                           className="list-group-item d-flex  contenedor">
-                          <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input"
+                          <div className="mi-div p-3 mb-2 bg-info text-dark" ><input className="form-check-input"
                             type="checkbox" value="" id="checkDefault" onClick={(e) => { setItapartment(item.id) }} /></div>
                           <div className="contratitem">
-                            <p><strong>Dirección</strong>: {item.address}, <strong>CP:</strong>: {item.postal_code}, <strong>Ciudad</strong>: {item.city}</p>
+                            <p><strong>Dirección</strong>: {item.address}, <strong>CP:</strong>: {item.postal_code}, <strong>Ciudad</strong>: {item.city}    <span className={`badge ${getDaysBadgeClass(alquilado)}`}>{alquilado}</span></p>
                           </div>
                         </li>
                       );
@@ -121,7 +135,7 @@ useEffect(() => {
                       <h1>Todavía no has registrado ninguna vivienda</h1>
                     )}
                 </ul>
-                
+
                 <div className="formIncidencia mt-2">
                   <h3 className="mt-2, mb-2">Formulario de Creación de Incidencia</h3>
                   <div className="formIncidenciadata">
@@ -178,17 +192,21 @@ useEffect(() => {
                       />
                     </div>
                     <div className="mb-1">
-                      <label htmlFor="city" className="form-label">
+                      <label htmlFor="Estado" className="form-label">
                         Estado
                       </label>
-                      <input
-                        type="text"
+                      <select
                         className="form-control"
                         id="Estado"
                         onChange={(e) =>
                           dispatch({ type: "addstatus", value: e.target.value })
                         }
-                      />
+                        required
+                      >
+                        <option value="">Seleccione estado</option>
+                        <option value="ABIERTA">ABIERTA</option>
+                        <option value="CERRADA">CERRADA</option>
+                      </select>
                     </div>
                   </div>
                   <div className="mb-1">
@@ -229,16 +247,18 @@ useEffect(() => {
                     })
                   }}><strong >Cancelar</strong></button>
               </div>
-              <div className="form mt-2" style={{ display: `${store.vista2}`,
-                          maxHeight: "600px",
-                          overflowY: "auto",
-                          overflowX: "hidden",
-                          paddingRight: "10px"
-                        }}>
+              <div className="form mt-2" style={{
+                display: `${store.vista2}`,
+                maxHeight: "600px",
+                overflowY: "auto",
+                overflowX: "hidden",
+                paddingRight: "10px"
+              }}>
                 <h1>Incidencias abiertas por vivienda</h1>
                 <ul className="list-group mt-2">
                   {
                     store && store.issues.map((item) => {
+                      const status = item.status
                       const alquilado = !item.apartment.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
@@ -246,20 +266,20 @@ useEffect(() => {
                         year: "numeric"
                       });
                       return (
-                        
-                          <li
-                            key={item.issue_id}
-                            className="list-group-item d-flex  contenedor">
-                          
-                            <div className="contratitem">
-                              <p><strong>Dirección: </strong>{item.apartment.address}, <strong>CP:</strong> {item.apartment.postal_code}, <strong>Ciudad:</strong> {item.apartment.city}, <strong>Estado:</strong> {alquilado}</p>
-                              <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> {item.status}</p>
-                              <p><strong>Descripcion: </strong>{item.description} </p>      
-                               <Link to={"/single/" + item.apartment_id}>Link to: {item.title} </Link>                  
-                            </div>
-                          </li>
-                         
-              
+
+                        <li
+                          key={item.issue_id}
+                          className="list-group-item d-flex  contenedor">
+
+                          <div className="contratitem">
+                            <p><strong>Dirección: </strong>{item.apartment.address}, <strong>CP:</strong> {item.apartment.postal_code}, <strong>Ciudad:</strong> {item.apartment.city}, <span className={`badge ${getDaysBadgeClass(alquilado)}`}>{alquilado}</span></p>
+                            <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> {item.status} <span className={`badge ${getStatusBadgeClass(status)}`}>{status}</span></p>
+                            <p><strong>Descripcion: </strong>{item.description} </p>
+                            <Link to={"/single/" + item.apartment_id}>Ver incidencia: {item.title} </Link>
+                          </div>
+                        </li>
+
+
                       );
                     })}{(!store.apartments || store.apartments.length === 0) && (
                       <h1>Todavía no has registrado ninguna vivienda</h1>

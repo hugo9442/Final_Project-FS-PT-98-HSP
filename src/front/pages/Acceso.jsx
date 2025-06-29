@@ -92,16 +92,7 @@ const LoginSection = () => {
   const handleLogingUser = async () => {
     try {
       const data = await users.loginguser(store.email, store.password);
-      console.log(data.error);
-
-      if ((typeof data.token === "string" && data.token.length > 0)) {
-        await dispatch({ type: "addToken", value: data.token });
-        await dispatch({ type: "add_user", value: data.user }); 
-      } if (data.user.role==="ADMIN"){
-        handleNavigate() 
-      }if(data.user.role==="INQUILINO"){
-        navigate("/InquilinoIndex")
-      }if (data.error) {
+      if (data.error==="El email o la contraseña es incorrecto") {
         swal({
           title: "ERROR",
           text: `${data.error}`,
@@ -109,6 +100,18 @@ const LoginSection = () => {
           buttons: true,
           dangerMode: true,
         });
+      }
+
+      if ((typeof data.token === "string" && data.token.length > 0)) {
+         dispatch({ type: "addToken", value: data.token });
+         dispatch({ type: "add_user", value: data.user }); 
+         dispatch({ type: "addEmail", value: "" })
+         dispatch({ type: "addPassword", value: "" })
+
+      } if (data.user.role==="ADMIN"){
+        handleNavigate() 
+      }if(data.user.role==="INQUILINO"){
+        navigate("/InquilinoIndex")
       }
       else {
         swal({
@@ -118,7 +121,6 @@ const LoginSection = () => {
           buttons: true,
         });
       }
-     // return data;
     } catch (error) { }
   };
 
@@ -127,7 +129,6 @@ const LoginSection = () => {
       await
         handleCreatUser();
 
-      // handleNavigate();
     }
   };
 

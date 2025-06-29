@@ -24,8 +24,11 @@ bcrypt = Bcrypt()
 @users_api.route('/', methods=["GET"])
 @jwt_required()
 def get_all_users():
-    users = User.query.all()
-    return jsonify([user.serialize() for user in users]), 200
+    try:
+        users = User.query.filter(User.role == Role.PROPIETARIO.value).all()
+        return jsonify([user.serialize() for user in users]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @users_api.route('/<int:user_id>', methods=["GET"])
@@ -212,6 +215,15 @@ def get_user_not_rented_apartments(user_id):
 
     return jsonify({"apartments": [apartment.serialize() for apartment in not_rented_apartments]}), 200
 
+@users_api.route('/apartments/notrented', methods=["GET"])
+@jwt_required()
+def get_not_rented_apartments():
+   try:
+        apartments = Apartment.query.filter_by(is_rent=False).all()
+        return jsonify({"apartments": [apartment.serialize_with_owner_name() for apartment in apartments]}), 200
+   except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+
 
 @users_api.route('/<int:user_id>/apartments/count', methods=["GET"])
 @jwt_required()
@@ -298,6 +310,54 @@ def get_contracts_by_owner(user_id):
 
     return jsonify(contratos_data), 200
 
+@users_api.route('/contracts/assoc', methods=["GET"])
+@jwt_required()
+def get_contracts_of_non_tenants():
+    try:
+        # Excluir a los usuarios con rol INQUILINO
+        users_all = User.query.options(
+            joinedload(User.contracts)
+            .joinedload(Contract.association)
+            .joinedload(AssocTenantApartmentContract.tenant),
+            joinedload(User.contracts)
+            .joinedload(Contract.association)
+            .joinedload(AssocTenantApartmentContract.apartment),
+            joinedload(User.contracts)
+            .joinedload(Contract.association)
+            .joinedload(AssocTenantApartmentContract.contract)
+        ).filter(User.role != Role.INQUILINO).all()
+
+        resultado = []
+
+        for user in users_all:
+            user_data = user.serialize()
+            contratos_data = []
+
+            for contrato in user.contracts:
+                contrato_dict = contrato.serialize()
+                asociaciones = []
+
+                for assoc in contrato.association:
+                    asociaciones.append({
+                        "assoc_id": assoc.id,
+                        "is_active": assoc.is_active,
+                        "tenant": assoc.tenant.serialize() if assoc.tenant else None,
+                        "apartment": assoc.apartment.serialize() if assoc.apartment else None,
+                        "contract": assoc.contract.serialize() if assoc.contract else None
+                    })
+
+                contrato_dict["asociaciones"] = asociaciones
+                contratos_data.append(contrato_dict)
+
+            user_data["contratos"] = contratos_data
+            resultado.append(user_data)
+
+        return jsonify(resultado), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 """ISSUES ENDPOINT"""
 
 @users_api.route('/<int:user_id>/issues', methods=["GET"])
@@ -307,6 +367,23 @@ def get_user_issues(user_id):
         db.session.query(Issue)
         .join(Issue.apartment)  
         .filter(Apartment.owner_id == user_id)
+        .options(joinedload(Issue.apartment)) 
+        .all()
+    )
+
+    return jsonify({
+        "msg": "ok",
+        "issues": [issue.serialize_with_relations() for issue in issues]
+    }), 200
+
+
+@users_api.route('/issues', methods=["GET"])
+@jwt_required()
+
+def get_all_issues():
+    issues = (
+        db.session.query(Issue)
+        .join(Issue.apartment)  
         .options(joinedload(Issue.apartment)) 
         .all()
     )
@@ -500,7 +577,7 @@ def register_tenant_initiate():
                       sender=os.getenv("MAIL_USERNAME"),
                       recipients=recipients_list,
                       html=html_body)
-        mail.send(msg)
+       ## mail.send(msg)
 
         return jsonify({"msg": "Inquilino registrado exitosamente. Se ha enviado un email para configurar su contraseña.",
                         "tenant": new_tenant.serialize()}), 201

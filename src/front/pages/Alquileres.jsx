@@ -22,25 +22,7 @@ const Alquileres = () => {
     setError(null)
     try {
 
-      const data = await users.getUserContracts(store.todos.id, store.token);
-      if (data.msg === "ok") {
-        await dispatch({ type: "add_contracts", value: data.contracts });
-      }
-    } catch (error) {
-
-    }
-    try {
-
-      const data = await users.getUserApartmentsNotRented(store.todos.id, store.token);
-      
-      dispatch({ type: "add_apartments", value: data.apartments });
-
-    } catch (error) {
-
-    }
-    try {
-
-      const data = await users.get_asociation(store.todos.id, store.token);
+      const data = await Asociations.get_full_asociates(store.token);
 
       await dispatch({ type: "add_asociation", value: data });
 
@@ -52,6 +34,7 @@ const Alquileres = () => {
   useEffect(() => {
     fetchData();
   }, [store.todos, store.token]);
+
   const handleDownloadContract = async (contractId) => {
     console.log(`Intentando descargar contrato con ID: ${contractId}`);
     try {
@@ -121,20 +104,8 @@ const Alquileres = () => {
   }
 };
 
-  const Drent = async () => {
-  setIsLoadingRent(true);
-    try {
-      await handleDeleteRent();
-    } catch (error) {
-      console.error("Error en Crent:", error);
-    } finally {
-      setIsLoadingRent(false); // Desactivar spinner cuando termine (éxito o error)
-    }  
-    
-    
-   
-  };
- 
+
+console.log(store) 
   return (
     <>
       <div className="container-fluid mt-4">
@@ -151,22 +122,23 @@ const Alquileres = () => {
                   <div className="row row-cols-1 row-cols-md-3  row-cols-lg-3 g-3">
                     {store.asociation.map((item) => {
 
-                      const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
+                      const startDate = new Date(item.contract.start_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric"
                       });
-                      const endDate = new Date(item.end_date).toLocaleDateString("es-ES", {
+                      const endDate = new Date(item.contract.end_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric"
                       });
-                      const splitDocument = item.document ? item.document.split("/").pop() : 'Sin documento';
+                      const splitDocument = item.contract.document ? item.contract.document.split("/").pop() : 'Sin documento';
                       const today = new Date();
-                      const contractEndDateObj = new Date(item.end_date);
+                      const contractEndDateObj = new Date(item.contract.end_date);
                       const diffDays = differenceInDays(contractEndDateObj, today);
-                      const estado= item.asociaciones[0].is_active? "activo" : "inactivo"
-                      if (estado==="activo"){
+                      const estado= item.is_active? "activo" : "inactivo"
+                      console.log("tenat", item.apartment)
+                      if (estado==="activo" && item.apartment !== null ){
                          return (
                         <div className="col mi_alquiler" key={item.id}>
                           <div className="card h-100 shadow-sm border">
@@ -177,13 +149,13 @@ const Alquileres = () => {
                                   {getDaysStatusText(diffDays)}
                                 </span>
                               </div>
-                             {item.asociaciones[0].is_active? "activo" : "inactivo"}
+                             {item.is_active? "activo" : "inactivo"}
                               <p className="card-text mb-1">
-                                <strong>{item.asociaciones[0].tenant.first_name} {item.asociaciones[0].tenant.last_name}, </strong>
+                                <strong>{item.tenant.first_name} {item.tenant.last_name}, </strong>
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
                               </p>
                               <p className="card-text mb-1">
-                                <strong>Direccion:</strong> {item.asociaciones[0].apartment?.address}, <strong>CP:</strong> {item.asociaciones[0].apartment?.postal_code}, <strong>Ciudad:</strong> {item.asociaciones[0].apartment?.city}
+                                <strong>Direccion:</strong> {item.apartment?.address}, <strong>CP:</strong> {item.apartment?.postal_code}, <strong>Ciudad:</strong> {item.partment?.city}
                               </p>
                               <p className="card-text mb-3">
                                 <strong>Documento:</strong> {splitDocument}
@@ -191,13 +163,13 @@ const Alquileres = () => {
                               <div className="mt-auto d-flex justify-content-between">
                                 <button
                                   className="btn btn-primary"
-                                  onClick={() => handleDownloadContract(item.id)}
+                                  onClick={() => handleDownloadContract(item.contract.id)}
                                 >
                                   Consultar Contrato
                                 </button>
                                  <button
                                   className="badge bg-danger text-white"
-                                  onClick={() => handleDeleteRent(item.asociaciones[0].assoc_id, item.asociaciones[0].apartment.id)}
+                                  onClick={() => handleDeleteRent(item.contract.id, item.apartment.id)}
                                 >
                                   Dar de baja este Alquiler
                                 </button>
@@ -233,21 +205,21 @@ const Alquileres = () => {
                   <div className="row row-cols-1 row-cols-md-2 row-cols-3 row-cols-lg-2 g-3">
                     {store.asociation.map((item) => {
 
-                      const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
+                      const startDate = new Date(item.contract.start_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric"
                       });
-                      const endDate = new Date(item.end_date).toLocaleDateString("es-ES", {
+                      const endDate = new Date(item.contract.end_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric"
                       });
-                      const splitDocument = item.document ? item.document.split("/").pop() : 'Sin documento';
+                      const splitDocument = item.contract.document ? item.contract.document.split("/").pop() : 'Sin documento';
                       const today = new Date();
-                      const contractEndDateObj = new Date(item.end_date);
+                      const contractEndDateObj = new Date(item.contract.end_date);
                       const diffDays = differenceInDays(contractEndDateObj, today);
-                      const estado= item.asociaciones[0].is_active? "activo" : "inactivo"
+                      const estado= item.is_active? "activo" : "inactivo"
                       if (estado==="inactivo"){
                          return (
                         <div className="col mi_alquiler" key={item.id}>
@@ -260,11 +232,11 @@ const Alquileres = () => {
                               </div>
                             
                               <p className="card-text mb-1">
-                                <strong>{item.asociaciones[0].tenant.first_name} {item.asociaciones[0].tenant.last_name}, </strong>
+                                <strong>{item.tenant.first_name} {item.tenant.last_name}, </strong>
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
                               </p>
                               <p className="card-text mb-1">
-                                <strong>Direccion:</strong> {item.asociaciones[0].apartment?.address}, <strong>CP:</strong> {item.asociaciones[0].apartment?.postal_code}, <strong>Ciudad:</strong> {item.asociaciones[0].apartment?.city}
+                                <strong>Direccion:</strong> {item.apartment?.address}, <strong>CP:</strong> {item.apartment?.postal_code}, <strong>Ciudad:</strong> {item.apartment?.city}
                               </p>
                               <p className="card-text mb-3">
                                 <strong>Documento:</strong> {splitDocument}
@@ -272,7 +244,7 @@ const Alquileres = () => {
                               <div className="mt-auto d-flex justify-content-between">
                                 <button
                                   className="btn btn-primary"
-                                  onClick={() => handleDownloadContract(item.id)}
+                                  onClick={() => handleDownloadContract(item.contract.id)}
                                 >
                                   Consultar Contrato
                                 </button>

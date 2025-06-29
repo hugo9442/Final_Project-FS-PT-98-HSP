@@ -11,7 +11,7 @@ CORS(issues_api)
 @jwt_required()
 def get_all_issues():
     issues = Issue.query.all()
-    return jsonify([issue.serialize() for issue in issues]), 200
+    return jsonify({"msg":"ok", "issues":[issue.serialize() for issue in issues]}), 200
 
 @issues_api.route('/<int:issue_id>', methods=["GET"])
 @jwt_required()
@@ -123,3 +123,24 @@ def get_issue_actions(issue_id):
         return jsonify({"error": "No actions for this issue"}), 404
 
     return jsonify([action.serialize() for action in actions]), 200
+
+@issues_api.route('/<int:issue_id>/close', methods=["PUT"])
+@jwt_required()
+def close_issue(issue_id):
+    issue = Issue.query.get(issue_id)
+
+    if not issue:
+        return jsonify({"error": "Incidencia no encontrada"}), 404
+
+    if issue.status.lower() == "cerrado":
+        return jsonify({"msg": "La incidencia ya está cerrada"}), 200
+
+    try:
+        issue.status = "cerrado"  # o "closed" si usas inglés
+        db.session.commit()
+        return jsonify({"msg": "Incidencia actualizada a cerrada", "issue": issue.serialize()}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        print("Error al actualizar incidencia:", e)
+        return jsonify({"error": "Error en el servidor"}), 500

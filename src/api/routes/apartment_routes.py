@@ -79,7 +79,7 @@ def get_apartment(id):
 def get_apartments():
     try:
         apartments = Apartment.query.all()
-        return jsonify([apartment.serialize() for apartment in apartments]), 200
+        return jsonify({"msg":"ok", "apartments": [apartment.serialize_with_owner_name() for apartment in apartments]}), 200
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     
@@ -88,7 +88,7 @@ def get_apartments():
 def get_apartments_not_rented():
     try:
         apartments = Apartment.query.filter_by(is_rent=False).all()
-        return jsonify([apartment.serialize() for apartment in apartments]), 200
+        return jsonify({"msg":"ok", "apartments": [apartment.serialize_with_owner_name() for apartment in apartments]}), 200
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     

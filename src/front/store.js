@@ -30,6 +30,7 @@ export const initialStore = () => {
     visibility2: "block",
     validToken: false,
     todos: [],
+    user:[],
     apartments: [],
     asociation: [],
     tenant: [],
@@ -37,6 +38,7 @@ export const initialStore = () => {
     issues: [],
     singleIssues:[],
     AssocByApertmentId:[],
+    assocnoapartments:[],
     forgotPasswordVisibility: "none",
     resetPasswordVisibility: "none",
     tenantSetPasswordVisibility: "none",
@@ -49,6 +51,16 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         singleIssues: action.value,
+      };
+       case "add_assocnoapartments":
+      return {
+        ...store,
+        assocnoapartments: action.value,
+      };
+     case "add_owner":
+      return {
+        ...store,
+        user: action.value,
       };
     case "addcontract":
       return {

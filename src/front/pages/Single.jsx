@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import MenuLateral from "../components/MenuLateral";
 import { apartments } from "../fecht_apartment.js"
 import NewActionForm from "../components/NewActionForm.jsx";
+import { Issues } from "../fecht_issues.js";
 
 
 export const Single = props => {
@@ -28,14 +29,23 @@ export const Single = props => {
     handlegetIssuesActionsByapartmetId();
   }, []);
 
+  const CloseIsusses = async (item) => {
+    try {
+      const data = await Issues.CloseIssues(item, store.token)
+      console.log(data)
+      handlegetIssuesActionsByapartmetId();
+    } catch (error) {
+      console.log("error")
+    }
+
+  }
+
+
   return (
     <>
       <div className="container-fluid mt-4">
         <div className="row">
-
-          
-
-          <div className="col-md-9">
+          <div className="col-md-12">
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Actuaciones</h2>
               <div className="form mt-2">
@@ -63,46 +73,42 @@ export const Single = props => {
 
                           <h5 className="mt-3">Actuaciones</h5>
                           <ul className="list-group">
-                            { item.actions && item.actions.map((action) =>{  
-                            const splitBill = action.bill_image ? action.bill_image.split("/").pop() : 'Sin documento'; 
-                            return (
-                              <li key={action.action_id} className="list-group-item">
-                                <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor}<strong>, Estado:</strong> {action.status}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")}</p>
-                                <p><strong>Importe:</strong> {action.bill_amount}€, <strong>Ver Factura</strong> {splitBill}   </p>
-                                <p><strong>Descripción:</strong> {action.description}</p>
-                              </li>
-                            )})}
+                            {item.actions && item.actions.map((action) => {
+                              const splitBill = action.bill_image ? action.bill_image.split("/").pop() : 'Sin documento';
+                              return (
+                                <li key={action.action_id} className="list-group-item">
+                                  <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor}<strong>, Estado:</strong> {action.status}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")}</p>
+                                  <p><strong>Importe:</strong> {action.bill_amount}€, <strong>Ver Factura</strong> {splitBill}   </p>
+                                  <p><strong>Descripción:</strong> {action.description}</p>
+                                </li>
+                              )
+                            })}
                           </ul>
-
-                          <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => setShowForm(item.issue_id)}>Añadir actuación</button>
-                          {showForm === item.issue_id && (
-                            <NewActionForm
-                              issueId={item.issue_id}
-                              token={store.token}
-                              onSuccess={() => {
-                                setShowForm(null);
-                                handlegetIssuesActionsByapartmetId();
-                              }}
-                              onClose={() => setShowForm(false)}
-                            />
-                          )}
+                          <div className="row">
+                            <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => setShowForm(item.issue_id)} disabled={item.status === 'cerrado'}>Añadir actuación</button>
+                            <button className="btn btn-sm btn-outline-primary mt-2"
+                              onClick={() => { CloseIsusses(item.issue_id) }} disabled={item.status === 'cerrado'}>
+                              <strong>Cerrar Incidencia</strong>
+                            </button>
+                            {showForm === item.issue_id && (
+                              <NewActionForm
+                                issueId={item.issue_id}
+                                token={store.token}
+                                onSuccess={() => {
+                                  setShowForm(null);
+                                  handlegetIssuesActionsByapartmetId();
+                                }}
+                                onClose={() => setShowForm(false)}
+                              />
+                            )}
+                          </div>
                         </li>
                       );
                     })
                   }
                 </ul>
 
-                <button className="btn btn-success mi-button mt-2" style={{
-                  color: "black",
-                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
-                  textDecoration: "strong"
-                }}
-                  onClick={() => {
-                    dispatch({ type: "vista", value: "" });
-                    dispatch({ type: "vista2", value: "none" });
-                  }}>
-                  <strong>Abrir Nueva Incidencia</strong>
-                </button>
+
               </div>
             </div>
           </div>

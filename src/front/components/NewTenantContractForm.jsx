@@ -4,12 +4,13 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Asociations } from "../fetch_asociations.js";
 import { contracts } from "../fecht_contract.js";
 import { useState } from "react";
-import {users} from "../fecht_user.js"
+import { users } from "../fecht_user.js"
+
 const NewTenantContractForm = ({ onSuccess, onCancel }) => {
 
     const { store, dispatch } = useGlobalReducer();
     const [isLoading, setIsLoading] = useState(false);
-
+    const [renta, setRenta] = useState(0)
 
     const handleCreatenant = async () => {
         let createdTenantId = null;
@@ -48,6 +49,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
             const asociationResult = await Asociations.createAsociation(
                 createdTenantId,
                 createdContractId,
+                renta,
                 store.token
             );
 
@@ -114,49 +116,75 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
                     </div>
                 )}
 
-                <div className="col-md-6" style={{textTransform:"capitalize"}}>
-                    <input type="text" id="firsth" placeholder="Nombre" className="form-control mb-2" 
-                        onChange={(e) => dispatch({type: "addFirtsname", value: e.target.value,})} required />
+                <div className="col-md-6" style={{ textTransform: "capitalize" }}>
+                    <input type="text" id="firsth" placeholder="Nombre" className="form-control mb-2"
+                        onChange={(e) => dispatch({ type: "addFirtsname", value: e.target.value, })} required />
                     <input type="text" id="lasth" placeholder="Apellidos" className="form-control mb-2"
                         onChange={(e) => dispatch({ type: "addLastname", value: e.target.value, })} required />
                     <input type="text" id="nidh" placeholder="DNI/NIE/PASAPORTE" className="form-control mb-2"
                         onChange={(e) => dispatch({ type: "addNid", value: e.target.value, })} required />
                 </div>
                 <div className="col-md-6">
-                        <input type="email" id="emailh" placeholder="Email" className="form-control mb-2"
-                            onChange={(e) => dispatch({ type: "addEmail", value: e.target.value, })} required /> 
-                        <input type="text" id="phoneh" placeholder="Teléfono" className="form-control mb-2 "
-                            onChange={(e) => dispatch({ type: "addPhone", value: e.target.value, })} required /> 
-                        <input type="text" id="aacch" placeholder="Número de Cuenta" className="form-control mb-2"
-                            onChange={(e) => dispatch({ type: "Aaccadd", value: e.target.value })} required  /> 
+                    <input type="email" id="emailh" placeholder="Email" className="form-control mb-2"
+                        onChange={(e) => dispatch({ type: "addEmail", value: e.target.value, })} required />
+                    <input type="text" id="phoneh" placeholder="Teléfono" className="form-control mb-2 "
+                        onChange={(e) => dispatch({ type: "addPhone", value: e.target.value, })} required />
+                    <input type="text" id="aacch" placeholder="Número de Cuenta" className="form-control mb-2"
+                        onChange={(e) => dispatch({ type: "Aaccadd", value: e.target.value })} required />
                 </div>
             </div>
             <div className="form" >
                 <h5>Contrato</h5>
                 <div className="row">
-                <div className="col-md-6">
-                <div className="mb-3">
-                    <label htmlFor="start_date" className="form-label">Fecha de inicio </label>
-                    <input type="date" className="form-control" id="start_day"
-                        onChange={(e) => dispatch({ type: "addstart_date", value: e.target.value })} required /> </div></div>
-                        <div className="col-md-6">
-                <div className="mb-3">
-                    <label htmlFor="end_date" className="form-label"> Fecha de Fin </label>
-                    <input type="date" className="form-control" id="end_day"
-                        onChange={(e) => dispatch({ type: "addend_date", value: e.target.value })} required /> </div></div>
-                        <div className="col-md-12">
-                <div className="mb-3">
-                    <label htmlFor="pdfUpload" className="form-label">Sube tu contrato en PDF </label>
-                    <input type="file" className="form-control" id="pdfUpload" accept="application/pdf"
-                        onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })} required/></div ></div>
+                    <div className="col-md-6">
+                        <div className="mb-3">
+                            <label htmlFor="start_date" className="form-label">Fecha de inicio </label>
+                            <input type="date" className="form-control" id="start_day"
+                                onChange={(e) => dispatch({ type: "addstart_date", value: e.target.value })} required /> </div>
+                        <div className="mb-3">
+                            <label htmlFor="renta" className="form-label">Importe Mensual de Renta </label>
+                            <input
+                                type="number"
+                                className="form-control"
+                                id="renta"
+                                step="0.01"
+                                min="0"
+                                value={renta || ''}
+                                onChange={(e) => {
+                                    const value = parseFloat(e.target.value);
+                                    setRenta(isNaN(value) ? '' : value.toFixed(2));
+                                }}
+                                onBlur={(e) => {
+                                    if (e.target.value) {
+                                        setRenta(parseFloat(e.target.value).toFixed(2));
+                                    }
+                                }}
+                                required
+                            /> </div>
+                    </div>
+                    <div className="col-md-6">
+                        <div className="mb-3">
+                            <label htmlFor="end_date" className="form-label"> Fecha de Fin </label>
+                            <input type="date" className="form-control" id="end_day"
+                                onChange={(e) => dispatch({ type: "addend_date", value: e.target.value })} required /> </div></div>
+                    <div className="col-md-12">
+                        <div className="mb-3">
+                            <label htmlFor="pdfUpload" className="form-label">Sube tu contrato en PDF </label>
+                            <input type="file" className="form-control" id="pdfUpload" accept="application/pdf"
+                                onChange={(e) => dispatch({ type: "addcontract", value: e.target.files[0] })} required /></div ></div>
 
-               
+
                 </div>
             </div>
-             <button className="btn btn-info" onClick={Ctenant}>
-                    Añadir Inqulino
-                </button>
-                <button className="btn btn-secondary" onClick={onCancel}>Cancelar</button>
+            <button className="btn" style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong",
+                  marginRight: "20px"
+                }} onClick={Ctenant}>
+                Añadir Inqulino
+            </button>
+            <button className="btn btn-secondary" onClick={onCancel}>Cancelar</button>
         </div>
     );
 

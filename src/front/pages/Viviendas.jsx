@@ -6,9 +6,11 @@ import { users } from "../fecht_user.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import MenuLateral from "../components/MenuLateral";
 import NewApartmentForm from "../components/NewApartmentForm.jsx";
+import NewuserForm from "../components/NewUserForm.jsx";
 
 const Viviendas = () => {
   const [showForm, setShowForm] = useState(false);
+  const [showFormUser, setShowFormUser] = useState(false);
   const [showBotton, setShowbotton] = useState(true);
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
@@ -16,9 +18,20 @@ const Viviendas = () => {
 
   const fetchApartments = async () => {
     try {
-      const data = await users.getUserApartments(store.todos.id, store.token);
+      const data = await apartments.getApartmentsWithOwner(store.token);
+      console.log("apartmnets en viviendas",data)
+
       if (data.msg === "ok") {
+        console.log(data.apartments)
         dispatch({ type: "add_apartments", value: data.apartments });
+      }
+    } catch (error) {
+      console.error("Error al cargar viviendas:", error);
+    }
+    try {
+      const data = await users.getUser_all(store.token);
+      if (data.length>0){
+         dispatch({ type: "add_owner", value: data });
       }
     } catch (error) {
       console.error("Error al cargar viviendas:", error);
@@ -29,39 +42,7 @@ const Viviendas = () => {
     fetchApartments();
   }, []);
 
-  const handleCreatapartment = async () => {
-    try {
-      const data = await apartments.create_apartment(
-        store.address,
-        store.postal_code,
-        store.city,
-        store.parking_slot,
-        store.is_rent,
-        store.todos.id,
-        store.token
-      );
-
-      if (data.msg === "La vivienda se ha registrado con exito") {
-        dispatch({ type: "add_apartments", value: data.apartments });
-        swal({
-          title: "VIVIENDA",
-          text: `${data.msg}`,
-          icon: "success",
-          buttons: true,
-        });
-      } else {
-        swal({
-          title: "ERROR",
-          text: `${data.error}`,
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        });
-      }
-    } catch (error) {
-      console.error("Error al crear vivienda:", error);
-    }
-  };
+  
 
   const getDaysBadgeClass = (alquilado) => {
     if (alquilado === "Pendiente de Alquilar") return "bg-danger text-white";
@@ -71,6 +52,7 @@ const Viviendas = () => {
 
   const renderApartmentItem = (item) => {
     const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
+    console.log(item)
     return (
       <li
         key={item.id}
@@ -78,15 +60,14 @@ const Viviendas = () => {
         
       >
         <div
-          className="contratitem"
+          className="col-md-12  contratitem"
           onClick={() => navigate("/Viviendasassoc/" + item.id)}
           style={{ cursor: "pointer",textTransform:"capitalize"}}
         >
           <p>
             <strong>Dirección:</strong> {item.address}, <strong>CP:</strong>{" "}
             {item.postal_code}, <strong>Ciudad:</strong> {item.city},{" "}
-            <strong>Parking:</strong> {item.parking_slot},{" "}
-            <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
+            <strong>Parking:</strong> {item.parking_slot},{" "} <strong>Propietario:</strong> {item.owner_name}, <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
               {alquilado}
             </span>
           </p>
@@ -94,11 +75,11 @@ const Viviendas = () => {
       </li>
     );
   };
-
+console.log(store)
   return (
     <div className="container-fluid mt-4">
       <div className="row">
-        <div className="col-md-9">
+        <div className="col-md-12">
           <div className="p-4 border rounded bg-light">
             <h2>Gestión de Viviendas</h2>
             <p>
@@ -136,6 +117,16 @@ const Viviendas = () => {
                 onCancel={() => {setShowForm(false), setShowbotton(true)}}
               />
             )}
+            {showFormUser && (
+              <NewuserForm
+                onSuccess={() => {
+                  setShowFormUser(false);
+                  fetchApartments();
+                  setShowbotton(true)
+                }}
+                onCancel={() => {setShowFormUser(false), setShowbotton(true)}}
+              />
+            )}
              {showBotton &&( 
             <button
               className="btn btn-success mt-3 " 
@@ -143,6 +134,14 @@ const Viviendas = () => {
               onClick={() => {setShowForm(true),setShowbotton(false)}}
             >
               Añadir Vivienda
+            </button>  )}
+            {showBotton &&( 
+            <button
+              className="btn btn-success mt-3 " 
+              style={{ marginLeft: "10px", display: showBotton ? "inline-block" : "none" }}
+              onClick={() => {setShowFormUser(true),setShowbotton(false)}}
+            >
+              Añadir Propietario
             </button>  )}
           </div>
         </div>

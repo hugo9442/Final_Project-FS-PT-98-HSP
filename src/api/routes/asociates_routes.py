@@ -8,6 +8,37 @@ asociates_api = Blueprint('asociates_api', __name__, url_prefix='/asociates')
 CORS(asociates_api)
 
 
+
+@asociates_api.route('/', methods=['GET'])
+@jwt_required()
+def get_asociations():
+    try:
+        asociaciones = AssocTenantApartmentContract.query.all()
+        return jsonify([a.serialize() for a in asociaciones]), 200
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+
+@asociates_api.route('/full', methods=['GET'])
+@jwt_required()
+def get_full_asociations():
+    try:
+        asociaciones = AssocTenantApartmentContract.query.all()
+        return jsonify([a.serialize() for a in asociaciones]), 200
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+    
+@asociates_api.route('/no-apartment', methods=['GET'])
+@jwt_required()
+def get_associations_without_apartment():
+    try:
+        asociaciones = AssocTenantApartmentContract.query.filter(
+            AssocTenantApartmentContract.apartment_id == None, AssocTenantApartmentContract.is_active == True
+        ).all()
+        return jsonify([a.serialize() for a in asociaciones]), 200
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+
+
 @asociates_api.route('/create', methods=['POST'])
 @jwt_required()
 def create_asociation():
