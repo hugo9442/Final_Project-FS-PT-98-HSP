@@ -37,7 +37,7 @@ const NewActionForm = ({ issueId, onClose, onSuccess, token }) => {
         dataToSend.append("bill_image", formData.bill_image);
       }
 
-      const res = await fetch(`https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/actions/create`, {
+      const res = await fetch(`https://sample-service-name-bnt3.onrender.com/create`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

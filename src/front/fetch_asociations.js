@@ -1,4 +1,4 @@
-const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/asociates";
+const Url = "https://sample-service-name-bnt3.onrender.com/asociates";
 
 export const Asociations = {
   
