@@ -1,6 +1,6 @@
 
-const Url = "https://sample-service-name-bnt3.onrender.com/issues"
-
+//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/issues"
+const Url ="https://sample-service-name-bnt3.onrender.com/apartments/issues";
 export const Issues = {
 
 create_issue: async (title, description, status, apartment_id, priority, type, start_date, end_day, token) => {

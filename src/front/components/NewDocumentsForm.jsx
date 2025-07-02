@@ -48,7 +48,7 @@ const NewDocumentsForm = ({ apartmentId, onCancel, onSuccess, token }) => {
         return;
       }
 
-      const res = await fetch(`https://sample-service-name-bnt3.onrender.com//upload`, {
+      const res = await fetch("https://sample-service-name-bnt3.onrender.com/documents/upload", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

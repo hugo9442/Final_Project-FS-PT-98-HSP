@@ -1,5 +1,5 @@
-const Url = "https://sample-service-name-bnt3.onrender.com/users"
-
+//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users"
+const Url ="https://sample-service-name-bnt3.onrender.com/users";
   export const users = {
 
     createuser: async (firstname, lastname, email, pass, phone, national_id, aacc) => {

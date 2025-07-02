@@ -12,6 +12,7 @@ export const PrivateRoutes = () => {
       try {
         const data = await users.privateareauser(store.token);
         setValid(data.msg);
+        console.log(data.msg)
       } catch (error) {
         setValid(false);
       }
@@ -28,6 +29,6 @@ export const PrivateRoutes = () => {
   if (valid === null) {
     return null;
   }
-
+console.log(valid)
   return valid ? <Outlet /> : <Navigate to="/Acceso" />;
 };
