@@ -47,6 +47,8 @@ def create_apartment():
         address=body.get("address"),
         postal_code=body.get("postal_code"),
         city=body.get("city"),
+        parking_slot=body.get("parking_slot"),
+        type=body.get("type"),
         owner_id=body.get("owner_id"),
         is_rent =body.get("is_rent")
     )
@@ -73,7 +75,25 @@ def get_apartment(id):
         return jsonify({"msg": str(e)}), 500
     
 
-    
+@apartments_api.route('/with-documents', methods=['GET'])
+@jwt_required()
+def get_apartments_with_documents():
+    try:
+        apartments = Apartment.query.all()
+        result = []
+        for apartment in apartments:
+            if apartment.documents and len(apartment.documents) > 0:
+                apartment_data = apartment.serialize()  # Serializa datos del apartamento
+                apartment_data['documents'] = [doc.serialize() for doc in apartment.documents]
+                result.append(apartment_data)
+
+        return jsonify({
+            "msg": "ok",
+            "apartments": result
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
 @apartments_api.route('/', methods=['GET'])
 @jwt_required()
 def get_apartments():

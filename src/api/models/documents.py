@@ -19,16 +19,16 @@ class Document (db.Model):
     apartment: Mapped['Apartment'] = relationship(
          back_populates='documents')
 
-def serialize(self):
-    return{
+    def serialize(self):
+         return{
         "id": self.id,
         "description":self.description,
         "file":self.file,
-        "apartament_id":self.apartament_id
+        "apartment_id":self.apartment_id
     }
 
-def serialize_with_relations(self):
-    data=self.serialize()
-    data['apartment'] = self.apartment.serialize()
-    return data
+    def serialize_with_relations(self):
+     data=self.serialize()
+     data['apartment'] = self.apartment.serialize()
+     return data
     

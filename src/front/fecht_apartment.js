@@ -7,6 +7,7 @@ export const apartments = {
     postal_code,
     city,
     parking,
+    type,
     is_rent,
     owner_id,
     token
@@ -16,6 +17,7 @@ export const apartments = {
       postal_code: postal_code,
       city: city,
       parking_slot: parking,
+      type:type,
       is_rent: Boolean(is_rent),
       owner_id: owner_id,
     };
@@ -56,6 +58,29 @@ export const apartments = {
     getApartmentsWithOwner: async (token) => {
     try {
         const response = await fetch(`${Url}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.msg || "Error al obtener los apartamentos");
+        }
+
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error("Error al obtener los apartamentos con propietario:", error);
+        return { error: "Error al conectar con la API" };
+    }
+},
+getApartmentswithdocuments: async (token) => {
+    try {
+        const response = await fetch(`${Url}/with-documents`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",

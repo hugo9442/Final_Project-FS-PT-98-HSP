@@ -4,7 +4,7 @@ import ImgEdificio from "../assets/img/ImgEdificio.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { users } from "../fecht_user.js";
 import swal from "sweetalert";
-
+import logo from "../assets/img/LogoTrabajoFinal.png";
 const LoginSection = () => {
 
   const { store, dispatch } = useGlobalReducer();
@@ -290,7 +290,7 @@ const LoginSection = () => {
                       <form>
                         <div className="d-flex align-items-center mb-3 pb-1">
                           <img
-                            src="src/front/assets/img/LogoTrabajoFinal.png"
+                            src={logo}
                             alt="Logo"
                             className="Logo"
                             style={{ width: "100px", height: "100px" }}

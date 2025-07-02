@@ -17,6 +17,7 @@ class Apartment(db.Model):
     postal_code: Mapped[str] = mapped_column(String(30), nullable=False)
     city: Mapped[str] = mapped_column(String(255), nullable=False)
     parking_slot: Mapped[str] = mapped_column(String(255), nullable=False)
+    type: Mapped[str] =mapped_column(String(255), nullable=False)
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)
     owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     owner: Mapped['User'] = relationship(
@@ -40,6 +41,7 @@ class Apartment(db.Model):
             "postal_code": self.postal_code,
             "city": self.city,
             "parking_slot": self.parking_slot,
+            "type": self.type,
             "is_rent": self.is_rent,
             "owner_id": self.owner_id,
         }

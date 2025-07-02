@@ -11,7 +11,7 @@ import NewTenantContractForm from "../components/NewTenantContractForm.jsx";
 const Inquilinos = () => {
   const [itemcontract, setItemcontract] = useState()
   const [itpartment, setItapartment] = useState()
-  const [ownerid, setOwnerid]=useState()
+  const [ownerid, setOwnerid] = useState()
   const { store, dispatch } = useGlobalReducer();
   const [showForm, setShowForm] = useState(false);
   const [showBotton, setShowbotton] = useState(true);
@@ -47,12 +47,12 @@ const Inquilinos = () => {
     } catch (error) {
     }
   };
-useEffect(() => {
-  if (store.todos?.id && store.token) {
-    fetchData();
-  }
-}, [store.todos, store.token])
- 
+  useEffect(() => {
+    if (store.todos?.id && store.token) {
+      fetchData();
+    }
+  }, [store.todos, store.token])
+
 
   const handleCreateRent = async () => {
     try {
@@ -83,17 +83,17 @@ useEffect(() => {
   }
 
   const Crent = async () => {
-    if (itemcontract && itemcontract){
-     setIsLoading(true); // Activar spinner al iniciar la acción
-    try {
-      await handleCreateRent();
-    } catch (error) {
-      console.error("Error en Crent:", error);
-    } finally {
-      setIsLoading(false); // Desactivar spinner cuando termine (éxito o error)
-    }  
-    }else {
-       swal({
+    if (itemcontract && itemcontract) {
+      setIsLoading(true); // Activar spinner al iniciar la acción
+      try {
+        await handleCreateRent();
+      } catch (error) {
+        console.error("Error en Crent:", error);
+      } finally {
+        setIsLoading(false); // Desactivar spinner cuando termine (éxito o error)
+      }
+    } else {
+      swal({
         title: "ERROR",
         text: "Hay que seleccionar una vivienda y un contrato para crear un alquiler",
         icon: "error",
@@ -101,10 +101,10 @@ useEffect(() => {
         dangerMode: true,
       });
     }
-   
+
   };
-console.log("owner_id",ownerid)
- console.log(itpartment)
+  console.log("owner_id", ownerid)
+  console.log(itpartment)
   console.log(store)
   return (
     <>
@@ -118,7 +118,7 @@ console.log("owner_id",ownerid)
               <div className="map" >
                 {isLoading && (
                   <div className="text-center p-5">
-                    <div className="spinner-border text-primary" role="status"> 
+                    <div className="spinner-border text-primary" role="status">
                       <span className="visually-hidden">Cargando...</span>
                     </div>
                     <p className="mt-3">Cargando contratos...</p>
@@ -128,45 +128,45 @@ console.log("owner_id",ownerid)
                 <div className="map" >
                   <h3>CONTRATOS PENDIENTES DE ASIGNAR VIVIENDA</h3>
 
-             <ul className="list-group">
-  {store && store.assocnoapartments ? (
-    store.assocnoapartments.length > 0 ? (
-      store.assocnoapartments.map((item) => {
-        const startDate = new Date(item.contract.start_date).toLocaleDateString("es-ES", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric"
-        });
+                  <ul className="list-group">
+                    {store && store.assocnoapartments ? (
+                      store.assocnoapartments.length > 0 ? (
+                        store.assocnoapartments.map((item) => {
+                          const startDate = new Date(item.contract.start_date).toLocaleDateString("es-ES", {
+                            day: "2-digit",
+                            month: "long",
+                            year: "numeric"
+                          });
 
-        return (
-          <li
-            key={item.id}
-            className="list-group-item d-flex contenedor"
-          >
-            <div className="mi-div p-3 mb-2 bg-info text-dark">
-              <input
-                className="form-check-input"
-                type="checkbox"
-                value=""
-                id="checkDefault"
-                onClick={(e) => { setItemcontract(item.id) }}
-              />
-            </div>
-            <div className="contratitem">
-              <h5>Tu Contrato con:</h5>
-              <p>Inquilino: {item.tenant.first_name}, {item.tenant.last_name} y de fecha {startDate}</p>
-              <p>No tiene vivienda asignada. Puedes asignarle una de las viviendas que están más abajo.</p>
-            </div>
-          </li>
-        );
-      })
-    ) : (
-      <p>No hay contratos pendientes de asignar</p>
-    )
-  ) : (
-    <p>Cargando...</p>
-  )}
-</ul>
+                          return (
+                            <li
+                              key={item.id}
+                              className="list-group-item d-flex contenedor"
+                            >
+                              <div className="mi-div p-3 mb-2 bg-info text-dark">
+                                <input
+                                  className="form-check-input"
+                                  type="checkbox"
+                                  value=""
+                                  id="checkDefault"
+                                  onClick={(e) => { setItemcontract(item.id) }}
+                                />
+                              </div>
+                              <div className="contratitem">
+                                <h5>Tu Contrato con:</h5>
+                                <p>Inquilino: {item.tenant.first_name}, {item.tenant.last_name} y de fecha {startDate}</p>
+                                <p>No tiene vivienda asignada. Puedes asignarle una de las viviendas que están más abajo.</p>
+                              </div>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        <p>No hay contratos pendientes de asignar</p>
+                      )
+                    ) : (
+                      <p>Cargando...</p>
+                    )}
+                  </ul>
 
                 </div>
                 <div className="map" >
@@ -181,7 +181,7 @@ console.log("owner_id",ownerid)
                           <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input" type="checkbox" value=""
                             id="checkDefault" onClick={() => { setItapartment(item.id); setOwnerid(item.owner_id); }} /></div>
                           <div className="contratitem">
-                            <p>Dirección: {item.address}, CP: {item.postal_code}, Ciudad: {item.city}, Parking: {item.parking_slot}, Propietario:{item.owner_name }</p>
+                            <p>Dirección: {item.address}, CP: {item.postal_code}, Ciudad: {item.city}, Parking: {item.parking_slot}, Propietario:{item.owner_name}</p>
                           </div>
                         </li>
                       );
@@ -195,20 +195,20 @@ console.log("owner_id",ownerid)
                         setShowForm(false);
                         setShowbotton(true);
                       }}
-                      onCancel={() => {setShowForm(false), setShowbotton(true)}}
+                      onCancel={() => { setShowForm(false), setShowbotton(true) }}
                     />
                   )}
                 </div>
-                {showBotton &&( 
-                 
-                  <button className="btn mt-2"style={{
-                  color: "black",
-                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
-                  textDecoration: "strong",
+                {showBotton && (
 
-                }}
-                  onClick={() => {setShowForm(true),setShowbotton(false)}}>Añadir Inquilino y Contrato</button>
-                  
+                  <button className="btn mt-2" style={{
+                    color: "black",
+                    backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                    textDecoration: "strong",
+
+                  }}
+                    onClick={() => { setShowForm(true), setShowbotton(false) }}>Añadir Inquilino y Contrato</button>
+
                 )}
                 <button className="btn mt-2" style={{
                   color: "black",
@@ -216,8 +216,8 @@ console.log("owner_id",ownerid)
                   textDecoration: "strong",
                   marginLeft: "10px", display: showBotton ? "inline-block" : "none"
                 }}
-                
-                onClick={Crent}>Crear Alquiler</button> 
+
+                  onClick={Crent}>Crear Alquiler</button>
               </div>
             </div>
           </div>

@@ -65,9 +65,9 @@ const Viviendas = () => {
           style={{ cursor: "pointer",textTransform:"capitalize"}}
         >
           <p>
-            <strong>Dirección:</strong> {item.address}, <strong>CP:</strong>{" "}
+            <strong>Dirección:</strong> {item.address }, <strong>CP:</strong>{" "}
             {item.postal_code}, <strong>Ciudad:</strong> {item.city},{" "}
-            <strong>Parking:</strong> {item.parking_slot},{" "} <strong>Propietario:</strong> {item.owner_name}, <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
+            <strong>Parking:</strong> {item.parking_slot}, <strong>Propietario:</strong> {item.owner_name}, <strong>Tipo:</strong> {item.type} <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
               {alquilado}
             </span>
           </p>
@@ -83,7 +83,7 @@ console.log(store)
           <div className="p-4 border rounded bg-light">
             <h2>Gestión de Viviendas</h2>
             <p>
-              Aquí puedes visualizar, cargar o gestionar viviendas activas.
+              Aquí Puedes Visualizar, Cargar o Gestionar Tus Viviendas.
             </p>
             <input
               type="text"
@@ -130,7 +130,13 @@ console.log(store)
              {showBotton &&( 
             <button
               className="btn btn-success mt-3 " 
-              style={{ marginLeft: "10px", display: showBotton ? "inline-block" : "none" }}
+              style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong",
+                  marginLeft: "10px", display: showBotton ? "inline-block" : "none"
+                }}
+              
               onClick={() => {setShowForm(true),setShowbotton(false)}}
             >
               Añadir Vivienda
@@ -138,7 +144,10 @@ console.log(store)
             {showBotton &&( 
             <button
               className="btn btn-success mt-3 " 
-              style={{ marginLeft: "10px", display: showBotton ? "inline-block" : "none" }}
+              style={{  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong",
+                  marginLeft: "10px", display: showBotton ? "inline-block" : "none" }}
               onClick={() => {setShowFormUser(true),setShowbotton(false)}}
             >
               Añadir Propietario

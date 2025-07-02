@@ -1,3 +1,4 @@
+import { apartments } from "./fecht_apartment";
 
 
 
@@ -32,6 +33,7 @@ export const initialStore = () => {
     todos: [],
     user:[],
     apartments: [],
+    apartmentwithdocuments:[],
     asociation: [],
     tenant: [],
     contracts: [],
@@ -56,6 +58,11 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         assocnoapartments: action.value,
+      };
+      case "add_apartmentswhitdocuments":
+      return {
+        ...store,
+        apartmentwithdocuments: action.value,
       };
      case "add_owner":
       return {

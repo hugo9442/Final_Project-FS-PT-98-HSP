@@ -26,6 +26,18 @@ def get_r2_client():
         region_name='auto'
     )
 
+@documents_api.route('/', methods=['GET'])
+@jwt_required()
+def get_documents():
+    try:
+        documents = Document.query.all()
+        return jsonify({
+            "msg": "ok",
+            "documents": [document.serialize_with_relations() for document in documents]
+        }), 200
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+
 
 
 
@@ -33,18 +45,20 @@ def get_r2_client():
 @jwt_required()
 def upload_document():
     def allowed_file(filename):
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf'}
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
 
-    if 'document' not in request.files:
+    file = request.files.get('file')
+    if not file:
         return jsonify({"error": "No file part"}), 400
-
-    file = request.files['document']
-
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
-
-    if not (file and allowed_file(file.filename)):
+    if not allowed_file(file.filename):
         return jsonify({"error": "Solo se permiten archivos PDF"}), 400
+
+    description = request.form.get('description')
+    apartment_id = request.form.get('apartment_id')
+    if not description or not apartment_id:
+        return jsonify({"error": "Faltan datos obligatorios"}), 400
 
     original_name = secure_filename(file.filename)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -55,7 +69,6 @@ def upload_document():
         file.seek(0, os.SEEK_END)
         file_size = file.tell()
         file.seek(0)
-
         if file_size == 0:
             raise ValueError("El archivo está vacío")
 
@@ -75,9 +88,9 @@ def upload_document():
 
         # Guardar en base de datos
         new_doc = Document(
-            description=request.form['description'],
+            description=description,
             file=file_url,
-            apartment_id=request.form['apartment_id']
+            apartment_id=apartment_id
         )
 
         db.session.add(new_doc)
@@ -91,6 +104,7 @@ def upload_document():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": "Error al procesar el archivo", "details": str(e)}), 500
+
 
 @documents_api.route('/download/<int:document_id>', methods=['GET'])
 @jwt_required()

@@ -10,6 +10,8 @@ import { Demo } from "./pages/Demo";
 import Acceso from "./pages/Acceso";
 import Contact from "./pages/Contact";
 import Servicios from "./pages/Servicios";
+import GestionDocumental from "./pages/GestionDocumental";
+import GestionDocumentalVista from "./pages/GestionDocumentalVista";
 import PropietarioIndex from "./pages/PropietarioIndex";
 import InquilinoIndex from "./pages/InquilinoIndex";
 import Contrato from "./pages/Contrato";
@@ -37,6 +39,8 @@ export const router = createBrowserRouter(
       <Route element={<PrivateRoutes />}>
         <Route path="/propietarioindex" element={<PropietarioIndex />} />
         <Route path="/Viviendas" element={<Viviendas />} />
+        <Route path="/Gestiondocumental" element={<GestionDocumental />} />
+        <Route path="/Gestiondocumentalvista" element={<GestionDocumentalVista />} />
         <Route path="/alquileres" element={<Alquileres />} />
         <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
         <Route path="/single/:theId" element={<Single />} />

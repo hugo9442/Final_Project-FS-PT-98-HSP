@@ -129,7 +129,7 @@ const Contrato = () => {
     <>
       <div className="container-fluid mt-4">
         <div className="row">
-          <MenuLateral setActiveOption={() => { }} />
+      
 
           <div className="col-md-9">
             <div className="p-4 border rounded bg-light">

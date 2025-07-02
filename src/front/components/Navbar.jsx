@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useNavigate } from "react-router-dom";
-
+import logo from "../assets/img/LogoTrabajoFinal.png";
 const Navbar = () => {
   const { store, dispatch } = useGlobalReducer();
   const history = useNavigate();
@@ -31,7 +31,7 @@ const Navbar = () => {
             <div className="container-fluid">
                 <Link to="/" className="navbar-brand ms-3">
                     <img
-                        src="src/front/assets/img/LogoTrabajoFinal.png"
+                        src={logo}
                         alt="Logo"
                         style={{ width: "70px", height: "70px" }}
                     />
