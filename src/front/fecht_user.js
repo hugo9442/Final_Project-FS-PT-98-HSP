@@ -1,5 +1,5 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users"
-const Url ="https://sample-service-name-bnt3.onrender.com/users";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users"
+//const Url ="https://sample-service-name-bnt3.onrender.com/users";
   export const users = {
 
     createuser: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
@@ -14,7 +14,7 @@ const Url ="https://sample-service-name-bnt3.onrender.com/users";
              
         };
         
-        console.log(user)
+      
         try {
             const request = await fetch(`${Url}/create`, {
                 method: "POST",
@@ -24,7 +24,7 @@ const Url ="https://sample-service-name-bnt3.onrender.com/users";
                 body: JSON.stringify(user)
             })
             const response = await request.json();
-            console.log(response)
+          
             return response
         } catch (error) {
             console.log(error)
@@ -54,7 +54,7 @@ const Url ="https://sample-service-name-bnt3.onrender.com/users";
                 body: JSON.stringify(user)
             })
             const response = await request.json();
-            console.log(response)
+            
             return response
         } catch (error) {
             console.log(error)
@@ -95,7 +95,7 @@ const Url ="https://sample-service-name-bnt3.onrender.com/users";
                 },
             })
             const response = await request.json();
-            console.log(response)
+            
             return response
         } catch (error) {
             console.log(error)

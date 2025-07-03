@@ -26,7 +26,7 @@ const NewActionForm = ({ issueId, onClose, onSuccess, token }) => {
     e.preventDefault();
     try {
       const dataToSend = new FormData();
-      dataToSend.append("status", formData.status);
+     // dataToSend.append("status", formData.status);//
       dataToSend.append("action_name", formData.action_name);
       dataToSend.append("start_date", formData.start_date);
       dataToSend.append("description", formData.description);
@@ -37,8 +37,8 @@ const NewActionForm = ({ issueId, onClose, onSuccess, token }) => {
         dataToSend.append("bill_image", formData.bill_image);
       }
 
-      const res = await fetch("https://sample-service-name-bnt3.onrender.com/actions/create"
-        //`https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/actions/create`//
+      const res = await fetch( //"https://sample-service-name-bnt3.onrender.com/actions/create"//
+        `https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/actions/create`
         , {
         method: "POST",
         headers: {
@@ -71,7 +71,7 @@ console.log(formData)
           <input name="start_date" type="date" className="form-control mb-2" onChange={handleChange} required />
         </div>
         <div className="col-md-6">
-          <select
+       { /*  <select
             name="status"
             className="form-control mb-2"
             onChange={handleChange}
@@ -80,7 +80,7 @@ console.log(formData)
             <option value="">Estado</option>
             <option value="ABIERTA">ABIERTA</option>
             <option value="CERRADA">CERRADA</option>
-          </select>
+          </select>*/}
           <input name="bill_amount" placeholder="Importe de factura" type="number" className="form-control mb-2" onChange={handleChange} required />
           <input name="bill_image" type="file" accept="application/pdf" placeholder="URL de imagen factura" className="form-control mb-2" onChange={handleChange} />
         </div>

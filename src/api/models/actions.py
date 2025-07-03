@@ -13,7 +13,7 @@ class Action(db.Model):
     __tablename__ = 'actions'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    status: Mapped[str] = mapped_column(String(255), nullable=False)
+    """status: Mapped[str] = mapped_column(String(255), nullable=False)"""
     action_name: Mapped[str] = mapped_column(String(255), nullable=False)
     start_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
     description: Mapped[str] = mapped_column(String(350), nullable=False)
@@ -29,7 +29,7 @@ class Action(db.Model):
         return {
             "action_id": self.id,
             "issue_id": self.issue_id,
-            "status": self.status,
+           """ "status": self.status,"""
             "action_name": self.action_name,
             "start_date": self.start_date,
             "description": self.description,

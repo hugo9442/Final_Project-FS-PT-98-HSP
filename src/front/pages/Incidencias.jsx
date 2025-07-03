@@ -91,7 +91,19 @@ const Incidencias = () => {
   };
 
   const Cissue = async () => {
-    await handlesIssues()
+    if (!itpartment){
+      swal({
+        title: "ERROR",
+        text: "Debes Seleccionar una Vivienda",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      });
+    }else{
+      await handlesIssues() 
+      fetchApartments()
+    }
+   
   }
   const getDaysBadgeClass = (alquilado) => {
     if (alquilado === "Pendiente de Alquilar") return "bg-danger text-white";

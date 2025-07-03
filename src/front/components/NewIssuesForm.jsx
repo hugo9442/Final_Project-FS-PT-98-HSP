@@ -35,7 +35,7 @@ const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
       setLoading(false);
     }
   };
-
+console.log(apartmentId)
   return (
     <div className="formIncidencia mt-2">
     <form onSubmit={handleSubmit} className="formIncidencia mt-2">
@@ -83,12 +83,19 @@ const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
 
       <div className="mb-1">
         <label htmlFor="Estado" className="form-label">Estado</label>
-        <input
-          type="text"
-          className="form-control"
-          id="Estado"
-          onChange={(e) => dispatch({ type: "addstatus", value: e.target.value })}
-        />
+        <select
+                        className="form-control"
+                        id="Estado"
+                        onChange={(e) =>
+                          dispatch({ type: "addstatus", value: e.target.value })
+                        }
+                        required
+                      >
+                        <option value="">Seleccione estado</option>
+                        <option value="ABIERTA">ABIERTA</option>
+                        <option value="CERRADA">CERRADA</option>
+                      </select>
+        
       </div>
 </div>
       <div className="mb-1">

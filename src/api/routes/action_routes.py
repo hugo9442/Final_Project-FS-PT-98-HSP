@@ -1,5 +1,5 @@
 from flask import request, jsonify, Blueprint, current_app, url_for, send_from_directory, abort, send_file
-from api.models import db, Action
+from api.models import db, Action,Issue
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
 from datetime import datetime
@@ -123,7 +123,6 @@ def create_action():
 
     try:
         new_action = Action(
-            status=data_request.get("status", "open"),
             action_name=data_request["action_name"],
             start_date=start_date,
             description=data_request["description"],
@@ -156,7 +155,7 @@ def create_action():
 @actions_api.route('/<int:action_id>', methods=["DELETE"])
 @jwt_required()
 def delete_action(action_id):
-    action = Issue.query.get(action_id)
+    action = Action.query.get(action_id)
 
     if not action:
         return jsonify({"error": "Action not found"}), 404

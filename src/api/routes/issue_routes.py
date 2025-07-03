@@ -2,7 +2,7 @@ from flask import request, jsonify, Blueprint
 from api.models import db, Issue
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
-from datetime import datetime
+from datetime import datetime, timezone
 issues_api = Blueprint('issues_api', __name__, url_prefix='/issues')
 
 CORS(issues_api)
@@ -137,6 +137,7 @@ def close_issue(issue_id):
 
     try:
         issue.status = "cerrado"  # o "closed" si usas inglés
+        issue.end_date = datetime.now(timezone.utc).date()
         db.session.commit()
         return jsonify({"msg": "Incidencia actualizada a cerrada", "issue": issue.serialize()}), 200
 

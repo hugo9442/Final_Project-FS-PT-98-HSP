@@ -9,19 +9,20 @@ import { contracts } from "../fecht_contract.js";
 import { users } from "../fecht_user.js";
 import MenuLateral from "../components/MenuLateral";
 import { apartments } from "../fecht_apartment.js"
+import { Issues } from "../fecht_issues.js";
 import swal from "sweetalert";
 import NewActionForm from "../components/NewActionForm.jsx";
-
+import NewFormIssues from "../components/NewIssuesForm.jsx";
 
 const ViviendasAssoc = () => {
-  
+
   const { theId } = useParams();
   const { store, dispatch } = useGlobalReducer()
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(null);
-
-
+  const [showFormissues, setShowFormissues] = useState(false);
+  const [showBotton, setShowbotton] = useState(true);
 
   const fetchData = async () => {
 
@@ -29,7 +30,7 @@ const ViviendasAssoc = () => {
 
       const data = await contracts.getAssocByApertmentId(parseInt(theId), store.token);
 
-       dispatch({ type: "addAssocByApertmentId", value: data });
+      dispatch({ type: "addAssocByApertmentId", value: data });
 
     } catch (error) {
     }
@@ -51,6 +52,17 @@ const ViviendasAssoc = () => {
       fetchData();
     }
   }, [theId, store.token]);
+  
+  const handlegetIssuesActionsByapartmetId = async ()=>{
+    try {
+      const data = await apartments.getIssuesActionsByApertmentId(parseInt(theId), store.token);
+      if (!data.error) {
+        dispatch({ type: "add_singleIssues", value: data });
+      }
+    } catch (error) {
+      console.error("Error fetching issues/actions:", error);
+    }
+  }
 
 
   const handleDownloadContract = async (contractId) => {
@@ -107,7 +119,16 @@ const ViviendasAssoc = () => {
     if (alquilado === "Alquilado") { return 'bg-info text-black' };
     return 'bg-success text-white';
   };
+  const CloseIsusses = async (item) => {
+    try {
+      const data = await Issues.CloseIssues(item, store.token)
+      console.log(data)
+      handlegetIssuesActionsByapartmetId();
+    } catch (error) {
+      console.log("error")
+    }
 
+  }
 
   return (
     <>
@@ -117,7 +138,7 @@ const ViviendasAssoc = () => {
           <div className="p-4 border rounded bg-light">
             <h2 className="mb-3">Datos de la Vivienda:</h2>
             <li className="list-group-item d-flex justify-content-between" >
-              <div className="contratitem" style={{textTransform:"capitalize"}}>
+              <div className="contratitem" style={{ textTransform: "capitalize" }}>
                 <p><strong>Dirección:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.address}, <strong>CP:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.postal_code}, <strong>Ciudad:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.city}, <strong>Parking:</strong> {store.AssocByApertmentId[0].asociaciones[0].apartment.parking_slot},    <span className={`badge ${getalquilado(alquilado)}`}>{alquilado}</span> </p>
               </div>
 
@@ -207,24 +228,57 @@ const ViviendasAssoc = () => {
                           })}
                         </ul>
 
-                        <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => setShowForm(item.issue_id)}>Añadir actuación</button>
-                        {showForm === item.issue_id && (
-                          <NewActionForm
-                            issueId={item.issue_id}
-                            token={store.token}
-                            onSuccess={() => {
-                              setShowForm(null);
-                              handlegetIssuesActionsByapartmetId();
-                            }}
-                            onClose={() => setShowForm(false)}
-                          />
-                        )}
+                        <div className="row">
+                          <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => setShowForm(item.issue_id)} disabled={item.status === 'cerrado'}>Añadir actuación</button>
+                          <button className="btn btn-sm btn-outline-primary mt-2"
+                            onClick={() => { CloseIsusses(item.issue_id) }} disabled={item.status === 'cerrado'}>
+                            <strong>Cerrar Incidencia</strong>
+                          </button>
+                          {showForm === item.issue_id && (
+                            <NewActionForm
+                              issueId={item.issue_id}
+                              token={store.token}
+                              onSuccess={() => {
+                                setShowForm(null);
+                                handlegetIssuesActionsByapartmetId();
+                              }}
+                              onClose={() => setShowForm(false)}
+                            />
+                          )}
+                        </div>
                       </li>
                     );
                   })
                 }
               </ul>
+              
             </div>
+            {showFormissues && (
+              <NewFormIssues
+                apartmentId={parseInt(theId)}
+                token={store.token}
+                onSuccess={() => {
+                  setShowFormissues(false);
+                  setShowbotton(true)
+                   handlegetIssuesActionsByapartmetId();
+                }}
+                onCancel={() => {setShowFormissues(false), setShowbotton(true)}}
+              />
+            )}
+            {showBotton && (
+              <button
+                className="btn btn-success mt-3 "
+                style={{
+                  color: "black",
+                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
+                  textDecoration: "strong",
+                  marginLeft: "10px", display: showBotton ? "inline-block" : "none"
+                }}
+
+                onClick={() => { setShowFormissues(true), setShowbotton(false) }}
+              >
+                Añadir incidencia
+              </button>)}
           </div>
 
         </div>
