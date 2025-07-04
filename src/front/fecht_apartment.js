@@ -1,5 +1,5 @@
-const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/apartments";
-  //const Url ="https://sample-service-name-bnt3.onrender.com/apartments";
+//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/apartments";
+  const Url ="https://sample-service-name-bnt3.onrender.com/apartments";
 export const apartments = {
 
   create_apartment: async (
