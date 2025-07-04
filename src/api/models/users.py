@@ -22,7 +22,7 @@ if TYPE_CHECKING:
     from .contracts import Contract
     from . apartments import Apartment
     from .assoc_tenants_apartments_contracts import  AssocTenantApartmentContract
-
+    from .invoice import Invoice
 class User(db.Model):
     __tablename__= "users"
     id: Mapped[int] = mapped_column(primary_key=True)
@@ -43,6 +43,10 @@ class User(db.Model):
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="tenant"
     )
+    invoices: Mapped[list['Invoice']] = relationship(
+        back_populates='user_tenant',
+        cascade="all, delete-orphan"
+    )
 
     def serialize(self):
         return {
@@ -61,4 +65,5 @@ class User(db.Model):
         data['apartment'] = [apartment.serialize() for apartment in self.apartment],
         data['contract'] = [contract.serialize() for contract in self.contract],
         data['asociation'] = [asociation.serialize() for asociation in self.asociation],
+        data['invoice']= [invoice.serializa() for invoice in self.invoices]
         return data 

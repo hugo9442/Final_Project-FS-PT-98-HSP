@@ -5,3 +5,4 @@ from .contract_routes import contracts_api
 from .action_routes import actions_api
 from .asociates_routes import asociates_api
 from .documents_rourtes import documents_api
+from .invoices_route import invoices_api

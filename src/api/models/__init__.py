@@ -6,3 +6,4 @@ from .apartments import Apartment
 from .assoc_tenants_apartments_contracts import AssocTenantApartmentContract
 from .issues import Issue
 from .documents import Document
+from .invoice import Invoice

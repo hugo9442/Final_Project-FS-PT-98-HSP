@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from .users import User
     from .apartments import Apartment
     from .contracts import Contract
+    from .invoice import Invoice
 
 class AssocTenantApartmentContract(db.Model):
     __tablename__ = 'assoc_tenants_apartments_contracts'
@@ -18,7 +19,6 @@ class AssocTenantApartmentContract(db.Model):
     renta: Mapped[float] = mapped_column(Float, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     
-
     tenant: Mapped['User'] = relationship(
         back_populates='association'
     )
@@ -27,6 +27,10 @@ class AssocTenantApartmentContract(db.Model):
     )
     contract: Mapped['Contract'] = relationship(
         back_populates='association'
+    )
+    invoices: Mapped[list['Invoice']] = relationship(
+    back_populates='association',
+    cascade="all, delete-orphan"
     )
 
     def serialize(self):

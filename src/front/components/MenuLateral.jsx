@@ -9,7 +9,8 @@ import {
   faTriangleExclamation,
   faUser,
   faRightFromBracket,
-  faBars
+  faBars,
+  faFolderOpen
 } from '@fortawesome/free-solid-svg-icons';
 
 const iconMap = {
@@ -21,6 +22,7 @@ const iconMap = {
   "user": faUser,
   "right-from-bracket": faRightFromBracket,
   "bars": faBars,
+  "folderOpen" : faFolderOpen,
 };
 
 const MenuLateral = ({ setActiveOption }) => {
@@ -32,12 +34,12 @@ const MenuLateral = ({ setActiveOption }) => {
   const navItems = [
     { name: "Inicio", path: "/propietarioindex", icon: "gauge-high", internalOption: "Propietarioindex" },
     { name: "Viviendas", path: "/Viviendas", icon: "house-chimney", internalOption: "viviendas" },
-    { name: "Alquileres", path: "/Alquileres", icon: "file-signature", internalOption: "Alquileres" },
     { name: "Registro de Inquilinos y Contratos", path: "/Inquilinos", icon: "people-roof", internalOption: "inquilinos" },
+    { name: "Alquileres", path: "/Alquileres", icon: "file-signature", internalOption: "Alquileres" },
     { name: "Incidencias", path: "/Incidencias", icon: "triangle-exclamation", internalOption: "incidencias" },
     {
       name: "Gestión Documental",
-      icon: "triangle-exclamation",
+      icon: "folderOpen",
       internalOption: "Gestiondocumental",
       dropdown: true,
       items: [
