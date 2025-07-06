@@ -12,6 +12,8 @@ import {
   faBars,
   faFolderOpen
 } from '@fortawesome/free-solid-svg-icons';
+import logo from "../assets/img/LogoTrabajoFinal.png";
+
 
 const iconMap = {
   "gauge-high": faGaugeHigh,
@@ -43,7 +45,7 @@ const MenuLateral = ({ setActiveOption }) => {
   return (
     <>
       <div className="d-md-none bg-info p-2 d-flex justify-content-between align-items-center shadow">
-        <img src="/assets/img/LogoTrabajoFinal.png" alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%" }} />
+        <img src={logo} alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%" }} />
         <button className="btn btn-outline-dark" onClick={() => setIsOpen(!isOpen)}>
           <FontAwesomeIcon icon={iconMap["bars"]} />
         </button>
@@ -60,7 +62,7 @@ const MenuLateral = ({ setActiveOption }) => {
           paddingTop: '80px',
         }}>
         <div className="text-center mb-4">
-          <img src="/assets/img/LogoTrabajoFinal.png" alt="Logo"
+          <img src={logo}alt="Logo"
             style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover" }}
             className="mb-2"
           />

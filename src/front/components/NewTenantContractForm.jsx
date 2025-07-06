@@ -30,7 +30,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
 
             if (tenantResult.error) throw new Error(tenantResult.error);
             createdTenantId = tenantResult.tenant.id;
-            await dispatch({ type: "add_tenant", value: tenantResult.tenant });
+            dispatch({ type: "add_tenant", value: tenantResult.tenant });
 
             // Paso 2: Crear contrato
             const contractResult = await contracts.create_contract(
@@ -43,7 +43,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
 
             if (contractResult.error) throw new Error(contractResult.error);
             createdContractId = contractResult.contract.id;
-            await dispatch({ type: "add_contracts", value: contractResult.contract });
+            dispatch({ type: "add_contracts", value: contractResult.contract });
 
             // Paso 3: Crear asociación
             const asociationResult = await Asociations.createAsociation(
@@ -61,10 +61,11 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
             );
 
             if (asociationload.error) throw new Error(asociationload.error);
-
-            await dispatch({ type: "add_asociation", value: asociationload });
+            
             swal({ title: "ÉXITO", text: "Operaciones completadas", icon: "success" });
+            dispatch({ type: "add_asociation", value: asociationload });
             onSuccess()
+            
         } catch (error) {
             // 🔁 ROLLBACK
             if (createdContractId) {

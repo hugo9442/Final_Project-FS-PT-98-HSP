@@ -1,14 +1,10 @@
 import React from "react";
-import { users } from "../fecht_user.js";
 import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
-import { differenceInDays } from 'date-fns';
-import { Asociations } from "../fetch_asociations.js";
-import { contracts } from "../fecht_contract.js";
 import { Invoices } from "../invoice.js";
-import NewTenantContractForm from "../components/NewTenantContractForm.jsx";
-
+import html2pdf from "html2pdf.js"
+import logo from "../assets/img/LogoTrabajoFinal.png";
 
 const Facturacionvista = () => {
 
@@ -35,6 +31,38 @@ const Facturacionvista = () => {
     useEffect(() => {
         fetchData();
     }, [store.todos, store.token]);
+const downloadInvoicePDF = (item) => {
+  // Creamos un HTML dinámico con la factura
+  const content = `
+    <div style="font-family: Arial; padding: 20px;">
+    <div style="text-align: center; margin-bottom: 20px;">
+  <img src=${logo} alt="Logo" style="width: 100px; height: auto; vertical-align: middle; display: inline-block;" />
+  <h1 style="display: inline-block; margin-left: 20px; vertical-align: middle; font-size: 24px;">
+    Montoria Gestión de Inmuebles
+  </h1>
+</div>
+    </div>
+      <h2>Factura #${item.id}</h2>
+      <p><strong>Cliente:</strong> ${item.tenant.first_name} ${item.tenant.last_name}</p>
+      <p><strong>NIF:</strong> ${item.tenant.national_id}</p>
+      <p><strong>Descripción:</strong> ${item.description}</p>
+      <p><strong>Importe:</strong> €${item.bill_amount}</p>
+      <p><strong>Fecha:</strong> ${new Date(item.date).toLocaleDateString()}</p>
+      <p><strong>Estado:</strong> ${item.status}</p>
+    </div>
+  `;
+
+  // Configuramos html2pdf
+  const opt = {
+    margin:       0.5,
+    filename:     `Factura_${item.id}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2 },
+    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  html2pdf().from(content).set(opt).save();
+};
 
 
     console.log(store)
@@ -86,11 +114,14 @@ const Facturacionvista = () => {
                                                             <div className="mt-auto d-flex justify-content-between">
                                                               
                                                                 <button
-                                                                    className=" btn btn-success mi-button mt-2"
+                                                                    className=" btn btn-success mt-2"
                                                                     onClick={() => handleDeleteRent(item.contract.id, item.apartment.id)}
                                                                 >
                                                                    Marcar como cobrada
                                                                 </button>
+                                                                <button className="btn btn-success" onClick={() => downloadInvoicePDF(item)}>
+        Descargar PDF
+      </button>
                                                             </div>
                                                         </div>
                                                     </div>

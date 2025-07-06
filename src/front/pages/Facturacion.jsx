@@ -73,7 +73,7 @@ const Facturacion = () => {
                     buttons: true,
                     dangerMode: true,
                 });
-            } else if (response.msg) {
+            } else if (response.msg!=="ok") {
                 swal({
                     title: "Éxito",
                     text: response.msg,
