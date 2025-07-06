@@ -29,6 +29,18 @@ def get_all_users():
         return jsonify([user.serialize() for user in users]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@users_api.route('/invoices', methods=['GET'])
+@jwt_required()
+def get_all_users_with_invoices():
+    try:
+        users = User.query.filter(User.role == Role.INQUILINO.value).all()
+        result = [user.serialize_invoices_only() for user in users]
+        return jsonify({"msg": "Listado de usuarios con sus facturas", "users": result}), 200
+    except Exception as e:
+        print("Error al obtener las facturas:", e)
+        return jsonify({"error": "Error en el servidor"}), 500
+
 
 
 @users_api.route('/<int:user_id>', methods=["GET"])

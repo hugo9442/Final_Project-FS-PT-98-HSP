@@ -37,6 +37,7 @@ export const initialStore = () => {
     asociation: [],
     tenant: [],
     contracts: [],
+    invoices:[],
     issues: [],
     singleIssues:[],
     AssocByApertmentId:[],
@@ -63,6 +64,11 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         apartmentwithdocuments: action.value,
+      };
+      case "add_invoices":
+      return {
+        ...store,
+        invoices: action.value,
       };
      case "add_owner":
       return {

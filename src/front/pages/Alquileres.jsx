@@ -155,7 +155,10 @@ console.log(store)
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
                               </p>
                               <p className="card-text mb-1">
-                                <strong>Direccion:</strong> {item.apartment?.address}, <strong>CP:</strong> {item.apartment?.postal_code}, <strong>Ciudad:</strong> {item.partment?.city}
+                                <strong>Direccion:</strong> {item.apartment?.address}, <strong>CP:</strong> {item.apartment?.postal_code}, <strong>Ciudad:</strong> {item.apartment?.city}
+                              </p>
+                              <p>
+                                <strong>Renta</strong> {item.renta}
                               </p>
                               <p className="card-text mb-3">
                                 <strong>Documento:</strong> {splitDocument}

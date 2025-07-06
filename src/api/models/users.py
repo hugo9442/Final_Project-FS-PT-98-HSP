@@ -43,10 +43,17 @@ class User(db.Model):
     association:Mapped[List["AssocTenantApartmentContract"]] = relationship(
         back_populates="tenant"
     )
-    invoices: Mapped[list['Invoice']] = relationship(
-        back_populates='user_tenant',
+    invoices_as_tenant: Mapped[list['Invoice']] = relationship(
+        back_populates="tenant",
+        foreign_keys="Invoice.tenant_id",
         cascade="all, delete-orphan"
     )
+    invoices_as_owner: Mapped[list['Invoice']] = relationship(
+        back_populates="owner",
+        foreign_keys="Invoice.owner_id",
+        cascade="all, delete-orphan"
+    )
+
 
     def serialize(self):
         return {
@@ -62,8 +69,19 @@ class User(db.Model):
     
     def serialize_with_relations(self):
         data = self.serialize()
-        data['apartment'] = [apartment.serialize() for apartment in self.apartment],
-        data['contract'] = [contract.serialize() for contract in self.contract],
-        data['asociation'] = [asociation.serialize() for asociation in self.asociation],
-        data['invoice']= [invoice.serializa() for invoice in self.invoices]
-        return data 
+        data['apartment'] = [apartment.serialize() for apartment in self.apartments] if self.apartments else []
+        data['contract'] = [contract.serialize() for contract in self.contracts] if self.contracts else []
+        data['association'] = [association.serialize() for association in self.association] if self.association else []
+        data['invoices_as_tenant'] = [inv.serialize() for inv in self.invoices_as_tenant]
+        data['invoices_as_owner'] = [inv.serialize() for inv in self.invoices_as_owner]
+        return data
+    
+    def serialize_invoices_only(self):
+        return {
+        "id": self.id,
+        "first_name": self.first_name,
+        "last_name": self.last_name,
+        "national_id":self.national_id,
+        "invoices_as_tenant": [inv.serialize() for inv in self.invoices_as_tenant],
+       
+    }

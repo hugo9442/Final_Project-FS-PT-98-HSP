@@ -103,6 +103,23 @@ const Url ="https://sample-service-name-bnt3.onrender.com/users";
 
         }
     },
+    tenant_invoices: async (token) => {
+        try {
+            const request = await fetch(`${Url}/invoices`, {
+                method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
 
     getUser: async (id) => {
         try {

@@ -21,8 +21,8 @@ import Viviendas from "./pages/Viviendas";
 import { PrivateRoutes } from "./pages/Privateroute";
 import Alquileres from "./pages/Alquileres";
 import ViviendasAssoc from "./pages/ViviendasAssoc";
-
-
+import Facturacion from "./pages/Facturacion";
+import Facturacionvista from "./pages/FacturacionVista";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -42,6 +42,8 @@ export const router = createBrowserRouter(
         <Route path="/Gestiondocumental" element={<GestionDocumental />} />
         <Route path="/Gestiondocumentalvista" element={<GestionDocumentalVista />} />
         <Route path="/alquileres" element={<Alquileres />} />
+        <Route path="/Facturacion" element={<Facturacion />} />
+        <Route path="/Facturacionvista" element={<Facturacionvista />} />
         <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
         <Route path="/single/:theId" element={<Single />} />
         <Route path="/Incidencias" element={<Incidencias />} />

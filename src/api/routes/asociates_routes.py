@@ -53,6 +53,7 @@ def create_asociation():
     new_asociation = AssocTenantApartmentContract(
         tenant_id=body.get("tenant_id"),
         contract_id=body.get("contract_id"),
+        renta=body.get("renta"),
         is_active =body.get("is_active")
     )
     

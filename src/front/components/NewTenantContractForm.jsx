@@ -78,7 +78,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
         }
     };
 
-
+console.log("renta", renta)
 
     const Ctenant = async () => {
         if (store.firstname === "" || store.lastname === "" || store.email === "" || store.phone === "" || store.national_id === "" || store.aacc === ""

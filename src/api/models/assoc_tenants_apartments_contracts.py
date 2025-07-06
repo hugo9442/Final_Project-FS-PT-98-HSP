@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, Boolean, ForeignKey,Float
+from sqlalchemy import Integer, Boolean, ForeignKey,Float,Numeric
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from .database import db
 from typing import TYPE_CHECKING
@@ -16,7 +16,7 @@ class AssocTenantApartmentContract(db.Model):
     tenant_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     apartment_id: Mapped[int] = mapped_column(ForeignKey('apartments.id'), nullable=True)
     contract_id: Mapped[int] = mapped_column(ForeignKey('contracts.id'), nullable=False)
-    renta: Mapped[float] = mapped_column(Float, nullable=False)
+    renta: Mapped[float] = mapped_column(Numeric(10,2), nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     
     tenant: Mapped['User'] = relationship(
@@ -43,6 +43,20 @@ class AssocTenantApartmentContract(db.Model):
             **self.apartment.serialize(),
             "owner": self.apartment.owner.serialize() if self.apartment and self.apartment.owner else None
         } if self.apartment else None,
-        "contract": self.contract.serialize() if self.contract else None
+        "contract": self.contract.serialize() if self.contract else None,
+        "invoices": [invoice.serialize() for invoice in self.invoices] if self.invoices else []
+    }
+    def serialize_invoice_only(self):
+     return {
+        "id": self.id,
+        "renta": self.renta,
+        "is_active": self.is_active,
+        "tenant": self.tenant.serialize() if self.tenant else None,
+        "apartment": {
+            **self.apartment.serialize(),
+            "owner": self.apartment.owner.serialize() if self.apartment and self.apartment.owner else None
+        } if self.apartment else None,
+        "contract": self.contract.serialize() if self.contract else None,
+        "invoices": [invoice.serialize() for invoice in self.invoices] if self.invoices else []
     }
 

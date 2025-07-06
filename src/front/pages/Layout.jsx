@@ -13,7 +13,7 @@ export const Layout = () => {
     const path = location.pathname;
 
     const privateRoutes = ["/admin", "/Contrato", "/Viviendas", "/Inquilinos", "/Alquileres",
-                             "/Incidencias", "/propietarioindex", "/single","/Gestiondocumental","/Gestiondocumentalvista",];
+                             "/Incidencias", "/propietarioindex", "/single","/Gestiondocumental","/Gestiondocumentalvista","/Facturacion", "/Facturacionvista"];
     const secondaryRoutes = ["/inquilinoindex"];
     const publicRoutes = ["/contact", "/acceso", "/servicios"];
 
