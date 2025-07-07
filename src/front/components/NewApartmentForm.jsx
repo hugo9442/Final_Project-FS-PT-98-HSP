@@ -71,15 +71,15 @@ const NewApartmentForm = ({ onSuccess, onCancel}) => {
   return (
     <div className="form mt-2" style={{ textTransform: "capitalize" }}>
       <div className="mb-3 row">
-        <div className="col-4" mb-3>
+        <div className="col-md-4" mb-3>
           <label htmlFor="address" className="form-label">Dirección</label>
           <input type="text" className="form-control" id="address" onChange={(e) => dispatch({ type: "address", value: e.target.value })} required />
         </div>
-        <div className="col-4" mb-3>
+        <div className="col-md-4" mb-3>
           <label htmlFor="postal_code" className="form-label">Código Postal</label>
           <input type="text" className="form-control" id="postal_code" onChange={(e) => dispatch({ type: "postal_code", value: e.target.value })} required />
         </div>
-        <div className="col-4" mb-3>
+        <div className="col-md-4" mb-3>
           <label htmlFor="city" className="form-label">Ciudad</label>
           <input type="text" className="form-control" id="city" onChange={(e) => dispatch({ type: "city", value: e.target.value })} required />
         </div>
@@ -101,12 +101,12 @@ const NewApartmentForm = ({ onSuccess, onCancel}) => {
             
           </select>
         </div>
-        <div className="col-4" mb-3>
+        <div className="col-md-4" mb-3>
           <label htmlFor="parking_slot" className="form-label">Plaza de Garage</label>
           <input type="text" className="form-control" id="parking_slot" onChange={(e) => dispatch({ type: "parking_slot", value: e.target.value })} required />
         </div>
       </div>
-      <div className="mb-3">
+      <div className="col-md-12 mb-3">
         <label htmlFor="propietario" className="form-label">Propietario</label>
         <select
           className="form-select" // Bootstrap usa form-select para dropdowns
