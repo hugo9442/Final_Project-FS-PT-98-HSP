@@ -77,86 +77,82 @@ const Viviendas = () => {
   };
 console.log(store)
   return (
-    <div className="container-fluid mt-4">
-      <div className="row">
-        <div className="col-md-12">
-          <div className="p-4 border rounded bg-light">
-            <h2>Gestión de Viviendas</h2>
-            <p>
-              Aquí Puedes Visualizar, Cargar o Gestionar Tus Viviendas.
-            </p>
-            <input
-              type="text"
-              className="form-control mb-3"
-              placeholder="Buscar por dirección, ciudad o código postal"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+  <div className="mt-4 p-4 border rounded bg-light">
+    <h2>Gestión de Viviendas</h2>
+    <p>
+      Aquí Puedes Visualizar, Cargar o Gestionar Tus Viviendas.
+    </p>
+    <input
+      type="text"
+      className="form-control mb-3"
+      placeholder="Buscar por dirección, ciudad o código postal"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
 
-            <ul className="list-group">
-              {store?.apartments?.length > 0 ? (
-                store && store.apartments
-                  .filter((item) => {
-                    const fullText = `${item.address} ${item.city} ${item.postal_code}`.toLowerCase();
-                    return fullText.includes(searchTerm.toLowerCase());
-                  }).map((item) => renderApartmentItem(item))
-              ) : (
-                <h5 className="mt-3 text-muted">
-                  Todavía no has registrado ninguna vivienda.
-                </h5>
-              )}
-            </ul>
+    <ul className="list-group">
+      {store?.apartments?.length > 0 ? (
+        store.apartments
+          .filter((item) => {
+            const fullText = `${item.address} ${item.city} ${item.postal_code}`.toLowerCase();
+            return fullText.includes(searchTerm.toLowerCase());
+          }).map((item) => renderApartmentItem(item))
+      ) : (
+        <h5 className="mt-3 text-muted">
+          Todavía no has registrado ninguna vivienda.
+        </h5>
+      )}
+    </ul>
 
-            {showForm && (
-              <NewApartmentForm
-                onSuccess={() => {
-                  setShowForm(false);
-                  fetchApartments();
-                  setShowbotton(true)
-                }}
-                onCancel={() => {setShowForm(false), setShowbotton(true)}}
-              />
-            )}
-            {showFormUser && (
-              <NewuserForm
-                onSuccess={() => {
-                  setShowFormUser(false);
-                  fetchApartments();
-                  setShowbotton(true)
-                }}
-                onCancel={() => {setShowFormUser(false), setShowbotton(true)}}
-              />
-            )}
-             {showBotton &&( 
-            <button
-              className="btn btn-success mt-3 " 
-              style={{
-                  color: "black",
-                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
-                  textDecoration: "strong",
-                  marginLeft: "10px", display: showBotton ? "inline-block" : "none"
-                }}
-              
-              onClick={() => {setShowForm(true),setShowbotton(false)}}
-            >
-              Añadir Vivienda
-            </button>  )}
-            {showBotton &&( 
-            <button
-              className="btn btn-success mt-3 " 
-              style={{  color: "black",
-                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
-                  textDecoration: "strong",
-                  marginLeft: "10px", display: showBotton ? "inline-block" : "none" }}
-              onClick={() => {setShowFormUser(true),setShowbotton(false)}}
-            >
-              Añadir Propietario
-            </button>  )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    {showForm && (
+      <NewApartmentForm
+        onSuccess={() => {
+          setShowForm(false);
+          fetchApartments();
+          setShowbotton(true)
+        }}
+        onCancel={() => { setShowForm(false), setShowbotton(true) }}
+      />
+    )}
+    {showFormUser && (
+      <NewuserForm
+        onSuccess={() => {
+          setShowFormUser(false);
+          fetchApartments();
+          setShowbotton(true)
+        }}
+        onCancel={() => { setShowFormUser(false), setShowbotton(true) }}
+      />
+    )}
+    {showBotton && (
+      <>
+        <button
+          className="btn btn-success mt-3"
+          style={{
+            color: "black",
+            backgroundColor: 'rgba(138, 223, 251, 0.8)',
+            marginLeft: "10px"
+          }}
+          onClick={() => { setShowForm(true), setShowbotton(false) }}
+        >
+          Añadir Vivienda
+        </button>
+        <button
+          className="btn btn-success mt-3"
+          style={{
+            color: "black",
+            backgroundColor: 'rgba(138, 223, 251, 0.8)',
+            marginLeft: "10px"
+          }}
+          onClick={() => { setShowFormUser(true), setShowbotton(false) }}
+        >
+          Añadir Propietario
+        </button>
+      </>
+    )}
+  </div>
+);
+
 };
 
 export default Viviendas;
