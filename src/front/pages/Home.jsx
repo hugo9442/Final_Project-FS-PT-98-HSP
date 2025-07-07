@@ -4,6 +4,9 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import Card from "../components/Card.jsx"
 import 'animate.css'; 
 import { Link } from "react-router-dom";
+import photoweb from "../assets/img/viviendasm.webp";
+import family from "../assets/img/familia.webp"
+import incidencias from "../assets/img/incidencia.webp"
 
 
 export const Home = () => {
@@ -59,19 +62,17 @@ export const Home = () => {
 
                 <div className="container position-relative z-1 py-5">
                     <h1 className="display-3 fw-bold mb-3 animate__animated animate__fadeInDown">
-                        Tu Gestión Inmobiliaria, Simplificada.
+                       Montoria sl.
                     </h1>
                     <p className="lead mb-4 mx-auto animate__animated animate__fadeInUp" style={{ maxWidth: '700px' }}>
-                        Centraliza y optimiza la administración de tus propiedades y alquileres.
-                        Desde la gestión de contratos hasta el seguimiento de incidencias,
-                        todo en un solo lugar.
+                        Promoción, Gestión y Alquiler de Inmuebles.
                     </p>
-                    <Link 
+                   {/* <Link 
                         to="/Acceso" 
                         className="btn btn-primary btn-lg shadow-sm animate__animated animate__zoomIn"
                     >
                         Empieza Ahora
-                    </Link>
+                    </Link>*/}
                 </div>
             </section>
 
@@ -88,25 +89,25 @@ export const Home = () => {
                     <div className="row justify-content-center g-4">
                         <div className="col-md-6 col-lg-4 d-flex justify-content-center">
                             <Card
-                                image="src/front/assets/img/viviendasm.webp"
-                                text="Arrendador: Control Total"
-                                text2="Visualiza y gestiona incidencias reportadas por inquilinos. Centraliza contratos, propiedades e inquilinos. Soluciones rápidas y cómodas para una administración sin estrés."
+                                image={photoweb}
+                                text="Promoción de Nuevas Viviendas"
+                                text2="Promoción exclusiva que combina hogares confortables, locales comerciales que impulsan el barrio y prácticos trasteros para tu día a día."
                                 alt="Propiedad para Arrendador"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 d-flex justify-content-center">
                             <Card
-                                image="src/front/assets/img/familia.webp"
-                                text="Arrendatario: Simplicidad y Comodidad"
-                                text2="Reporta incidencias fácilmente desde cualquier lugar. Olvídate de llamadas: tu arrendador recibe y gestiona todo online, rápido y sin complicaciones."
+                                image={family}
+                                text="Viviendas, Locales y Trasteros en Alquiler"
+                                text2="Alquila con nosotros: viviendas, locales y trasteros gestionados por Montoria, sin intermediarios."
                                 alt="Propiedad para Arrendatario"
                             />
                         </div>
                         <div className="col-md-6 col-lg-4 d-flex justify-content-center">
                             <Card
-                                image="src/front/assets/img/incidencia.webp"
+                                image={incidencias}
                                 text="Servicios Digitalizados"
-                                text2="Digitaliza la gestión de tu vivienda: seguimiento de incidencias, comunicación ágil y soluciones eficientes para propietarios e inquilinos, todo en un solo lugar."
+                                text2="Contratos digitales, reporte inmediato de incidencias y una comunicación ágil con nuestro equipo, todo desde tu dispositivo."
                                 alt="Servicios Digitales"
                             />
                         </div>

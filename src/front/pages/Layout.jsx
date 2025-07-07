@@ -73,7 +73,7 @@ export const Layout = () => {
                 <MenuLateral setActiveOption={setActiveOption} />
             )}
 
-            <div className="main-content p-4 mt-4">
+            <div className={`${showPrivateNavbar ? 'main-content' : ''} p-4 mt-4`}>
                 <Outlet />
             </div>
 
