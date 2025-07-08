@@ -41,7 +41,11 @@ const handleDownload=async()=>{
   useEffect(() => {
     fetchApartments();
   }, []);
-console.log("Id Document",itdoc)
+
+
+
+
+
   return (
     <div className="container-fluid mt-4">
       <div className="row">

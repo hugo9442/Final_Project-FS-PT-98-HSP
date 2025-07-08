@@ -137,7 +137,7 @@ console.log(store)
                       const contractEndDateObj = new Date(item.contract.end_date);
                       const diffDays = differenceInDays(contractEndDateObj, today);
                       const estado= item.is_active? "activo" : "inactivo"
-                      console.log("tenat", item.apartment)
+                      
                       if (estado==="activo" && item.apartment !== null ){
                          return (
                         <div className="col mi_alquiler" key={item.id}>
@@ -149,7 +149,7 @@ console.log(store)
                                   {getDaysStatusText(diffDays)}
                                 </span>
                               </div>
-                             {item.is_active? "activo" : "inactivo"}
+                            
                               <p className="card-text mb-1">
                                 <strong>{item.tenant.first_name} {item.tenant.last_name}, </strong>
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
@@ -163,15 +163,15 @@ console.log(store)
                               <p className="card-text mb-3">
                                 <strong>Documento:</strong> {splitDocument}
                               </p>
-                              <div className="mt-auto d-flex justify-content-between">
+                              <div className="pt-1 mb-4 justify-content-between">
                                 <button
-                                  className="btn btn-primary"
+                                  className="badge bg-info text-white "
                                   onClick={() => handleDownloadContract(item.contract.id)}
                                 >
                                   Consultar Contrato
                                 </button>
                                  <button
-                                  className="badge bg-danger text-white"
+                                  className="badge bg-danger text-white ms-3"
                                   onClick={() => handleDeleteRent(item.contract.id, item.apartment.id)}
                                 >
                                   Dar de baja este Alquiler

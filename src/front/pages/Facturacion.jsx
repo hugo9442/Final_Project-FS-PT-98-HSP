@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { differenceInDays } from 'date-fns';
 import { Asociations } from "../fetch_asociations.js";
 import { contracts } from "../fecht_contract.js";
-import { Invoices } from "../invoice.js";
+import { Invoices } from "../fecht_invoice.js";
 import swal from "sweetalert";
 
 const Facturacion = () => {

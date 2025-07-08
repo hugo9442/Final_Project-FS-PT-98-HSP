@@ -3,76 +3,110 @@ import { useAuth } from "../context/AuthContext";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/img/LogoTrabajoFinal.png";
+import { useRef } from "react"; // Importamos useRef
+
 const Navbar = () => {
   const { store, dispatch } = useGlobalReducer();
   const history = useNavigate();
+  const navbarCollapseRef = useRef(null); // Referencia para el menú colapsable
+
   const handleNavigatePropietarioIndex = () => history("/propietarioindex");
-  const handleNavigateAcceso=()=>history("/Acceso")
+  const handleNavigateAcceso = () => history("/Acceso");
 
-  
-  const accessToPropietarioIndex=()=>{
-    
-    if (store.token){
-        handleNavigatePropietarioIndex()
-    }else {handleNavigateAcceso()}
-  }
+  // Función para cerrar el menú colapsable
+  const closeNavbar = () => {
+    if (navbarCollapseRef.current) {
+      navbarCollapseRef.current.classList.remove("show");
+    }
+  };
 
+  const accessToPropietarioIndex = () => {
+    closeNavbar(); // Cerramos el menú al hacer clic
+    if (store.token) {
+      handleNavigatePropietarioIndex();
+    } else {
+      handleNavigateAcceso();
+    }
+  };
 
-    return (
-        <nav
-            className="navbar navbar-expand-lg sticky-top shadow"
-            data-bs-theme="dark"
-            style={{
-                backgroundColor: "rgba(138, 223, 251, 0.8)",
-                boxShadow: "0 3px 25px rgba(0, 0, 0, 0.3)",
-            
-            }}
+  return (
+    <nav
+      className="navbar navbar-expand-lg sticky-top shadow"
+      data-bs-theme="dark"
+      style={{
+        backgroundColor: "rgba(138, 223, 251, 0.8)",
+        boxShadow: "0 3px 25px rgba(0, 0, 0, 0.3)",
+      }}
+    >
+      <div className="container-fluid">
+        <Link to="/" className="navbar-brand ms-3" onClick={closeNavbar}>
+          <img
+            src={logo}
+            alt="Logo"
+            style={{ width: "70px", height: "70px" }}
+          />
+        </Link>
+        <button
+          className="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
-            <div className="container-fluid">
-                <Link to="/" className="navbar-brand ms-3">
-                    <img
-                        src={logo}
-                        alt="Logo"
-                        style={{ width: "70px", height: "70px" }}
-                    />
-                </Link>
-                <button
-                    className="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbarNav"
-                    aria-controls="navbarNav"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation"
-                >
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <div className="collapse navbar-collapse" id="navbarNav">
-                    <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex gap-2 me-3">
-                        <li className="nav-item">
-                            <Link to="/" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
-                                Inicio
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/Contact" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
-                                Contacto
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                            <Link to="/Servicios" className="btn btn-light btn-sm w-100" style={{ minWidth: "120px" }}>
-                                Servicios
-                            </Link>
-                        </li>
-                        <li className="nav-item">
-                           <button className="btn btn-light btn-sm w-100 me-5" style={{ minWidth: "120px" }} onClick={accessToPropietarioIndex}>Acceso</button>
-                        
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-    );
+          <span className="navbar-toggler-icon"></span>
+        </button>
+        <div 
+          className="collapse navbar-collapse" 
+          id="navbarNav"
+          ref={navbarCollapseRef} // Asignamos la referencia
+        >
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex gap-2 me-3">
+            <li className="nav-item">
+              <Link 
+                to="/" 
+                className="btn btn-light btn-sm w-100" 
+                style={{ minWidth: "120px" }}
+                onClick={closeNavbar} // Cerramos al hacer clic
+              >
+                Inicio
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link 
+                to="/Contact" 
+                className="btn btn-light btn-sm w-100" 
+                style={{ minWidth: "120px" }}
+                onClick={closeNavbar} // Cerramos al hacer clic
+              >
+                Contacto
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link 
+                to="/Servicios" 
+                className="btn btn-light btn-sm w-100" 
+                style={{ minWidth: "120px" }}
+                onClick={closeNavbar} // Cerramos al hacer clic
+              >
+                Servicios
+              </Link>
+            </li>
+            <li className="nav-item">
+              <button 
+                className="btn btn-light btn-sm w-100 me-5" 
+                style={{ minWidth: "120px" }} 
+                onClick={accessToPropietarioIndex}
+              >
+                Acceso
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;

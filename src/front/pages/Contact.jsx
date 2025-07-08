@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Contacts } from "../fecht_contacts";
+import swal from "sweetalert";
 
 const Contact = () => {
     const [formData, setFormData] = useState({
@@ -12,15 +14,27 @@ const Contact = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = e => {
-        e.preventDefault();
-        alert("Mensaje enviado. ¡Gracias por contactarnos!");
-        setFormData({
-            name: "",
-            email: "",
-            message: ""
-        });
-    };
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+        const data = await Contacts.contact_create(formData);
+        if (data.error) {
+            swal("Oops", data.error, "error");
+            return;
+        }
+        if (data.msg) {
+            swal("Email enviado", "Gracias por tu email", "success");
+            setFormData({
+                name: "",
+                email: "",
+                message: ""
+            });
+        }
+    } catch (error) {
+        console.error("Error al enviar el formulario:", error);
+        swal("Oops", "Hubo un error al enviar el formulario. Intenta más tarde.", "error");
+    }
+};
 
     return (
         <div className="container mt-5">

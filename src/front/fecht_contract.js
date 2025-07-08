@@ -1,21 +1,11 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/contracts";
-const Url ="https://sample-service-name-bnt3.onrender.com/contracts";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/contracts";
+//const Url ="https://sample-service-name-bnt3.onrender.com/contracts";
 
 
 export const contracts = {
-  create_contract: async (start, end, document, owner_id, token) => {
+  create_contract: async (data, token) => {
     
-
-    if (!document || !document.name.toLowerCase().endsWith(".pdf")) {
-      console.error("Error: Solo se permiten archivos PDF");
-      return { error: "Formato no válido. Solo se aceptan PDFs" };
-    }
-
-    const formData = new FormData();
-    formData.append("start_date", start);
-    formData.append("end_date", end);
-    formData.append("document", document);
-    formData.append("owner_id", owner_id);
+ 
 
     try {
       const response = await fetch(`${Url}/create`, {
