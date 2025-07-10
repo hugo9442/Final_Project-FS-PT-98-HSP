@@ -71,16 +71,7 @@ console.log(formData)
           <input name="start_date" type="date" className="form-control mb-2" onChange={handleChange} required />
         </div>
         <div className="col-md-6">
-       { /*  <select
-            name="status"
-            className="form-control mb-2"
-            onChange={handleChange}
-            required
-          >
-            <option value="">Estado</option>
-            <option value="ABIERTA">ABIERTA</option>
-            <option value="CERRADA">CERRADA</option>
-          </select>*/}
+ 
           <input name="bill_amount" placeholder="Importe de factura" type="number" className="form-control mb-2" onChange={handleChange} required />
           <input name="bill_image" type="file" accept="application/pdf" placeholder="URL de imagen factura" className="form-control mb-2" onChange={handleChange} />
         </div>

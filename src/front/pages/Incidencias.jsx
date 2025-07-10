@@ -148,7 +148,7 @@ const Incidencias = () => {
                     )}
                 </ul>
 
-                <div className="formIncidencia mt-2">
+                <div className="p-3 border rounded bg-white mt-2">
                   <h3 className="mt-2, mb-2">Formulario de Creación de Incidencia</h3>
                   <div className="formIncidenciadata">
                     <div className="mb-1">
@@ -234,8 +234,6 @@ const Incidencias = () => {
                       }
                     />
                   </div>
-
-
                 </div>
                 <button className="btn btn-success mt-2" style={{
                   color: "black",
@@ -285,7 +283,7 @@ const Incidencias = () => {
 
                           <div className="contratitem">
                             <p><strong>Dirección: </strong>{item.apartment.address}, <strong>CP:</strong> {item.apartment.postal_code}, <strong>Ciudad:</strong> {item.apartment.city}, <span className={`badge ${getDaysBadgeClass(alquilado)}`}>{alquilado}</span></p>
-                            <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> {item.status} <span className={`badge ${getStatusBadgeClass(status)}`}>{status}</span></p>
+                            <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> <span className={`badge ${getStatusBadgeClass(status)}`}>{status}</span></p>
                             <p><strong>Descripcion: </strong>{item.description} </p>
                             <Link to={"/single/" + item.apartment_id}>Ver incidencia: {item.title} </Link>
                           </div>

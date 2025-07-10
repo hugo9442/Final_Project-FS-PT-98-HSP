@@ -37,7 +37,7 @@ const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
   };
 console.log(apartmentId)
   return (
-    <div className="formIncidencia mt-2">
+    <div className="p-3 border rounded bg-white mt-2">
     <form onSubmit={handleSubmit} className="formIncidencia mt-2">
       <h3 className="mt-2 mb-2">Formulario de Creación de Incidencia</h3>
        <div className="formIncidenciadata">

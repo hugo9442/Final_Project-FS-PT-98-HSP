@@ -210,7 +210,8 @@ const ViviendasAssoc = () => {
                         key={item.issue_id}
                         className="list-group-item d-flex flex-column contenedor">
                         <div className="contratitem">
-                          <p><strong>Incidencia:</strong> {item.title} <strong>Fecha de apertura:</strong> {startDate}, <strong>Estado:</strong> {item.status}</p>
+                          <p><strong>Incidencia:</strong> {item.title} <strong>Fecha de apertura:</strong> {startDate}, <strong>Estado:</strong>  <span className={`badge ${item.status==="cerrado"?  "bg-success text-black" : "bg-danger text-white"}`}>
+                          {item.status}</span></p>
                           <p><strong>Descripción:</strong> {item.description}</p>
                         </div>
 
