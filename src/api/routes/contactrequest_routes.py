@@ -58,6 +58,7 @@ def contact_form():
             body=f"Nombre: {name}\nEmail: {email}\nMensaje: {message_content}"
         )
         mail.send(msg)
+       
         return jsonify({"msg":"Mensaje enviado correctamente"})
     except Exception as e:
         print("Error enviando el email:", e)

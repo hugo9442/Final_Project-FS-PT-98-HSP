@@ -93,6 +93,14 @@ app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
 
 mail.init_app(app)
+print("MAIL CONFIGURATION:")
+print("MAIL_SERVER:", app.config['MAIL_SERVER'])
+print("MAIL_PORT:", app.config['MAIL_PORT'])
+print("MAIL_USE_TLS:", app.config['MAIL_USE_TLS'])
+print("MAIL_USE_SSL:", app.config['MAIL_USE_SSL'])
+print("MAIL_USERNAME:", app.config['MAIL_USERNAME'])
+print("MAIL_PASSWORD:", app.config['MAIL_PASSWORD'])
+print("MAIL_DEFAULT_SENDER:", app.config['MAIL_DEFAULT_SENDER'])
 
 # Handle/serialize errors like a JSON object
 

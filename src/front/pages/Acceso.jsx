@@ -10,6 +10,7 @@ const LoginSection = () => {
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const handleNavigate = () => navigate("/propietarioindex");
+  const handleNavigateAcceso=()=>navigate("/Acceso")
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -126,8 +127,8 @@ const LoginSection = () => {
 
   const createContact = async () => {
     if (store.email !== "" && store.password !== "") {
-      await
-        handleCreatUser();
+      
+       await  handleCreatUser();
 
     }
   };
@@ -151,6 +152,7 @@ const LoginSection = () => {
     const result = await users.forgotPassword(forgotEmail);
 
     if (result.message) {
+        
       swal({
         title: "Correo enviado",
         text: result.message,
@@ -188,19 +190,32 @@ const LoginSection = () => {
 
     const result = await users.resetPassword(store.resetToken, newPassword);
 
-    if (result.success) {
+    console.log("resul",result)
+    if (result.message) {
+         dispatch({ type: "addToken", value: result.token });
+         dispatch({ type: "add_user", value: result.user }); 
       swal({
         title: "Contraseña restablecida",
         text: result.message,
         icon: "success",
-        buttons: false,
-        timer: 2500,
-      }).then(() => {
-        setTimeout(() => {
-          navigate("/Acceso");
-        }, 500);
-      });
+        buttons: "ok",
+       
+      }).then((willDelete) => {
+  if (willDelete) {
+    
+   if (result.user.role==="ADMIN"){
+        handleNavigate() 
+      }if(result.user.role==="INQUILINO"){
+        navigate("/InquilinoIndex")
+      }
+  } 
+  
+});
+        
+       
+        
       setMessageFeedback(result.message);
+
     } else {
       swal({
         title: "Error",
@@ -265,7 +280,7 @@ const LoginSection = () => {
     }
   };
 
-
+console.log(store)
   return (
     <div>
       <section
@@ -338,7 +353,7 @@ const LoginSection = () => {
                           >
                             Acceder
                           </button>
-                          <button
+                        { /* <button
                             className="btn btn-dark btn-lg btn-block"
                             style={{ margin: 5 }}
                             type="button"
@@ -348,7 +363,7 @@ const LoginSection = () => {
                             }}
                           >
                             Crear Cuenta
-                          </button>
+                          </button>*/}
                         </div>
 
                         <a

@@ -476,7 +476,7 @@ def forgot_password():
                                       additional_claims=claims)
 
     frontend_url = current_app.config.get("FRONTEND_URL")
-    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
+    reset_link = f"{frontend_url}reset-password?token={reset_token}"
     print(reset_link)
     try:
         html_body = render_template('reset_password_email.html',
@@ -512,13 +512,14 @@ def reset_password():
             user.password = bcrypt.generate_password_hash(
                 new_password).decode('utf-8')
             db.session.commit()
-            return jsonify({"message": "Contraseña restablecida"}), 200
+            access_token = create_access_token(identity=str(user.id))
+            return jsonify({"message": "Contraseña restablecida", "token":access_token,"user": user.serialize()}), 200
         else:
-            return jsonify({"message": "Error en la validación de los datos, contacta al administrador"}), 401
+            return jsonify({"error": "Error en la validación de los datos, contacta al administrador"}), 401
     except Exception as e:
         print(e)
         db.session.rollback()
-        return jsonify({"message": "Error en el servidor, intenta más tarde"}), 500
+        return jsonify({"error": "Error en el servidor, intenta más tarde"}), 500
 
 
 @users_api.route('/register-tenant-initiate', methods=["POST"])

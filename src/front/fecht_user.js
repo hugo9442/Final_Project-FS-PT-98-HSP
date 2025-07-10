@@ -1,5 +1,5 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users"
-const Url ="https://sample-service-name-bnt3.onrender.com/users";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/users"
+//const Url ="https://sample-service-name-bnt3.onrender.com/users";
   export const users = {
 
     createuser: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
@@ -360,7 +360,7 @@ const Url ="https://sample-service-name-bnt3.onrender.com/users";
 
             const response = await request.json();
 
-            return { message: response.message, success: request.ok };
+            return response;
 
         } catch (error) {
             console.error("Error al restablecer contraseña:", error);
