@@ -272,6 +272,7 @@ def get_contracts_by_tenant(tenant_id):
             contratos_dict[contract_id]["asociaciones"].append({
                 "assoc_id": assoc.id,
                 "is_active": assoc.is_active,
+                "renta":assoc.renta,
                 "tenant": assoc.tenant.serialize(),
                 "apartment": {
                     **assoc.apartment.serialize(),

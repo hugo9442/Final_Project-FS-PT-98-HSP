@@ -57,9 +57,9 @@ export const Single = props => {
                   <h2>Incidencias</h2>
                   {
                     store && store.singleIssues.issues && store.singleIssues.issues.map((item) => {
-                    
-                  item.status==="cerrado"?  "bg-danger text-white" : "bg-info text-black";
-    
+
+                      item.status === "cerrado" ? "bg-danger text-white" : "bg-info text-black";
+
                       const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
                         day: "2-digit",
                         month: "long",
@@ -71,9 +71,9 @@ export const Single = props => {
                           key={item.issue_id}
                           className="list-group-item d-flex flex-column contenedor">
                           <div className="contratitem">
-                            <p><strong>Incidencia:</strong> {item.title} <strong>Fecha de apertura:</strong> {startDate}, <strong>Estado:</strong>  <span className={`badge ${item.status==="cerrado"?  "bg-success text-black" : "bg-danger text-white"}`}>
-                          {item.status}
-                        </span></p>
+                            <p><strong>Incidencia:</strong> {item.title} <strong>Fecha de apertura:</strong> {startDate}, <strong>Estado:</strong>  <span className={`badge ${item.status === "cerrado" ? "bg-success text-black" : "bg-danger text-white"}`}>
+                              {item.status}
+                            </span></p>
                             <p><strong>Descripción:</strong> {item.description}</p>
                           </div>
 
@@ -86,8 +86,8 @@ export const Single = props => {
                                   <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")}</p>
                                   <p><strong>Importe:</strong> {action.bill_amount}€, <strong>Ver Factura</strong> {splitBill}   </p>
                                   <span className="d-inline-block ms-2"> {/* Añadido contenedor flexible */}
-            <strong>Ver Factura:</strong> {splitBill}
-          </span>
+                                    <strong>Ver Factura:</strong> {splitBill}
+                                  </span>
                                 </li>
                               )
                             })}

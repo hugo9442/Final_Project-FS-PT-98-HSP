@@ -4,7 +4,7 @@ import { Issues } from "../fecht_issues.js";
 import swal from "sweetalert";
 
 
-const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
+const NewFormIssues = ({ apartmentId,tenant_name, address, onSuccess, onCancel }) => {
   const { store, dispatch } = useGlobalReducer();
   const [loading, setLoading] = useState(false);
 
@@ -12,7 +12,7 @@ const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await Issues.create_issue(
+      const data = await Issues.create_issue_by_tenant(
         store.title,
         store.description,
         store.status,
@@ -21,8 +21,11 @@ const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
         store.type,
         store.contract_start_date,
         store.contract_end_date,
+        tenant_name,
+        address,
         store.token
       );
+
       if (data.msg) {
         swal("ÉXITO", data.msg, "success");
         onSuccess && onSuccess();
@@ -35,7 +38,7 @@ const NewFormIssues = ({ apartmentId, onSuccess, onCancel }) => {
       setLoading(false);
     }
   };
-console.log(apartmentId)
+console.log(apartmentId, tenant_name, address)
   return (
     <div className="p-3 border rounded bg-white mt-2">
     <form onSubmit={handleSubmit} className="formIncidencia mt-2">

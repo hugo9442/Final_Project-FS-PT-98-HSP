@@ -9,7 +9,7 @@ const Navbar = () => {
   const { store, dispatch } = useGlobalReducer();
   const history = useNavigate();
   const navbarCollapseRef = useRef(null); // Referencia para el menú colapsable
-
+  const navigate=useNavigate()
   const handleNavigatePropietarioIndex = () => history("/propietarioindex");
   const handleNavigateAcceso = () => history("/Acceso");
 
@@ -22,13 +22,18 @@ const Navbar = () => {
 
   const accessToPropietarioIndex = () => {
     closeNavbar(); // Cerramos el menú al hacer clic
-    if (store.token) {
-      handleNavigatePropietarioIndex();
-    } else {
-      handleNavigateAcceso();
+    if (store.token && store.todos.role==="INQUILINO") {
+      
+        navigate("/InquilinoIndex")
+    
+     
+    } else if  (store.token && store.todos.role==="ADMIN" || store.todos.role==="PROPIETARIO"){
+       handleNavigatePropietarioIndex();
+    } else{
+       handleNavigateAcceso();
     }
   };
-
+console.log(store.todos)
   return (
     <nav
       className="navbar navbar-expand-lg sticky-top shadow"

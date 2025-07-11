@@ -23,6 +23,23 @@ def get_invoices():
     except Exception as e:
         print("Error al obtener facturas:", e)
         return jsonify({"error": "Error en el servidor"}), 500
+    
+@invoices_api.route('/<int:tenant_id>', methods=['GET'])
+@jwt_required()
+def get_invoices_by_tenant(tenant_id):
+
+    
+    try:
+        
+        invoices = Invoice.query.filter(Invoice.tenant_id==tenant_id).order_by(Invoice.date.desc()).all()
+        result = [inv.serialize() for inv in invoices]
+        return jsonify({
+            "msg": "Listado de facturas",
+            "invoices": result
+        }), 200
+    except Exception as e:
+        print("Error al obtener facturas:", e)
+        return jsonify({"error": "Error en el servidor"}), 500
 
 
 @invoices_api.route('/create', methods=['POST'])

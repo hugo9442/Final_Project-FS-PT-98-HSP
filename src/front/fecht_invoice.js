@@ -1,5 +1,5 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/invoices"
-const Url ="https://sample-service-name-bnt3.onrender.com/invoices";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/invoices"
+//const Url ="https://sample-service-name-bnt3.onrender.com/invoices";
 
 
 export const Invoices = {
@@ -33,6 +33,23 @@ create_invoice: async (data, token) => {
  tenant_invoices: async (token) => {
         try {
             const request = await fetch(`${Url}`, {
+                method: "GET", 
+                 headers: {
+                    "Authorization": `Bearer  ${token}`
+                },
+            })
+            const response = await request.json();
+            
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+     tenant_invoices_id: async (id, token) => {
+        try {
+            const request = await fetch(`${Url}/${id}`, {
                 method: "GET", 
                  headers: {
                     "Authorization": `Bearer  ${token}`

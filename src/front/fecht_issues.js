@@ -1,6 +1,6 @@
 
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/issues"
-const Url ="https://sample-service-name-bnt3.onrender.com/issues";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/issues"
+//const Url ="https://sample-service-name-bnt3.onrender.com/issues";
 
 
 export const Issues = {
@@ -20,6 +20,40 @@ create_issue: async (title, description, status, apartment_id, priority, type, s
         
         try {
             const request = await fetch(`${Url}/create`, {
+                method: "POST",
+                headers: {
+                     "Content-Type": "application/json",
+                     "Authorization": `Bearer  ${token}`
+                },  
+                body: JSON.stringify(issue)
+
+            })
+            const response = await request.json();
+            console.log(response)
+            return response
+        } catch (error) {
+            console.log(error)
+            return error
+
+        }
+    },
+    create_issue_by_tenant: async (title, description, status, apartment_id, priority, type, start_date, end_day,tenant_name, address, token) => {
+        let issue = {
+            "title":title,
+        "description":description,
+        "status":status,
+        "apartment_id":apartment_id,
+        "priority":priority,
+        "type":type,
+        "start_date":start_date,
+        "end_date":end_day,
+        "tenant_name":tenant_name,
+        "address":address
+        
+        };
+        
+        try {
+            const request = await fetch(`${Url}/create_bytenant`, {
                 method: "POST",
                 headers: {
                      "Content-Type": "application/json",

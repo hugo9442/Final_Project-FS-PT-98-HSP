@@ -44,6 +44,13 @@ class Invoice(db.Model):
                 "last_name": self.tenant.last_name,
                 "national_id": self.tenant.national_id
             } if self.tenant else None,
+             "owner": {
+                "id": self.owner.id,
+                "first_name": self.owner.first_name,
+                "last_name": self.owner.last_name,
+                "national_id": self.owner.national_id
+            } if self.owner else None
+        
            
          }
          
