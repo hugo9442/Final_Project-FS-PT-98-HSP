@@ -151,7 +151,7 @@ console.log(store)
                               </div>
                             
                               <p className="card-text mb-1">
-                                <strong>{item.tenant.first_name} {item.tenant.last_name}, </strong>
+                                <strong>{item.tenant.first_name} {item.tenant.last_name}, </strong> <strong>email:</strong> {item.tenant.email} {""}
                                 de fecha  <strong>{startDate}</strong> y que finaliza el <strong>{endDate}</strong>
                               </p>
                               <p className="card-text mb-1">

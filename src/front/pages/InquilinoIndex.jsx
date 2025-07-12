@@ -79,7 +79,7 @@ const fetchInquilinoData = async () => {
     console.log(store)
     console.log(id)
     const getstatusBadgeClass = (status) => {
-        if (status === "pendiente") return 'bg-danger text-white';
+        if (status === "pagada") return 'bg-danger text-white';
         if (status === "cobrada") return 'bg-success text-white';
         return 'bg-secondary text-white';
     };
