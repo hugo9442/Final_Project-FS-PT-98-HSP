@@ -31,7 +31,7 @@ class User(db.Model):
     email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255),nullable=False)
     phone: Mapped[str] = mapped_column(nullable=False)
-    national_id: Mapped[str] = mapped_column(String(255), nullable=False)
+    national_id: Mapped[str] = mapped_column(String(255), nullable=False) 
     account_number: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Role] = mapped_column(role_type, nullable=False)
     apartments: Mapped[List["Apartment"]] = relationship(

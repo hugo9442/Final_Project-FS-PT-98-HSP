@@ -7,3 +7,4 @@ from .asociates_routes import asociates_api
 from .documents_rourtes import documents_api
 from .invoices_route import invoices_api
 from .contactrequest_routes import contact_api
+from .financial_route import dashboard_api
