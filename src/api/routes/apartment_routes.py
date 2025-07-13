@@ -2,6 +2,7 @@ from flask import request, jsonify, Blueprint
 from api.models import db, Apartment
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
+from sqlalchemy import func
 
 apartments_api = Blueprint('apartments_api', __name__, url_prefix='/apartments')
 
@@ -94,6 +95,7 @@ def get_apartments_with_documents():
 
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
+    
 @apartments_api.route('/', methods=['GET'])
 @jwt_required()
 def get_apartments():
@@ -111,6 +113,20 @@ def get_apartments_not_rented():
         return jsonify({"msg":"ok", "apartments": [apartment.serialize_with_owner_name() for apartment in apartments]}), 200
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
+    
+@apartments_api.route('/count', methods=['GET'])
+@jwt_required()
+def get_apartmentscount():
+   try:
+        total_apartments = db.session.query(func.count(Apartment.id)).scalar()
+
+        return jsonify({
+            "msg": "ok",
+            "total": total_apartments
+        }), 200
+   except Exception as e:
+        print("Error al obtener apartamentos:", e)
+        return jsonify({"msg": "Error en el servidor"}), 500
     
 @apartments_api.route('/<int:id>', methods=['PUT'])
 @jwt_required()

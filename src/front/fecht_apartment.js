@@ -1,9 +1,24 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/apartments";
-const Url ="https://sample-service-name-bnt3.onrender.com/apartments";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/apartments";
+//const Url ="https://sample-service-name-bnt3.onrender.com/apartments";
 
 
 export const apartments = {
-
+ getApartment: async (token) => {
+        try {
+            const request = await fetch(`${Url}/count`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const response = await request.json();
+            return response;
+        } catch (error) {
+            console.error("Error al obtener la vivienda del inquilino:", error);
+            return { error: "Error al conectar con la API" };
+        }
+    },
   create_apartment: async (
     address,
     postal_code,

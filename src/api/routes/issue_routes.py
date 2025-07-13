@@ -1,4 +1,4 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint,current_app
 from api.models import db, Issue
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
@@ -6,9 +6,8 @@ from datetime import datetime, timezone
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from flask import current_app
 from api.extensions import mail
-
+from sqlalchemy import func
 
 
 issues_api = Blueprint('issues_api', __name__, url_prefix='/issues')
@@ -20,6 +19,14 @@ CORS(issues_api)
 def get_all_issues():
     issues = Issue.query.all()
     return jsonify({"msg":"ok", "issues":[issue.serialize() for issue in issues]}), 200
+
+@issues_api.route('/opened', methods=["GET"])
+@jwt_required()
+def get_opened_issues():
+    opened = opened = db.session.query(func.count(Issue.id))\
+                   .filter(Issue.status == "ABIERTA")\
+                   .scalar()
+    return jsonify({"msg":"ok", "total":opened}), 200
 
 @issues_api.route('/<int:issue_id>', methods=["GET"])
 @jwt_required()

@@ -7,6 +7,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { apartments } from "../fecht_apartment.js";
 import { contracts } from "../fecht_contract.js";
 import { users } from "../fecht_user.js";
+import { Issues } from "../fecht_issues.js";
 
 
 const PropietarioIndex = () => {
@@ -23,7 +24,9 @@ const PropietarioIndex = () => {
     const fetchData = async () => {
       try {
 
-        const data = await users.getUserApartmentsCount(store.todos.id, store.token);
+       // const data = await users.getUserApartmentsCount(store.todos.id, store.token);
+       const data =await apartments.getApartment(store.token)
+     console.log("apartamntos",data)
         if (data.total === null) {
           setTotalViviendas(0);
         }
@@ -51,15 +54,19 @@ const PropietarioIndex = () => {
         setTotalContratos(0);
       }
 
-      /* try {
+     try {
  
-         const res = await fetch("/api/incidencias/count");
-         const data = await res.json();
-         setTotalIncidencias(data.total);
+         const data = await Issues.getIssuesOpened(store.token);
+         if (data.total === null){
+          setTotalIncidencias(0);
+         }else{
+          setTotalIncidencias(data.total);
+         }
+         
        } catch (error) {
          console.error("Error al cargar total de incidencias", error);
          setTotalIncidencias(0);
-       }*/
+       }
     };
     fetchData();
   }, []);
@@ -73,7 +80,7 @@ const PropietarioIndex = () => {
     <div className="container-fluid mt-4">
       <div className="row">
 
-        <div className="col-md-9">
+        <div className="col-md-12">
           <div className="p-4 border rounded bg-light">
             <h2 className="mb-4">Bienvenido, propietario</h2>
             <p className="mb-4">Gestiona tu inmueble desde este panel.</p>
@@ -126,7 +133,7 @@ const PropietarioIndex = () => {
                 <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
                   <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
                     <h1 className="display-4">{totalViviendas}</h1>
-                    <p className="lead mb-0">Total de Inquilinos</p>
+                    <p className="lead mb-0">Total de Viviendas</p>
                   </div>
                   <div className="card-body">
                     <p className="card-text">Gestión completa de tus inquilinos.</p>

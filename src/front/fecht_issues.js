@@ -1,6 +1,6 @@
 
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/issues"
-const Url ="https://sample-service-name-bnt3.onrender.com/issues";
+const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/issues"
+//const Url ="https://sample-service-name-bnt3.onrender.com/issues";
 
 
 export const Issues = {
@@ -100,6 +100,22 @@ create_issue: async (title, description, status, apartment_id, priority, type, s
                 return response;
             } catch (error) {
                 console.error(`Error al obtener incidencias para el apartamento ${apartmentId}:`, error);
+                return { error: "Error al conectar con la API", issues: [] };
+            }
+        },
+         getIssuesOpened: async (token) => {
+            try {
+                const request = await fetch(`${Url}/opened`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                const response = await request.json();
+                return response;
+            } catch (error) {
+                console.error(`Error al obtener incidencias `, error);
                 return { error: "Error al conectar con la API", issues: [] };
             }
         },

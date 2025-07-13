@@ -16,6 +16,7 @@ class Apartment(db.Model):
     address: Mapped[str] = mapped_column(String(255),nullable=False)
     postal_code: Mapped[str] = mapped_column(String(30), nullable=False)
     city: Mapped[str] = mapped_column(String(255), nullable=False)
+    provincia:Mapped[str] = mapped_column(String(255), nullable=True)
     parking_slot: Mapped[str] = mapped_column(String(255), nullable=False)
     type: Mapped[str] =mapped_column(String(255), nullable=False)
     is_rent: Mapped[bool] = mapped_column(Boolean, nullable=False)
@@ -40,6 +41,7 @@ class Apartment(db.Model):
             "address": self.address,
             "postal_code": self.postal_code,
             "city": self.city,
+            "provincia":self.provincia,
             "parking_slot": self.parking_slot,
             "type": self.type,
             "is_rent": self.is_rent,

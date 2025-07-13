@@ -131,6 +131,7 @@ const Incidencias = () => {
                 <ul className="list-group">
                   {
                     store && store.apartments.map((item) => {
+                     
                       const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       return (
                         <li
@@ -268,6 +269,7 @@ const Incidencias = () => {
                 <ul className="list-group mt-2">
                   {
                     store && store.issues.map((item) => {
+                       console.log(item.status)
                       const status = item.status
                       const alquilado = !item.apartment.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {
