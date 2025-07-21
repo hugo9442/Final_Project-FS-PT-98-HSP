@@ -11,7 +11,8 @@ const NewFormIssues = ({ apartmentId,tenant_name, address, onSuccess, onCancel }
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    try {
+    if (tenant_name){
+      try {
       const data = await Issues.create_issue_by_tenant(
         store.title,
         store.description,
@@ -37,8 +38,34 @@ const NewFormIssues = ({ apartmentId,tenant_name, address, onSuccess, onCancel }
     } finally {
       setLoading(false);
     }
+    }else{
+       try {
+      const data = await Issues.create_issue(
+        store.title,
+        store.description,
+        store.status,
+        apartmentId,
+        store.priority,
+        store.type,
+        store.contract_start_date,
+        store.contract_end_date,
+        store.token
+      );
+
+      if (data.msg) {
+        swal("ÉXITO", data.msg, "success");
+        onSuccess && onSuccess();
+      } else {
+        swal("ERROR", data.error || "Algo salió mal", "warning");
+      }
+    } catch (error) {
+      swal("ERROR", error.message || "Error inesperado", "error");
+    } finally {
+      setLoading(false);
+    }
+ }
   };
-console.log(apartmentId, tenant_name, address)
+
   return (
     <div className="p-3 border rounded bg-white mt-2">
     <form onSubmit={handleSubmit} className="formIncidencia mt-2">

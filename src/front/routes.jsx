@@ -23,6 +23,10 @@ import Alquileres from "./pages/Alquileres";
 import ViviendasAssoc from "./pages/ViviendasAssoc";
 import Facturacion from "./pages/Facturacion";
 import Facturacionvista from "./pages/FacturacionVista";
+import Contractors from "./pages/Contractors";
+import ExpenseWizardForm from "./pages/Expenses";
+import { SingleIssue } from "./pages/SingleIssue";
+import ContractorDetail from "./pages/ContractorDetail";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,8 +50,12 @@ export const router = createBrowserRouter(
         <Route path="/Facturacionvista" element={<Facturacionvista />} />
         <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
         <Route path="/single/:theId" element={<Single />} />
+        <Route path="/contractor/:contractorId" element={<ContractorDetail />} />
+        <Route path="//singleissue/:apartment_id/:issue_id" element={<SingleIssue />} />
         <Route path="/Incidencias" element={<Incidencias />} />
         <Route path="/Inquilinos" element={<Inquilinos />} />
+        <Route path="/Contractors" element={<Contractors />} />
+        <Route path="/Expenses" element={<ExpenseWizardForm />} />
         <Route path="/viviendasassoc/:theId" element={<ViviendasAssoc />} />
         <Route path="/Contrato" element={<Contrato />} />
       </Route>

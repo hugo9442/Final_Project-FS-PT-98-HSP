@@ -8,3 +8,9 @@ from .documents_rourtes import documents_api
 from .invoices_route import invoices_api
 from .contactrequest_routes import contact_api
 from .financial_route import dashboard_api
+from .contractor_route import contractor_api
+from .tax_holding_route import taxhold_api
+from .tax_route import iva_api
+from .categories_route import expense_category_api
+from .expenses_route import expenses_api
+from .expensespayments_route import expensespayments_api

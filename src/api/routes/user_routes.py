@@ -54,35 +54,44 @@ def get_user(user_id):
 
 @users_api.route('/<int:user_id>', methods=["PUT"])
 @jwt_required()
-def update_user(user_id):
+def update_user_contact(user_id):
     user = User.query.get(user_id)
 
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     data_request = request.get_json()
+    if not data_request:
+        return jsonify({"error": "No se proporcionaron datos"}), 400
 
-    if 'email' in data_request:
-        existing_user = User.query.filter_by(
-            email=data_request["email"]).first()
-        if existing_user and existing_user.id != user_id:
+    # Email (con validación)
+    if "email" in data_request:
+        email = data_request["email"].strip().lower()
+        if '@' not in email:
+            return jsonify({"error": "Email inválido"}), 400
+
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user and existing_user.id != user.id:
             return jsonify({"error": "El email ya está registrado"}), 409
 
-    user.first_name = data_request.get("first_name", user.first_name)
-    user.last_name = data_request.get("last_name", user.last_name)
-    user.phone = data_request.get("phone", user.phone)
-    user.national_id = data_request.get("national_id", user.national_id)
-    user.account_number = data_request.get(
-        "account_number", user.account_number)
-    user.roll = data_request.get("roll", user.roll)
+        user.email = email
+
+    # Teléfono
+    if "phone" in data_request:
+        user.phone = data_request["phone"]
+
+    # Cuenta bancaria
+    if "account_number" in data_request:
+        user.account_number = data_request["account_number"]
 
     try:
         db.session.commit()
-        return jsonify({"msg": "Usuario actualizado", "user": user.serialize()}), 200
+        return jsonify({"msg": "Datos de contacto actualizados", "user": user.serialize()}), 200
     except Exception as e:
-        print(e)
+        print("Error actualizando contacto:", e)
         db.session.rollback()
-        return jsonify({"error": "Error en el servido"}), 500
+        return jsonify({"error": "Error en el servidor"}), 500
+
 
 
 @users_api.route('/create', methods=["POST"])

@@ -133,6 +133,20 @@ console.log(store)
                         year: "numeric"
                       });
                       const splitDocument = item.contract.document ? item.contract.document.split("/").pop() : 'Sin documento';
+                      const start = splitDocument.length - 20;
+
+                    const cleanFileName = () => {
+                      if (splitDocument !== "Sin documento") {
+                        return (
+                          splitDocument.slice(0, start) +
+                          splitDocument.slice(start + 16)
+                        );
+                      } else {
+                        return splitDocument;
+                      }
+                    };
+
+                    const result = cleanFileName();
                       const today = new Date();
                       const contractEndDateObj = new Date(item.contract.end_date);
                       const diffDays = differenceInDays(contractEndDateObj, today);
@@ -161,7 +175,7 @@ console.log(store)
                                 <strong>Renta</strong> {item.renta}
                               </p>
                               <p className="card-text mb-3">
-                                <strong>Documento:</strong> {splitDocument}
+                                <strong>Documento:</strong> {result}
                               </p>
                               <div className="pt-1 mb-4 justify-content-between">
                                 <button

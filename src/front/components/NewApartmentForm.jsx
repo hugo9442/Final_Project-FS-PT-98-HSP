@@ -109,7 +109,7 @@ const NewApartmentForm = ({ onSuccess, onCancel}) => {
       <div className="col-md-12 mb-3">
         <label htmlFor="propietario" className="form-label">Propietario</label>
         <select
-          className="form-select" // Bootstrap usa form-select para dropdowns
+          className="form-select" 
           id="propietario"
           value={propietarioId}
           onChange={handleChange}

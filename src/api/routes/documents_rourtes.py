@@ -44,6 +44,7 @@ def get_documents():
 @documents_api.route('/upload', methods=['POST'])
 @jwt_required()
 def upload_document():
+   
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
 
@@ -56,9 +57,17 @@ def upload_document():
         return jsonify({"error": "Solo se permiten archivos PDF"}), 400
 
     description = request.form.get('description')
-    apartment_id = request.form.get('apartment_id')
-    if not description or not apartment_id:
-        return jsonify({"error": "Faltan datos obligatorios"}), 400
+    apartment_id_raw = request.form.get('apartment_id')
+    action_id_raw = request.form.get('action_id')
+    contractor_id_raw = request.form.get('contractor_id')
+
+    if not description or not apartment_id_raw:
+      return jsonify({"error": "Faltan datos obligatorios"}), 400
+
+# Convertir IDs a enteros o None
+    apartment_id = int(apartment_id_raw) if apartment_id_raw.isdigit() else None
+    action_id = int(action_id_raw) if action_id_raw and action_id_raw.isdigit() else None
+    contractor_id = int(contractor_id_raw) if contractor_id_raw and contractor_id_raw.isdigit() else None
 
     original_name = secure_filename(file.filename)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -89,8 +98,11 @@ def upload_document():
         # Guardar en base de datos
         new_doc = Document(
             description=description,
-            file=file_url,
-            apartment_id=apartment_id
+            file_url=file_url,
+            apartment_id=apartment_id,
+            action_id=action_id,
+            contractor_id=contractor_id
+
         )
 
         db.session.add(new_doc)
@@ -113,7 +125,7 @@ def download_document(document_id):
       
         document = Document.query.get_or_404(document_id)
         
-        filename = document.file.split('/')[-1]
+        filename = document.file_url.split('/')[-1]
         
         s3 = get_r2_client()
         

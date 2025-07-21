@@ -1,4 +1,5 @@
 import { apartments } from "./fecht_apartment";
+import { expenses } from "./fecht_expenses";
 
 
 
@@ -30,7 +31,10 @@ export const initialStore = () => {
     visibility: "none",
     visibility2: "block",
     validToken: false,
+    expenses:[],
+    contractorexpenses:[],
     todos: [],
+    contractor:[],
     user:[],
     apartments: [],
     apartmentwithdocuments:[],
@@ -50,10 +54,25 @@ export const initialStore = () => {
 
 export default function storeReducer(store, action = {}) {
   switch (action.type) {
-    case "add_singleIssues":
+    case "add_expenses":
+      return {
+        ...store,
+        expenses: action.value,
+      };
+       case "add_singleIssues":
       return {
         ...store,
         singleIssues: action.value,
+      };
+       case "add_contractor_expenses":
+      return {
+        ...store,
+        contractorexpenses: action.value,
+      };
+      case "add_contractor":
+      return {
+        ...store,
+        contractor: action.value,
       };
        case "add_assocnoapartments":
       return {

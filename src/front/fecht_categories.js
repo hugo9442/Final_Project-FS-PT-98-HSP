@@ -1,0 +1,23 @@
+//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/categories";
+const Url ="https://sample-service-name-bnt3.onrender.com/dashboard";
+
+
+export const categories={
+ getcategories:async (token) => {
+        try {
+            const request = await fetch(`${Url}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            const response = await request.json();
+            return response;
+        } catch (error) {
+            console.error("Error al obtener contratistas:", error);
+            return { error: "Error al conectar con la API" };
+        }
+
+},
+ }

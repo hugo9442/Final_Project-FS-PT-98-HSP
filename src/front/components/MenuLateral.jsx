@@ -14,7 +14,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import logo from "../assets/img/LogoTrabajoFinal.png";
 
-
 const iconMap = {
   "gauge-high": faGaugeHigh,
   "house-chimney": faHouseChimney,
@@ -33,6 +32,7 @@ const MenuLateral = ({ setActiveOption }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownDoc, setDropdownDoc] = useState(false);
   const [dropdownFact, setDropdownFact] = useState(false);
+  const [dropdownProv, setDropdownProv] = useState(false); 
 
   const navItems = [
     { name: "Inicio", path: "/propietarioindex", icon: "gauge-high", internalOption: "Propietarioindex" },
@@ -45,7 +45,7 @@ const MenuLateral = ({ setActiveOption }) => {
   return (
     <>
       <div className="d-md-none bg-info p-2 d-flex justify-content-between align-items-center shadow">
-        <img src={logo} alt="Logo" style={{ width: 40, height: 40, borderRadius: "50%" }} />
+        <img src={logo} alt="Logo" style={{ width: 40, height: 40 }} />
         <button className="btn btn-outline-dark" onClick={() => setIsOpen(!isOpen)}>
           <FontAwesomeIcon icon={iconMap["bars"]} />
         </button>
@@ -62,8 +62,8 @@ const MenuLateral = ({ setActiveOption }) => {
           paddingTop: '80px',
         }}>
         <div className="text-center mb-4">
-          <img src={logo}alt="Logo"
-            style={{ width: "80px", height: "80px", borderRadius: "50%", objectFit: "cover" }}
+          <img src={logo} alt="Logo"
+            style={{ width: "80px", height: "80px", objectFit: "cover" }}
             className="mb-2"
           />
           <h5 className="fw-bold text-dark">Panel de Propietario</h5>
@@ -133,6 +133,31 @@ const MenuLateral = ({ setActiveOption }) => {
                 </li>
                 <li className="list-group-item list-group-item-action" onClick={() => { navigate('/Facturacionvista'); setDropdownFact(false); setIsOpen(false); }}>
                   Ver Facturas
+                </li>
+              </ul>
+            )}
+          </li>
+
+          {/* Proveedores y Gastos */}
+          <li className="nav-item mb-2">
+            <button
+              className={`btn w-100 text-start ${dropdownProv ? 'bg-primary text-white' : 'text-dark'}`}
+              onClick={() => setDropdownProv(!dropdownProv)}>
+              <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
+              Proveedores y Gastos
+            </button>
+            {dropdownProv && (
+              <ul className="list-group position-relative" style={{
+                zIndex: 2000,
+                width: '100%',
+                backgroundColor: 'white',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
+              }}>
+                <li className="list-group-item list-group-item-action" onClick={() => { navigate('/Contractors'); setDropdownProv(false); setIsOpen(false); }}>
+                  Proveedores
+                </li>
+                <li className="list-group-item list-group-item-action" onClick={() => { navigate('/Expenses'); setDropdownProv(false); setIsOpen(false); }}>
+                  Gastos
                 </li>
               </ul>
             )}

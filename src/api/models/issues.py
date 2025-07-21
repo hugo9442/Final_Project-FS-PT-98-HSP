@@ -37,6 +37,7 @@ class Issue(db.Model):
             "start_date": self.start_date,
             "end_date": self.end_date,
             "apartment_id": self.apartment_id
+            
         }
     
     def serialize_with_relations(self):

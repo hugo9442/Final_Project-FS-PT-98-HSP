@@ -8,3 +8,9 @@ from .issues import Issue
 from .documents import Document
 from .invoice import Invoice
 from .ContactRequest import ContactRequest
+from .contractor import Contractor
+from .expenses import Expense
+from .expenses_category import ExpenseCategory
+from .taxtype import TaxType
+from .withholder import Withholding
+from .expenses_payments import ExpensePayment

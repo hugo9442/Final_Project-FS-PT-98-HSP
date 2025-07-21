@@ -7,6 +7,7 @@ import MenuLateral from "../components/MenuLateral";
 import { apartments } from "../fecht_apartment.js"
 import NewActionForm from "../components/NewActionForm.jsx";
 import { Issues } from "../fecht_issues.js";
+import ModifyExpensesDocumentsbyAction from "../components/ModifyExpensesDocumentsbyActions.jsx";
 
 
 
@@ -14,6 +15,7 @@ export const Single = props => {
   const { theId } = useParams();
   const { store, dispatch } = useGlobalReducer();
   const [showForm, setShowForm] = useState(null);
+  const [showFormExp, setShowFormExp] = useState(null);
 
   const handlegetIssuesActionsByapartmetId = async () => {
     try {
@@ -40,7 +42,7 @@ export const Single = props => {
     }
 
   }
-
+  console.log(store)
 
   return (
     <>
@@ -78,16 +80,33 @@ export const Single = props => {
                           </div>
 
                           <h5 className="mt-3">Actuaciones</h5>
+
                           <ul className="list-group">
                             {item.actions && item.actions.map((action) => {
-                              const splitBill = action.bill_image ? action.bill_image.split("/").pop() : 'Sin documento';
+                               const splitBill = action.documents[0]?.file_url ? action.documents[0].file_url.split("/").pop() : 'Sin documento';
                               return (
                                 <li key={action.action_id} className="list-group-item">
-                                  <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")}</p>
-                                  <p><strong>Importe:</strong> {action.bill_amount}€, <strong>Ver Factura</strong> {splitBill}   </p>
-                                  <span className="d-inline-block ms-2"> {/* Añadido contenedor flexible */}
-                                    <strong>Ver Factura:</strong> {splitBill}
-                                  </span>
+                                  <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor.name}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")} {''}
+                                    <strong>Importe:</strong> {action.expenses[0]?.received_invoices || "No tiene coste"}, <strong>Ver Factura</strong> {splitBill}  </p>
+                                  <p><strong>Descripcion:</strong> {action.description}  </p>
+                                   <button className="btn btn-sm btn-outline-primary mt-2" 
+                                   onClick={() => setShowFormExp(action.action_id)} 
+                                   style={{display: !action.expenses[0]?.received_invoices && splitBill? "block":"none"}}     
+                                   disabled={item.status === 'cerrado'}>Añadir Factura e Importe</button>
+                               {showFormExp === action.action_id && (
+                              <ModifyExpensesDocumentsbyAction
+                                issueId={item.issue_id}
+                                actionId={action.action_id}
+                              
+                                apartmentId={store.singleIssues.id}
+                                token={store.token}
+                                onSuccess={() => {
+                                  setShowForm(null);
+                                  handlegetIssuesActionsByapartmetId();
+                                }}
+                                onClose={() => setShowFormExp(false)}
+                              />
+                            )}
                                 </li>
                               )
                             })}
@@ -101,6 +120,7 @@ export const Single = props => {
                             {showForm === item.issue_id && (
                               <NewActionForm
                                 issueId={item.issue_id}
+                                apartmentId={store.singleIssues.id}
                                 token={store.token}
                                 onSuccess={() => {
                                   setShowForm(null);

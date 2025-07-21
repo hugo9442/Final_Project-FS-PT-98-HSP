@@ -1,398 +1,192 @@
-{/*import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import MenuLateral from "../components/MenuLateral";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
-import { apartments } from "../fecht_apartment.js";
-import { contracts } from "../fecht_contract.js";
-import { users } from "../fecht_user.js";
-import { Issues } from "../fecht_issues.js";
-
-
-const PropietarioIndex = () => {
-  const [activeOption, setActiveOption] = useState(null);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [totalViviendas, setTotalViviendas] = useState();
-  const [totalContratos, setTotalContratos] = useState();
-  const [totalIncidencias, setTotalIncidencias] = useState();
-  const { store, dispatch } = useGlobalReducer();
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-
-       // const data = await users.getUserApartmentsCount(store.todos.id, store.token);
-       const data =await apartments.getApartment(store.token)
-     console.log("apartamntos",data)
-        if (data.total === null) {
-          setTotalViviendas(0);
-        }
-        else {
-          setTotalViviendas(data.total)
-        };
-      } catch (error) {
-        console.error("Error al cargar total de viviendas", error);
-        setTotalViviendas(0);
-      }
-
-      try {
-
-        const data = await users.getUserContractsCount(store.todos.id, store.token);
-        console.log(data.total)
-        if (data.error === "No hay contratos para este usuario") {
-          setTotalContratos(0)
-        }
-        else {
-          setTotalContratos(data.total)
-        };
-
-      } catch (error) {
-        console.error("Error al cargar total de contratos", error);
-        setTotalContratos(0);
-      }
-
-     try {
- 
-         const data = await Issues.getIssuesOpened(store.token);
-         if (data.total === null){
-          setTotalIncidencias(0);
-         }else{
-          setTotalIncidencias(data.total);
-         }
-         
-       } catch (error) {
-         console.error("Error al cargar total de incidencias", error);
-         setTotalIncidencias(0);
-       }
-    };
-    fetchData();
-  }, []);
-
-
-
-
-  const renderContent = () => { };
-
-  return (
-    <div className="container-fluid mt-4">
-      <div className="row">
-
-        <div className="col-md-12">
-          <div className="p-4 border rounded bg-light">
-            <h2 className="mb-4">Bienvenido, propietario</h2>
-            <p className="mb-4">Gestiona tu inmueble desde este panel.</p>
-
-
-            <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5 mx-auto" style={{ maxWidth: '800px' }} data-bs-ride="carousel">
-              <div className="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-              </div>
-              <div className="carousel-inner">
-                <div className="carousel-item active" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalViviendas}</h1>
-                      <p className="lead">Total de Viviendas Registradas</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="carousel-item" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalContratos}</h1>
-                      <p className="lead">Total de Contratos Activos</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="carousel-item" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalIncidencias}</h1>
-                      <p className="lead">Total de Incidencias Abiertas</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Anterior</span>
-              </button>
-              <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Siguiente</span>
-              </button>
-            </div>
-
-            <div className="row mt-4 justify-content-center">
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                    <h1 className="display-4">{totalViviendas}</h1>
-                    <p className="lead mb-0">Total de Viviendas</p>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">Gestión completa de tus inquilinos.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                    <h1 className="display-4">{totalContratos}</h1>
-                    <p className="lead mb-0">Total de Contratos Activos</p>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">Consulta y edición de viviendas.</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 d-flex flex-column justify-content-center align-items-center text-center">
-                  <div className="p-4" style={{ backgroundColor: "#e3f2fd", borderBottom: "1px solid #ccc" }}>
-                    <h1 className="display-4">{totalIncidencias}</h1>
-                    <p className="lead mb-0">Total de Incidencias Abiertas</p>
-                  </div>
-                  <div className="card-body">
-                    <p className="card-text">Revisión de problemas y reportes.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-  );
-
-
-
-  return (
-
-    <div className="container-fluid mt-3 px-3">
-      <div className="row">
-        <MenuLateral setActiveOption={setActiveOption} />
-
-
-        <div className="col-md-9">
-          <div className="p-2 border rounded bg-light">
-            {renderContent()}
-          </div>
-
-
-        </div>
-      </div>
-    </div>
-  )
-
-
-};
-
-export default PropietarioIndex;*/}
-
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import MenuLateral from "../components/MenuLateral";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { apartments } from "../fecht_apartment.js";
-import { contracts } from "../fecht_contract.js";
 import { users } from "../fecht_user.js";
 import { Issues } from "../fecht_issues.js";
 import { dashboard } from "../fecht_dashboard.js";
+import { expenses } from "../fecht_expenses.js"; // <-- Import para gastos
 
-// 🎯 IMPORT recharts
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  Tooltip, 
-  Legend, 
-  ResponsiveContainer 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  LabelList,
+  Line
 } from 'recharts';
 
-
 const PropietarioIndex = () => {
-  const [activeOption, setActiveOption] = useState(null);
-  const [totalViviendas, setTotalViviendas] = useState();
-  const [totalContratos, setTotalContratos] = useState();
-  const [totalIncidencias, setTotalIncidencias] = useState();
-  const [facturacionMensual, setFacturacionMensual] = useState([
-    { month: 'Enero', amount: 1200 },
-    { month: 'Febrero', amount: 900 },
-    { month: 'Marzo', amount: 1400 },
-    { month: 'Abril', amount: 800 },
-  ]); // ⚠️ ejemplo temporal
-  const { store, dispatch } = useGlobalReducer();
+  const [totalViviendas, setTotalViviendas] = useState(0);
+  const [totalContratos, setTotalContratos] = useState(0);
+  const [totalIncidencias, setTotalIncidencias] = useState(0);
+  const [facturacionMensual, setFacturacionMensual] = useState([]);
+  const [gastosMensuales, setGastosMensuales] = useState([]);
+  const [dataCombinada, setDataCombinada] = useState([]);
+  const [rentabilidadAnual, setRentabilidadAnual] = useState(0);
 
+  const { store } = useGlobalReducer();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await dashboard.getMonhtlySumary(store.token)
-        console.log("facturacio", data.facturacion_mensual)
-        if (data.facturacion_mensual !== null) {
-          setFacturacionMensual(data.facturacion_mensual)
+        const dataFact = await dashboard.getMonhtlySumary(store.token);
+        if (dataFact.facturacion_mensual) {
+          setFacturacionMensual(dataFact.facturacion_mensual);
         }
       } catch (error) {
-        console.error("Error al cargar total de viviendas", error);
-        setTotalViviendas(0);
+        console.error("Error al cargar facturación mensual", error);
       }
+
       try {
-        const data = await apartments.getApartment(store.token)
-        if (data.total === null) {
-          setTotalViviendas(0);
-        } else {
-          setTotalViviendas(data.total)
+        const dataGastos = await expenses.getMonthlySummary(store.token);
+        console.log("gastos_mensuales", dataGastos)
+        if (dataGastos.gastos_mensuales) {
+          setGastosMensuales(dataGastos.gastos_mensuales);
         }
       } catch (error) {
+        console.error("Error al cargar gastos mensuales", error);
+      }
+
+      try {
+        const data = await apartments.getApartment(store.token);
+        setTotalViviendas(data.total || 0);
+      } catch (error) {
         console.error("Error al cargar total de viviendas", error);
-        setTotalViviendas(0);
       }
 
       try {
         const data = await users.getUserContractsCount(store.todos.id, store.token);
-        if (data.error === "No hay contratos para este usuario") {
-          setTotalContratos(0)
-        } else {
-          setTotalContratos(data.total)
-        }
+        setTotalContratos(data.total || 0);
       } catch (error) {
         console.error("Error al cargar total de contratos", error);
-        setTotalContratos(0);
       }
 
       try {
         const data = await Issues.getIssuesOpened(store.token);
-        if (data.total === null) {
-          setTotalIncidencias(0);
-        } else {
-          setTotalIncidencias(data.total);
-        }
+        setTotalIncidencias(data.total || 0);
       } catch (error) {
         console.error("Error al cargar total de incidencias", error);
-        setTotalIncidencias(0);
       }
     };
+
     fetchData();
-  }, []);
+  }, [store.token, store.todos.id]);
+
+  // Combinar facturación y gastos para calcular rentabilidad mensual
+  useEffect(() => {
+  // Obtener todos los meses (puede ser el listado de meses del año completo)
+  const meses = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+  ];
+
+  let acumulado = 0;
+
+  const combinado = meses.map(mes => {
+    const ingreso = facturacionMensual.find(f => f.month === mes)?.amount || 0;
+    const gasto = gastosMensuales.find(g => g.month === mes)?.gastos || 0;
+    const rentabilidad = ingreso - gasto;
+    acumulado += rentabilidad;
+
+    return { month: mes, ingresos: ingreso, gastos: gasto, rentabilidad };
+  });
+
+  setDataCombinada(combinado);
+  setRentabilidadAnual(acumulado);
+
+}, [facturacionMensual, gastosMensuales]);
 
   return (
     <div className="container-fluid mt-4">
-      <div className="row">
-        <div className="col-md-12">
-          <div className="p-4 border rounded bg-light">
-            <h2 className="mb-4">Bienvenido, propietario</h2>
-            <p className="mb-4">Gestiona tu inmueble desde este panel.</p>
+      <div className="p-4 border rounded bg-light shadow">
+        <h2 className="mb-4">🏠 Panel de control del propietario</h2>
+        <p>Resumen general de tu actividad y estado de las propiedades.</p>
 
-            {/* 🏠 CARRUSEL */}
-            <div id="carouselExampleDark" className="carousel carousel-dark slide mt-5 mx-auto" style={{ maxWidth: '800px' }} data-bs-ride="carousel">
-              <div className="carousel-indicators">
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" className="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-              </div>
-              <div className="carousel-inner">
-                <div className="carousel-item active" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalViviendas}</h1>
-                      <p className="lead">Total de Viviendas Registradas</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="carousel-item" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalContratos}</h1>
-                      <p className="lead">Total de Contratos Activos</p>
-                    </div>
-                  </div>
-                </div>
-                <div className="carousel-item" data-bs-interval="5000">
-                  <div className="d-flex justify-content-center align-items-center bg-light" style={{ height: "200px" }}>
-                    <div className="text-center">
-                      <h1 className="display-4">{totalIncidencias}</h1>
-                      <p className="lead">Total de Incidencias Abiertas</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Anterior</span>
-              </button>
-              <button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-                <span className="carousel-control-next-icon" aria-hidden="true"></span>
-                <span className="visually-hidden">Siguiente</span>
-              </button>
-            </div>
-
-            {/* 📊 GRÁFICO */}
-            <div className="mt-5">
-              <h4>Facturación Mensual</h4>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={facturacionMensual}>
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                   <Legend verticalAlign="top" height={36}/>
-                  <Bar dataKey="amount" fill="#8884d8" name="Total facturado" />
-                  <Bar dataKey="pending" fill="#ff4d4f" name="Pendiente" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* 🗂 CARDS */}
-            <div className="row mt-4 justify-content-center">
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 text-center">
-                  <div className="p-4 bg-primary text-white">
-                    <h1 className="display-4">{totalViviendas}</h1>
-                    <p>Total de Viviendas</p>
-                  </div>
-                  <div className="card-body">
-                    <p>Gestión completa de tus inquilinos.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 text-center">
-                  <div className="p-4 bg-success text-white">
-                    <h1 className="display-4">{totalContratos}</h1>
-                    <p>Total de Contratos</p>
-                  </div>
-                  <div className="card-body">
-                    <p>Consulta y edición de viviendas.</p>
-                  </div>
-                </div>
-              </div>
-              <div className="col-md-4 mb-3">
-                <div className="card h-100 text-center">
-                  <div className="p-4 bg-danger text-white">
-                    <h1 className="display-4">{totalIncidencias}</h1>
-                    <p>Total de Incidencias Abiertas</p>
-                  </div>
-                  <div className="card-body">
-                    <p>Revisión de problemas y reportes.</p>
-                  </div>
-                </div>
+        {/* KPIs */}
+        <div className="row text-white mt-4">
+          <div className="col-md-4 mb-3">
+            <div className="card bg-primary shadow text-center">
+              <div className="card-body">
+                <h5 className="card-title">Viviendas</h5>
+                <h2>{totalViviendas}</h2>
               </div>
             </div>
-
           </div>
+          <div className="col-md-4 mb-3">
+            <div className="card bg-success shadow text-center">
+              <div className="card-body">
+                <h5 className="card-title">Contratos Activos</h5>
+                <h2>{totalContratos}</h2>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-4 mb-3">
+            <div className="card bg-danger shadow text-center">
+              <div className="card-body">
+                <h5 className="card-title">Incidencias Abiertas</h5>
+                <h2>{totalIncidencias}</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Gráfico combinado de facturación, gastos y rentabilidad */}
+        <div className="mt-5">
+          <h4>📊 Rentabilidad mensual</h4>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={dataCombinada}>
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend verticalAlign="top" height={36} />
+              <Bar dataKey="ingresos" fill="#4e73df" name="Ingresos">
+                <LabelList dataKey="ingresos" position="top" />
+              </Bar>
+              <Bar dataKey="gastos" fill="#e74a3b" name="Gastos">
+                <LabelList dataKey="gastos" position="top" />
+              </Bar>
+              <Line type="monotone" dataKey="rentabilidad" stroke="#2e59d9" name="Rentabilidad" />
+            </BarChart>
+          </ResponsiveContainer>
+          <h5 className="mt-3">
+            Rentabilidad anual acumulada: <strong>{rentabilidadAnual.toFixed(2)} €</strong>
+          </h5>
+        </div>
+
+        {/* Accesos rápidos */}
+        <div className="mt-5">
+          <h5>⚡ Accesos rápidos</h5>
+          <div className="d-flex gap-3 flex-wrap">
+            <button className="btn btn-outline-primary" onClick={() => navigate("/add-property")}>
+              ➕ Nueva Vivienda
+            </button>
+            <button className="btn btn-outline-success" onClick={() => navigate("/add-contract")}>
+              📄 Nuevo Contrato
+            </button>
+            <button className="btn btn-outline-warning" onClick={() => navigate("/issues")}>
+              🛠 Ver Incidencias
+            </button>
+            <button className="btn btn-outline-info" onClick={() => navigate("/contractors")}>
+              🧰 Proveedores
+            </button>
+          </div>
+        </div>
+
+        {/* Últimas actividades (simulado por ahora) */}
+        <div className="mt-5">
+          <h5>🕓 Últimas actividades</h5>
+          <ul className="list-group">
+            <li className="list-group-item">📄 Contrato creado para Juan Pérez</li>
+            <li className="list-group-item">🏠 Inmueble en Calle Falsa 123 añadido</li>
+            <li className="list-group-item">🔧 Incidencia abierta: Fuga de agua</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -400,5 +194,3 @@ const PropietarioIndex = () => {
 };
 
 export default PropietarioIndex;
-
-

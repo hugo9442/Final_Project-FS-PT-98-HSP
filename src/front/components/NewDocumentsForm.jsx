@@ -40,7 +40,7 @@ const NewDocumentsForm = ({ apartmentId, onCancel, onSuccess, token }) => {
       if (formData.file) {
         dataToSend.append("file", formData.file);
         for (let pair of dataToSend.entries()) {
-    console.log(pair[0]+ ': ', pair[1]);
+   
   }
       } else {
         setError("Debes subir un archivo PDF.");
@@ -49,7 +49,7 @@ const NewDocumentsForm = ({ apartmentId, onCancel, onSuccess, token }) => {
       }
 
       const res = await fetch( "https://sample-service-name-bnt3.onrender.com/documents/upload"
-       // `https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/documents/upload`
+       //`https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/documents/upload`
         , {
         method: "POST",
         headers: {

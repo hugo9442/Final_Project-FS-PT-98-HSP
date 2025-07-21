@@ -1,7 +1,8 @@
 from flask import request, jsonify, Blueprint
-from api.models import db, AssocTenantApartmentContract,Apartment
+from api.models import db, AssocTenantApartmentContract,Apartment,TaxType, Withholding
 from flask_cors import CORS
 from flask_jwt_extended import jwt_required
+from decimal import Decimal
 
 asociates_api = Blueprint('asociates_api', __name__, url_prefix='/asociates')
 
@@ -36,58 +37,50 @@ def get_associations_without_apartment():
         ).all()
         return jsonify([a.serialize() for a in asociaciones]), 200
     except Exception as e:
-        return jsonify({"msg": str(e)}), 500
+        return jsonify({"error": str(e)}), 500
 
 
 @asociates_api.route('/create', methods=['POST'])
 @jwt_required()
-def create_asociation():
-    body = request.get_json()
-    
-    if not body:
-        return jsonify({"msg": "No data provided"}), 400
-    if not "tenant_id" in body  or not "contract_id" in body:
-        return jsonify({"error":"No se han relacionado todos los campos necesarios para crear el alquiler. por favor revisa tu selección"})
-    
-    
-    new_asociation = AssocTenantApartmentContract(
-        tenant_id=body.get("tenant_id"),
-        contract_id=body.get("contract_id"),
-        renta=body.get("renta"),
-        is_active =body.get("is_active")
-    )
-    
+def create_association():
     try:
-        new_asociation = AssocTenantApartmentContract(**body)
-        db.session.add(new_asociation)
-        db.session.commit()
-        return jsonify({"asociation":new_asociation.serialize(),
-                        "msg":"La asociacion, se ha completado con exito"}), 201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
-    
-@asociates_api.route('/<int:id>/update', methods=['PUT'])
-@jwt_required()
-def update_asociates(id):
-    body = request.get_json()
-    if not body:
-        return jsonify({"msg": "No data provided"}), 400
+        data = request.get_json()
 
-    asociates = AssocTenantApartmentContract.query.get(id)
+        required_fields = ["tenant_id", "contract_id", "renta", "tax_type_id", "withholding_id"]
+        missing = [f for f in required_fields if f not in data]
+        if missing:
+            return jsonify({"error": f"Faltan campos: {', '.join(missing)}"}), 400
 
-    if not asociates:
-        return jsonify({"msg": "No se encuentra la Asociación"}), 404
-    protected_fields = ["id", "tenant_id","contract_id"]
-    try:
-        for key, value in body.items():
-            if key in protected_fields:
-                continue
-            if hasattr(asociates, key):
-                setattr(asociates, key, value)
+        tenant_id = data["tenant_id"]
+        contract_id = data["contract_id"]
+        renta = Decimal(data["renta"])
+        tax_type_id = data["tax_type_id"]
+        withholding_id = data["withholding_id"]
+
+        tax_type = TaxType.query.get(tax_type_id)
+        if not tax_type:
+            return jsonify({"error": "TaxType no encontrado"}), 404
+
+        withholding = Withholding.query.get(withholding_id)
+        if not withholding:
+            return jsonify({"error": "Withholding no encontrado"}), 404
+
+        association = AssocTenantApartmentContract(
+            tenant_id=tenant_id,
+            contract_id=contract_id,
+            renta=renta,
+            tax_type_id=tax_type_id,
+            withholding_id=withholding_id,
+            tax_percentage_applied=tax_type.percentage,
+            withholding_percentage_applied=withholding.percentage,
+            is_active=True
+        )
+
+        db.session.add(association)
         db.session.commit()
-        return jsonify({"msg":"el Alquiler está activo",
-                       "asosiate":asociates.serialize()}), 200
+
+        return jsonify({"message": "Asociación creada exitosamente", "association": association.serialize()}), 201
+
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": str(e)}), 500

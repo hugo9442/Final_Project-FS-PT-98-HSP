@@ -16,6 +16,7 @@ const Incidencias = () => {
   const { store, dispatch } = useGlobalReducer();
   const [itpartment, setItapartment] = useState()
   const [showForm, setShowForm] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchApartments = async () => {
     try {
@@ -91,7 +92,7 @@ const Incidencias = () => {
   };
 
   const Cissue = async () => {
-    if (!itpartment){
+    if (!itpartment) {
       swal({
         title: "ERROR",
         text: "Debes Seleccionar una Vivienda",
@@ -99,11 +100,11 @@ const Incidencias = () => {
         buttons: true,
         dangerMode: true,
       });
-    }else{
-      await handlesIssues() 
+    } else {
+      await handlesIssues()
       fetchApartments()
     }
-   
+
   }
   const getDaysBadgeClass = (alquilado) => {
     if (alquilado === "Pendiente de Alquilar") return "bg-danger text-white";
@@ -127,11 +128,19 @@ const Incidencias = () => {
             <div className="p-4 border rounded bg-light">
               <h2>Gestión de Incidencias</h2>
               <h5>Seleccione una Vivienda para añadir una Incidencia</h5>
+              <input
+                type="text"
+                className="form-control mb-3"
+                placeholder="Buscar por dirección y estado"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+
               <div className="map" style={{ display: `${store.vista}` }}>
                 <ul className="list-group">
                   {
                     store && store.apartments.map((item) => {
-                     
+
                       const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       return (
                         <li
@@ -268,8 +277,11 @@ const Incidencias = () => {
                 <h1>Incidencias abiertas por vivienda</h1>
                 <ul className="list-group mt-2">
                   {
-                    store && store.issues.map((item) => {
-                       console.log(item.status)
+                    store && store.issues.filter((item) => {
+                      const fullText = ` ${item.apartment.address} ${item.status}`.toLowerCase();
+                      return fullText.includes(searchTerm.toLowerCase());
+                    }).map((item) => {
+                      console.log(item.status)
                       const status = item.status
                       const alquilado = !item.apartment.is_rent ? "Pendiente de Alquilar" : "Alquilado";
                       const startDate = new Date(item.start_date).toLocaleDateString("es-ES", {

@@ -9,6 +9,7 @@ import boto3
 from botocore.client import Config
 from io import BytesIO
 from botocore.exceptions import ClientError
+from sqlalchemy.orm import joinedload
 
 actions_api = Blueprint('actions_api', __name__, url_prefix='/actions')
 
@@ -29,6 +30,29 @@ def get_r2_client():
 def get_all_actions():
     actions = Action.query.all()
     return jsonify([action.serialize() for action in actions]), 200
+
+
+@actions_api.route('/by-apartment/<int:apartment_id>/no-expenses-docs', methods=['GET'])
+@jwt_required()
+def get_actions_without_expenses_or_docs(apartment_id):
+    try:
+        actions = db.session.query(Action).join(Issue).filter(
+            Issue.apartment_id == apartment_id,
+            ~Action.expenses.any(),
+            ~Action.documents.any()
+        ).all()
+
+        return jsonify({"msg":"ok","actionlist":[{
+            "id": action.id,
+            "action_name": action.action_name,
+            "start_date": action.start_date.isoformat(),
+            "description": action.description,
+            "issue_id": action.issue_id
+        } for action in actions]}), 200
+
+    except Exception as e:
+        return jsonify({"error": "No se pudieron obtener las acciones filtradas", "details": str(e)}), 500
+
 
 @actions_api.route('/<int:action_id>', methods=["GET"])
 @jwt_required()
@@ -62,88 +86,41 @@ def update_action(action_id):
 @actions_api.route('/create', methods=["POST"])
 @jwt_required()
 def create_action():
-    data_request = request.form 
+    data_request = request.get_json()
 
     # Verificar campos obligatorios
-    required_fields = ['description', 'action_name', 'contractor', 'bill_amount', 'start_date', 'issue_id']
+    required_fields = ['description', 'action_name', 'contractor_id','start_date', 'issue_id']
     missing_fields = [field for field in required_fields if field not in data_request]
     if missing_fields:
         return jsonify({"error": f"Faltan campos obligatorios: {', '.join(missing_fields)}"}), 400
-    
+
     try:
         start_date = datetime.fromisoformat(data_request["start_date"])
-    except (KeyError, ValueError):
-        return jsonify({"error": "Fecha de inicio inválida o faltante"}), 400
-    
-    def allowed_file(filename):
-        return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'pdf'}
-
-    file_url = None
-
-    # Manejo del archivo (opcional)
-    if 'bill_image' in request.files:
-        file = request.files['bill_image']
-        
-        if file.filename != '':
-            if not allowed_file(file.filename):
-                return jsonify({"error": "Solo se permiten archivos PDF"}), 400
-
-            original_name = secure_filename(file.filename)
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            unique_filename = f"{original_name.rsplit('.', 1)[0]}_{timestamp}.pdf"
-            
-            try:
-                file.seek(0, os.SEEK_END)
-                file_size = file.tell()
-                file.seek(0)
-                
-                if file_size == 0:
-                    return jsonify({"error": "El archivo está vacío"}), 400
-                
-                s3 = get_r2_client()
-                s3.upload_fileobj(
-                    file,
-                    os.getenv("R2_BUCKET_NAME"),
-                    unique_filename,
-                    ExtraArgs={
-                        'ContentType': 'application/pdf',
-                        'ACL': 'private'
-                    }
-                )
-
-                file_url = f"{os.getenv('R2_PUBLIC_URL')}/{unique_filename}"
-
-
-            except Exception as e:
-                current_app.logger.error(f"Error al subir archivo: {str(e)}", exc_info=True)
-                return jsonify({
-                    "error": "Error al procesar el archivo",
-                    "details": str(e)
-                }), 500
+    except ValueError:
+        return jsonify({"error": "Fecha de inicio inválida"}), 400
 
     try:
         new_action = Action(
             action_name=data_request["action_name"],
             start_date=start_date,
             description=data_request["description"],
-            contractor=data_request["contractor"],
-            bill_amount=int(data_request["bill_amount"]),
-            bill_image=file_url,
-            issue_id=data_request["issue_id"],
-            
+            contractor_id=data_request["contractor_id"],
+            issue_id=data_request["issue_id"]
         )
 
         db.session.add(new_action)
         db.session.commit()
-        
+
         return jsonify({
-            "msg": "Acción creada exitosamente", 
-            "action": new_action.serialize()  # Usando tu método serialize correctamente
+            "msg": "Acción creada exitosamente",
+            "id": new_action.id,  # útil para frontend
+            "action": new_action.serialize()
         }), 201
-    
-    except ValueError as e:
+
+    except ValueError:
         db.session.rollback()
         return jsonify({"error": "bill_amount debe ser un número entero"}), 400
+
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(f"Error al crear acción: {str(e)}", exc_info=True)
@@ -151,6 +128,7 @@ def create_action():
             "error": "Error al crear la acción",
             "details": str(e)
         }), 500
+
     
 @actions_api.route('/<int:action_id>', methods=["DELETE"])
 @jwt_required()

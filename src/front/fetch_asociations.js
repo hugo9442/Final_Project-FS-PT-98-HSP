@@ -4,11 +4,13 @@ const Url ="https://sample-service-name-bnt3.onrender.com/asociates";
 
 export const Asociations = {
   
-  createAsociation: async (tenant_id, contract_id, renta, token) => {
+  createAsociation: async (tenant_id, contract_id, renta, taxTypeId, withholdingId, token) => {
     let asociate = {
       "tenant_id": tenant_id,
       "contract_id": contract_id,
       "renta": renta,
+      "tax_type_id": taxTypeId,
+      "withholding_id": withholdingId,
       "is_active": Boolean(true)
     };
   
