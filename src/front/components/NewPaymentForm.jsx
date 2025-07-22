@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Urlexport } from "../urls.js";
 
 const NewPaymentForm = ({ token, onSuccess, onClose }) => {
   const [formData, setFormData] = useState({ expense_id: "", amount: "", date: ""});
@@ -16,8 +17,8 @@ const NewPaymentForm = ({ token, onSuccess, onClose }) => {
     setError(null);
 
     try {
-      const res = await fetch("https://sample-service-name-bnt3.onrender.com/expensespayments/create",
-        //"https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/expensespayments/create", 
+      const res = await fetch(`${Urlexport}/create`,
+
         {
           method: "POST",
           headers: {

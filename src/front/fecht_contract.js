@@ -1,5 +1,6 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/contracts";
-const Url ="https://sample-service-name-bnt3.onrender.com/contracts";
+import { Urlexport } from "./urls";
+const Url =`${Urlexport}/contracts`;
+
 
 
 export const contracts = {

@@ -1,5 +1,7 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/documents";
-const Url ="https://sample-service-name-bnt3.onrender.com/documents";
+import { Urlexport } from "./urls";
+
+const Url =`${Urlexport}/documents`;
+
 export const files={
      create_files: async (description, file, apartment_id, token) => {
     

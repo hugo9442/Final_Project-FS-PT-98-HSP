@@ -7,6 +7,7 @@ import { contractor } from "../fecht_contractor";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { expenses } from "../fecht_expenses.js";
 import { categories } from "../fecht_categories.js";
+import { Urlexport } from "../urls.js";
  
 const ModifyExpensesDocumentsbyAction = ({ apartmentId, issueId, actionId,  token, onSuccess, onClose }) => {
   const { store, dispatch } = useGlobalReducer();
@@ -99,8 +100,8 @@ const handleChange = (e) => {
       docForm.append("action_id", actionId); // props, no crear acción nueva
       docForm.append("file", formData.file);
 
-      const docRes = await fetch("https://sample-service-name-bnt3.onrender.com/documents/upload"
-       // `https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/documents/upload`
+      const docRes = await fetch(`${Urlexport}/documents/upload`
+       
         , {
         method: "POST",
         headers: {
@@ -130,8 +131,8 @@ const handleChange = (e) => {
         ...(documentId && { document_id: documentId })
       };
 
-      const expenseRes = await fetch("https://sample-service-name-bnt3.onrender.com/expenses/create"
-       // `https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/expenses/create`
+      const expenseRes = await fetch(`${Urlexport}/expenses/create`
+ 
         , {
         method: "POST",
         headers: {

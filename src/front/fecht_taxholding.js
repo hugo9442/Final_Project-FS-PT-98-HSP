@@ -1,5 +1,5 @@
-//const Url = "https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/taxhold";
-const Url ="https://sample-service-name-bnt3.onrender.com/asociates";
+import { Urlexport } from "./urls";
+const Url =`${Urlexport}/asociates`;
 
 export const taxholding={
 

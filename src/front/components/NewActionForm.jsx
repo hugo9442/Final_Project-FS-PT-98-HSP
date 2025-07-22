@@ -7,6 +7,7 @@ import { contractor } from "../fecht_contractor";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { expenses } from "../fecht_expenses.js";
 import { categories } from "../fecht_categories.js";
+import { Urlexport } from "../urls.js";
  
 const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
   const { store, dispatch } = useGlobalReducer();
@@ -96,8 +97,8 @@ const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
         issue_id: issueId,
       };
 
-      const res = await fetch("https://sample-service-name-bnt3.onrender.com/actions/create"
-    // `https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/actions/create`
+      const res = await fetch(`${Urlexport}/create`
+    
     , {
         method: "POST",
         headers: {
@@ -132,8 +133,8 @@ const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
         docForm.append("file", formData.file);
         
        
-        const docRes = await fetch("https://sample-service-name-bnt3.onrender.com/documents/upload"
-      // `https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/documents/upload`
+        const docRes = await fetch( `${Urlexport}/upload`
+      
        , {
           method: "POST",
           headers: {
@@ -165,8 +166,8 @@ const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
       };
        console.log(actionPayloadExpense)
       
-        const expenseRes = await fetch("https://sample-service-name-bnt3.onrender.com/expenses/create"
-          //`https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/expenses/create`
+        const expenseRes = await fetch(`${Urlexport}/expenses/create`
+          
           ,{
             method: "POST",
             headers: {

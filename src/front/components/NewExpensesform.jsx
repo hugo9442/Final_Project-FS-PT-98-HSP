@@ -4,6 +4,7 @@ import { contractor } from "../fecht_contractor.js";
 import { categories } from "../fecht_categories.js";
 import { action } from "../fetch_actions.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Urlexport } from "../urls.js";
 
 const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
   const { store, dispatch } = useGlobalReducer();
@@ -96,8 +97,8 @@ const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
         docForm.append("action_id", formData.action_id);
         docForm.append("file", formData.file);
        console.log(docForm)
-        const docRes = await fetch("https://sample-service-name-bnt3.onrender.com/documents/upload",
-          //`https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/documents/upload`,
+        const docRes = await fetch(`${Urlexport}/upload`,
+        
           {
             method: "POST",
             headers: {
@@ -126,8 +127,8 @@ const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
         document_id: documentId || null,
       };
 
-      const expenseRes = await fetch("https://sample-service-name-bnt3.onrender.com/expenses/create",
-        //"https://special-couscous-wrpgj9jx4q92v6xw-3001.app.github.dev/expenses/create",
+      const expenseRes = await fetch( `${Urlexport}/create`,
+       
         {
           method: "POST",
           headers: {
