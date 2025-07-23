@@ -45,7 +45,8 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
       fetchData();
     }, [store.token]);
 
-   
+   console.log("retencion", withholdings)
+   console.log("iva",taxTypes)
 
     const handleCreatenant = async () => {
         let createdTenantId = null;

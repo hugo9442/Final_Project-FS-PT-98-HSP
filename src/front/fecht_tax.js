@@ -1,11 +1,11 @@
 import { Urlexport } from "./urls";
-const Url =`${Urlexport}/asociates`;
+const Url =`${Urlexport}`;
 
 export const tax={
 
  gettaxt: async (token) => {
             try {
-                const request = await fetch(`${Url}`, {
+                const request = await fetch(`${Url}/iva`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json",
