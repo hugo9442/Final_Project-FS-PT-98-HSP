@@ -6,7 +6,7 @@ import { action } from "../fetch_actions.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Urlexport } from "../urls.js";
 
-const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
+const NewExpensesForm = ({ apartmentId, onCancel, onSuccess }) => {
   const { store, dispatch } = useGlobalReducer();
   const [step, setStep] = useState(1);
   const [categoriesList, setCategoriesList] = useState([]);
@@ -97,7 +97,8 @@ const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
         docForm.append("action_id", formData.action_id);
         docForm.append("file", formData.file);
        console.log(docForm)
-        const docRes = await fetch(`${Urlexport}/upload`,
+
+        const docRes = await fetch(`${Urlexport}/documents/upload`,
         
           {
             method: "POST",
@@ -127,7 +128,7 @@ const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
         document_id: documentId || null,
       };
 
-      const expenseRes = await fetch( `${Urlexport}/create`,
+      const expenseRes = await fetch( `${Urlexport}/expenses/create`,
        
         {
           method: "POST",
@@ -161,7 +162,7 @@ const NewExpensesForm = ({ apartmentId, onSubmit, onCancel, onSuccess }) => {
         console.error("Error fetching issues/actions:", error);
       }
     };
-
+console.log(formData)
   return (
     <form onSubmit={handleSubmit} className="p-4 border rounded shadow bg-white">
       <h4 className="mb-4">Nuevo Gasto</h4>

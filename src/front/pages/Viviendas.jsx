@@ -48,6 +48,12 @@ const Viviendas = () => {
     if (alquilado === "Alquilado") return "bg-info text-black";
     return "bg-success text-white";
   };
+  const getRowColor = (item) => {
+    if (item.has_unpaid_invoices && item.has_open_issues) return "bg-red-200";
+    if (item.has_unpaid_invoices) return "bg-red-100";
+    if (item.has_open_issues) return "bg-yellow-100";
+    return "";
+  };
 
   console.log(store);
 
@@ -55,7 +61,7 @@ const Viviendas = () => {
     <div className="mt-4 p-4 border rounded bg-light">
       <h2>Gestión de Viviendas</h2>
       <p>Aquí Puedes Visualizar, Cargar o Gestionar Tus Viviendas.</p>
-      
+
       <input
         type="text"
         className="form-control mb-3"
@@ -75,7 +81,8 @@ const Viviendas = () => {
               <th>Propietario</th>
               <th>Tipo</th>
               <th>Estado</th>
-           
+              <th>Alertas</th>
+
             </tr>
           </thead>
           <tbody>
@@ -87,9 +94,12 @@ const Viviendas = () => {
                 })
                 .map((item) => {
                   const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
+
+
                   return (
-                    <tr 
-                      key={item.id} 
+                    <tr
+                      key={item.id}
+                      className={`${getRowColor(item)} border-b`}
                       onClick={() => navigate("/Viviendasassoc/" + item.id)}
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
                     >
@@ -103,70 +113,85 @@ const Viviendas = () => {
                         <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
                           {alquilado}
                         </span>
-                         </td>
-                        <td>
-                        
                       </td>
+                      <td>
+                        {item.has_unpaid_invoices && item.has_open_issues && (
+                          <span className="badge bg-danger">Facturas + Incidencias</span>
+                        )}
+                        {item.has_unpaid_invoices && !item.has_open_issues && (
+                          <span className="badge bg-warning text-dark">Facturas impagadas</span>
+                        )}
+                        {item.has_open_issues && !item.has_unpaid_invoices && (
+                          <span className="badge bg-warning text-dark">Incidencias abiertas</span>
+                        )}
+                      </td>
+                    
                     </tr>
-                  );
+          );
                 })
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center text-muted">
-                  Todavía no has registrado ninguna vivienda.
-                </td>
-              </tr>
+          ) : (
+          <tr>
+            <td colSpan="7" className="text-center text-muted">
+              Todavía no has registrado ninguna vivienda.
+            </td>
+          </tr>
             )}
-          </tbody>
-        </table>
-      </div>
-
-      {showForm && (
-        <NewApartmentForm
-          onSuccess={() => {
-            setShowForm(false);
-            fetchApartments();
-            setShowbotton(true);
-          }}
-          onCancel={() => { setShowForm(false), setShowbotton(true); }}
-        />
-      )}
-      {showFormUser && (
-        <NewuserForm
-          onSuccess={() => {
-            setShowFormUser(false);
-            fetchApartments();
-            setShowbotton(true);
-          }}
-          onCancel={() => { setShowFormUser(false), setShowbotton(true); }}
-        />
-      )}
-      {showBotton && (
-        <div className="mt-3">
-            <button
-            className="btn btn-success me-2"
-            style={{
-              color: "black",
-              backgroundColor: "rgba(138, 223, 251, 0.8)",
-            }}
-            onClick={() => { setShowFormUser(true), setShowbotton(false); }}
-          >
-            Añadir Propietario
-          </button>
-          <button
-            className="btn btn-success me-2"
-            style={{
-              color: "black",
-              backgroundColor: "rgba(138, 223, 251, 0.8)",
-            }}
-            onClick={() => { setShowForm(true), setShowbotton(false); }}
-          >
-            Añadir Vivienda
-          </button>
-        
-        </div>
-      )}
+        </tbody>
+      </table>
     </div>
+
+      {
+    showForm && (
+      <NewApartmentForm
+        onSuccess={() => {
+          setShowForm(false);
+          fetchApartments();
+          setShowbotton(true);
+        }}
+        onCancel={() => { setShowForm(false), setShowbotton(true); }}
+      />
+    )
+  }
+  {
+    showFormUser && (
+      <NewuserForm
+        onSuccess={() => {
+          setShowFormUser(false);
+          fetchApartments();
+          setShowbotton(true);
+        }}
+        onCancel={() => { setShowFormUser(false), setShowbotton(true); }}
+      />
+    )
+  }
+  {
+    showBotton && (
+      <div className="mt-3">
+        <button
+          className="btn btn-success me-2"
+          style={{
+            color: "black",
+            backgroundColor: "rgba(138, 223, 251, 0.8)",
+          }}
+          onClick={() => { setShowFormUser(true), setShowbotton(false); }}
+        >
+          Añadir Propietario
+        </button>
+        <button
+          className="btn btn-success me-2"
+          style={{
+            color: "black",
+            backgroundColor: "rgba(138, 223, 251, 0.8)",
+          }}
+          onClick={() => { setShowForm(true), setShowbotton(false); }}
+        >
+          Añadir Vivienda
+        </button>
+
+      </div>
+    )
+  }
+    </div >
   );
 };
 

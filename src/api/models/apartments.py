@@ -53,6 +53,29 @@ class Apartment(db.Model):
         return data
 
     def serialize_with_owner_name(self):
-        data = self.serialize()
-        data["owner_name"] = f"{self.owner.first_name} {self.owner.last_name}" if self.owner else None
-        return data
+        has_unpaid_invoices = False
+        for assoc in self.association:
+            for invoice in assoc.invoices:
+                if invoice.status.lower() == "pendiente":
+                    has_unpaid_invoices = True
+                    break
+            if has_unpaid_invoices:
+                break
+
+        has_open_issues = any(issue.status.lower() == "abierta" for issue in self.issues)
+
+        return {
+            "id": self.id,
+            "address": self.address,
+            "postal_code": self.postal_code,
+            "city": self.city,
+            "provincia": self.provincia,
+            "parking_slot": self.parking_slot,
+            "type": self.type,
+            "is_rent": self.is_rent,
+            "owner_id": self.owner_id,
+            "owner_name": self.owner.first_name if self.owner else None,
+            "has_unpaid_invoices": has_unpaid_invoices,
+            "has_open_issues": has_open_issues
+        }
+

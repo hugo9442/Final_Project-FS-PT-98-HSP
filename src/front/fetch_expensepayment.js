@@ -1,5 +1,5 @@
 import { Urlexport } from "./urls";
-const Url =`${Urlexport} /expensespayments`;
+const Url =`${Urlexport}/expensespayments`;
 
 
 

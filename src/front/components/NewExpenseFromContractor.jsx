@@ -5,7 +5,7 @@ import { categories } from "../fecht_categories.js";
 import { action } from "../fetch_actions.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
-const ExpenseWizardForm = ({ onSubmit }) => {
+const NewExpenseFromContractor = ({ onSubmit }) => {
   const { store, dispatch } = useGlobalReducer();
   const [step, setStep] = useState(1);
   const [categoriesList, setCategoriesList] = useState([]);
@@ -187,4 +187,4 @@ const ExpenseWizardForm = ({ onSubmit }) => {
   );
 };
 
-export default ExpenseWizardForm;
+export default NewExpenseFromContractor;

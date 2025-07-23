@@ -29,7 +29,7 @@ const PropietarioIndex = () => {
   const [gastosMensuales, setGastosMensuales] = useState([]);
   const [dataCombinada, setDataCombinada] = useState([]);
   const [rentabilidadAnual, setRentabilidadAnual] = useState(0);
-
+ const [totalanual, setTotalanual] = useState(0);
   const { store } = useGlobalReducer();
   const navigate = useNavigate();
 
@@ -88,21 +88,24 @@ const PropietarioIndex = () => {
   ];
 
   let acumulado = 0;
-
+  let facturadoanual = 0
   const combinado = meses.map(mes => {
     const ingreso = facturacionMensual.find(f => f.month === mes)?.amount || 0;
+    const pendiente = facturacionMensual.find(f => f.month === mes)?.pending || 0;
     const gasto = gastosMensuales.find(g => g.month === mes)?.gastos || 0;
-    const rentabilidad = ingreso - gasto;
+    const rentabilidad = ingreso.toFixed(2) - gasto.toFixed(2);
     acumulado += rentabilidad;
+    facturadoanual +=ingreso
 
-    return { month: mes, ingresos: ingreso, gastos: gasto, rentabilidad };
+    return { month: mes, ingresos: ingreso, gastos: gasto, pendientes: pendiente, rentabilidad };
   });
 
   setDataCombinada(combinado);
   setRentabilidadAnual(acumulado);
+  setTotalanual(facturadoanual);
 
 }, [facturacionMensual, gastosMensuales]);
-
+console.log("facturacion", facturacionMensual)
   return (
     <div className="container-fluid mt-4">
       <div className="p-4 border rounded bg-light shadow">
@@ -149,13 +152,20 @@ const PropietarioIndex = () => {
               <Bar dataKey="ingresos" fill="#4e73df" name="Ingresos">
                 <LabelList dataKey="ingresos" position="top" />
               </Bar>
-              <Bar dataKey="gastos" fill="#e74a3b" name="Gastos">
+               <Bar dataKey="pendientes" fill="#e74a3b" name="Pendientes">
+                <LabelList dataKey="ingresos" position="top" />
+              </Bar>
+              <Bar dataKey="gastos" fill="#e7d33bff" name="Gastos">
                 <LabelList dataKey="gastos" position="top" />
               </Bar>
               <Line type="monotone" dataKey="rentabilidad" stroke="#2e59d9" name="Rentabilidad" />
             </BarChart>
           </ResponsiveContainer>
+          
           <h5 className="mt-3">
+            Total Acumulado Facturado : <strong>{totalanual.toFixed(2)} €</strong>
+          </h5>
+           <h5 className="mt-3">
             Rentabilidad anual acumulada: <strong>{rentabilidadAnual.toFixed(2)} €</strong>
           </h5>
         </div>

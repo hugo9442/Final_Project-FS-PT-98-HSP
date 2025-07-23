@@ -44,10 +44,10 @@ def get_documents():
 @documents_api.route('/upload', methods=['POST'])
 @jwt_required()
 def upload_document():
-   
+ 
     def allowed_file(filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'pdf'
-
+    
     file = request.files.get('file')
     if not file:
         return jsonify({"error": "No file part"}), 400
@@ -55,7 +55,7 @@ def upload_document():
         return jsonify({"error": "No selected file"}), 400
     if not allowed_file(file.filename):
         return jsonify({"error": "Solo se permiten archivos PDF"}), 400
-
+    
     description = request.form.get('description')
     apartment_id_raw = request.form.get('apartment_id')
     action_id_raw = request.form.get('action_id')
@@ -72,6 +72,11 @@ def upload_document():
     original_name = secure_filename(file.filename)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     unique_filename = f"{original_name.rsplit('.', 1)[0]}_{timestamp}.pdf"
+
+    print("Archivo recibido:", file)
+    print("Nombre:", file.filename)
+    print("Tipo:", file.content_type)
+    print("Tamaño (request content-length):", request.content_length)
 
     try:
         # Validar tamaño del archivo

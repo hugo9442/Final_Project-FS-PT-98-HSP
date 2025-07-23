@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Urlexport } from "../urls.js";
+//import { itemAxisPredicate } from "recharts/types/state/selectors/axisSelectors.js";
 
-const NewPaymentForm = ({ token, onSuccess, onClose }) => {
+const NewPaymentForm = ({ token, onSubmit, onSuccess, onClose }) => {
   const [formData, setFormData] = useState({ expense_id: "", amount: "", date: ""});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -17,7 +18,7 @@ const NewPaymentForm = ({ token, onSuccess, onClose }) => {
     setError(null);
 
     try {
-      const res = await fetch(`${Urlexport}/create`,
+      const res = await fetch(`${Urlexport}/expensespayments/create`,
 
         {
           method: "POST",
@@ -46,7 +47,7 @@ const NewPaymentForm = ({ token, onSuccess, onClose }) => {
       setLoading(false);
     }
   };
-
+console.log(store.contractorexpenses)
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-3">
@@ -60,12 +61,13 @@ const NewPaymentForm = ({ token, onSuccess, onClose }) => {
         >
           <option value="">-- Selecciona un gasto --</option>
           {store.contractorexpenses
-            ?.filter(e => (e.received_invoices - (e.payed_invoice || 0)) > 0)
+            ?.filter(e => ((e.received_invoices - (e.payed_invoice || 0)).toFixed(2))> 0)
             .map(e => (
               <option key={e.id} value={e.id}>
                 {new Date(e.date).toLocaleDateString("es-ES")} - {e.description} ({(e.received_invoices - (e.payed_invoice || 0)).toFixed(2)} € pendiente)
               </option>
             ))
+          
           }
         </select>
       </div>

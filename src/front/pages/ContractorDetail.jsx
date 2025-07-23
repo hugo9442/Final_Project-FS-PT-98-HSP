@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { expenses } from "../fecht_expenses";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import NewPaymentForm from "../components/NewPaymentForm";
+import NewExpenseFromContractor from "../components/NewExpenseFromContractor"; // 👉 nuevo import
+import * as XLSX from "xlsx";
+import { useReactToPrint } from 'react-to-print';
 
 const ContractorDetail = () => {
     const { contractorId } = useParams();
@@ -10,6 +13,13 @@ const ContractorDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [showExpenseModal, setShowExpenseModal] = useState(false); // 👉 nuevo estado
+    const componentRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        documentTitle: `Gastos del contractor #${contractorId}`,
+    });
 
     const fetchContractorExpenses = async () => {
         try {
@@ -28,66 +38,92 @@ const ContractorDetail = () => {
         fetchContractorExpenses();
     }, [contractorId]);
 
-    
-  
-
     const openModal = () => setShowModal(true);
+    const closeModal = () => setShowModal(false);
 
-    const closeModal = () => {
-        setShowModal(false);
+    const openExpenseModal = () => setShowExpenseModal(true); // 👉 nuevo
+    const closeExpenseModal = () => setShowExpenseModal(false); // 👉 nuevo
+
+    const exportTableToExcel = () => {
+        const table = document.getElementById("expenses-table");
+        const workbook = XLSX.utils.table_to_book(table, { sheet: "Gastos" });
+        XLSX.writeFile(workbook, "gastos.xlsx");
     };
-
-
-    
 
     if (loading) return <div>Cargando...</div>;
     if (error) return <div>{error}</div>;
 
+    let acumulado = 0;
+
     return (
         <div className="container mt-4">
-            <h2>Detalle del Contractor #{contractorId}</h2> <div className="d-flex justify-content-end mb-3">
-                <button className="btn btn-success" onClick={openModal}>
+            <h2>Detalle del Contractor #{contractorId}</h2>
+
+            <div className="d-flex gap-2 flex-wrap mb-3">
+                <button className="btn btn-outline-primary" onClick={exportTableToExcel}>
+                    Exportar gastos a Excel
+                </button>
+                <button className="btn btn-outline-primary" onClick={handlePrint}>
+                    Imprimir tabla
+                </button>
+                <button className="btn btn-outline-primary" onClick={openModal}>
                     Registrar nuevo pago
+                </button>
+                <button className="btn btn-outline-success" onClick={openExpenseModal}> {/* 👉 nuevo */}
+                    Añadir gasto
                 </button>
             </div>
 
+            {/* Contenido a imprimir */}
+            <div ref={componentRef}>
+                <table id="expenses-table" className="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Descripción</th>
+                            <th>Pagos</th>
+                            <th>Fra. recibida</th>
+                            <th>Pendiente</th>
+                            <th>Balance</th>
 
-            <table className="table table-bordered mt-3">
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Descripción</th>
-                        <th>Pagos</th>
-                        <th>Fra. recibida</th>
-                        <th>balance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {store.contractorexpenses?.map((item) => (
-                        <tr key={item.id}>
-                            <td>{new Date(item.date).toLocaleDateString("es-ES")}</td>
-                            <td>{item.description}</td>
-                            <td>
-                                {item.payments?.length > 0 ? (
-                                    <ul>
-                                        {item.payments.map((p) => (
-                                            <li key={p.id}>{p.payment_date}: {p.amount} €</li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    "Sin pagos"
-                                )}
-                            </td>
-                            <td>{item.received_invoices} €</td>
-                            <td>
-                               {item.balance}
-                            </td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {store.contractorexpenses?.sort((b, a) => new Date(b.date) - new Date(a.date))
+                            .map((item) => {
+                                acumulado += item.balance;
+                                return (
+                                    <tr key={item.id}>
+                                        <td>{new Date(item.date).toLocaleDateString("es-ES")}</td>
+                                        <td>{item.description}</td>
+                                        <td>
+                                            {item.payments?.length > 0 ? (
+                                                <ul>
+                                                    {item.payments
+                                                        .sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date))
+                                                        .map((p) => (
+                                                            <li key={p.id}>{p.payment_date}: {p.amount} €</li>
+                                                        ))}
+                                                </ul>
+                                            ) : (
+                                                "Sin pagos"
+                                            )}
+                                        </td>
+                                        <td>{item.received_invoices} €</td>
+                                        <td style={{ color: item.balance > 0 ? "black" : "red" }}>
+                                            {item.balance.toFixed(2)}
+                                        </td>
+                                        <td style={{ color: acumulado > 0 ? "black" : "red" }}>
+                                            {acumulado.toFixed(2)}
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                    </tbody>
+                </table>
+            </div>
 
-            {/* MODAL */}
+            {/* MODAL PAGO */}
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
                     <div className="modal-dialog">
@@ -103,7 +139,7 @@ const ContractorDetail = () => {
                                     expenses={store.contractorexpenses}
                                     onSuccess={() => {
                                         closeModal();
-                                        fetchContractorExpenses(); // refresca tras insertar
+                                        fetchContractorExpenses();
                                     }}
                                     onClose={closeModal}
                                 />
@@ -113,6 +149,30 @@ const ContractorDetail = () => {
                 </div>
             )}
 
+            {/* MODAL NUEVO GASTO */}
+            {showExpenseModal && (
+                <div className="modal show d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
+                    <div className="modal-dialog modal-lg">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title">Añadir nueva factura</h5>
+                                <button type="button" className="btn-close" onClick={closeExpenseModal}></button>
+                            </div>
+                            <div className="modal-body">
+                                <NewExpenseFromContractor
+                                    contractorId={contractorId}
+                                    token={store.token}
+                                    onSuccess={() => {
+                                        closeExpenseModal();
+                                        fetchContractorExpenses();
+                                    }}
+                                    onClose={closeExpenseModal}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

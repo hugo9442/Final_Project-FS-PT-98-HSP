@@ -63,12 +63,15 @@ def get_monthly_summary():
         ).group_by('year', 'month')\
          .order_by('year', 'month')\
          .all()
-
+        MESES_ES = [
+        "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+       ]
         data = []
         for row in results:
             data.append({
                 "year": int(row.year),
-                "month": calendar.month_name[int(row.month)],
+                "month": MESES_ES[int(row.month)],
                 "amount": float(row.total),
                 "pending": float(row.pendiente)
             })

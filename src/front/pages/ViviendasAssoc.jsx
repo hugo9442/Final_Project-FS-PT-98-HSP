@@ -59,14 +59,14 @@ const ViviendasAssoc = () => {
       fetchData();
     }
   }, [theId, store.token]);
-  
-  const exportTableToExcel = () => {
-  const table = document.getElementById("expenses-table"); // ID que asignaremos abajo
-  const workbook = XLSX.utils.table_to_book(table, { sheet: "Gastos" });
 
-  // Generar y descargar el archivo
-  XLSX.writeFile(workbook, "gastos.xlsx");
-};
+  const exportTableToExcel = () => {
+    const table = document.getElementById("expenses-table"); // ID que asignaremos abajo
+    const workbook = XLSX.utils.table_to_book(table, { sheet: "Gastos" });
+
+    // Generar y descargar el archivo
+    XLSX.writeFile(workbook, "gastos.xlsx");
+  };
 
   const handlegetIssuesActionsByapartmetId = async () => {
     try {
@@ -394,16 +394,11 @@ const ViviendasAssoc = () => {
                     };
 
                     const result = cleanFileName();
-
-
-
                     const expensesDate = new Date(item.date).toLocaleDateString("es-ES", {
                       day: "2-digit",
                       month: "long",
                       year: "numeric"
                     });
-
-
 
                     return (
                       <tr key={item.id}>
@@ -428,7 +423,7 @@ const ViviendasAssoc = () => {
               </table>
             </div>
 
-            {/* Formulario para añadir incidencias */}
+            {/* Formulario para añadir gastos */}
             {showFormExpenses && (
               <NewExpensesForm
                 apartmentId={parseInt(theId)}
