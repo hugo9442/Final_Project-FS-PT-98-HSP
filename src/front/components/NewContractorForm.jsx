@@ -37,8 +37,8 @@ const NewContractorForm = ({ onSuccess, onCancel }) => {
     e.preventDefault();
     try {
       const data = await contractor.create(formData, store.token);
-      if (data.msg === "ok") {
-        onSuccess();
+      if (data.msg === "ok" && data.contractor)  {
+        onSuccess(data.contractor);
       } else {
         alert("Error al crear contractor");
       }

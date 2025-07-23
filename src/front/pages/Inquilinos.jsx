@@ -192,10 +192,11 @@ const Inquilinos = () => {
                   {showForm && (
                     <NewTenantContractForm
                       onSuccess={() => {
+                        fetchData();
                         setShowForm(false);
                         setShowbotton(true);
                       }}
-                      onCancel={() => { setShowForm(false), setShowbotton(true) }}
+                      onCancel={() => { setShowForm(false); setShowbotton(true) }}
                     />
                   )}
                 </div>
@@ -207,7 +208,7 @@ const Inquilinos = () => {
                     textDecoration: "strong",
 
                   }}
-                    onClick={() => { setShowForm(true), setShowbotton(false) }}>Añadir Inquilino y Contrato</button>
+                    onClick={() => { setShowForm(true); setShowbotton(false); }}>Añadir Inquilino y Contrato</button>
 
                 )}
                 <button className="btn mt-2" style={{

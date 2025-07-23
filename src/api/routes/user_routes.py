@@ -599,7 +599,7 @@ def register_tenant_initiate():
                       sender=os.getenv("MAIL_USERNAME"),
                       recipients=recipients_list,
                       html=html_body)
-       ## mail.send(msg)
+        mail.send(msg)
 
         return jsonify({"msg": "Inquilino registrado exitosamente. Se ha enviado un email para configurar su contraseña.",
                         "tenant": new_tenant.serialize()}), 201

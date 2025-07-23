@@ -49,7 +49,7 @@ const NewDocumentsForm = ({ apartmentId, onCancel, onSuccess, token }) => {
         return;
       }
 
-      const res = await fetch(`${Urlexport}/upload`
+      const res = await fetch(`${Urlexport}/documents/upload`
      
         , {
         method: "POST",

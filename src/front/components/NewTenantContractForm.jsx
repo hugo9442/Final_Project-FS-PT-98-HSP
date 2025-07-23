@@ -20,33 +20,33 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
     const [taxTypes, setTaxTypes] = useState([]);
     const [withholdings, setWithholdings] = useState([]);
 
-   const fetchData = async () => {
-     
-      try {
-  
-        const data = await  tax.gettaxt (store.token);
-  
-        setTaxTypes(data)
-  
-      } catch (error) {
-      }
+    const fetchData = async () => {
 
-      try {
-  
-        const data = await taxholding.getholding(store.token);
-  
-       setWithholdings(data) 
-      } catch (error) {
-      }
-     
+        try {
+
+            const data = await tax.gettaxt(store.token);
+
+            setTaxTypes(data)
+
+        } catch (error) {
+        }
+
+        try {
+
+            const data = await taxholding.getholding(store.token);
+
+            setWithholdings(data)
+        } catch (error) {
+        }
+
     };
-  
+
     useEffect(() => {
-      fetchData();
+        fetchData();
     }, [store.token]);
 
-   console.log("retencion", withholdings)
-   console.log("iva",taxTypes)
+    console.log("retencion", withholdings)
+    console.log("iva", taxTypes)
 
     const handleCreatenant = async () => {
         let createdTenantId = null;
@@ -99,10 +99,10 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
 
         } catch (error) {
             if (createdContractId) {
-                await contracts.delete_contract(createdContractId, store.token).catch(() => {});
+                await contracts.delete_contract(createdContractId, store.token).catch(() => { });
             }
             if (createdTenantId) {
-                await users.delete_tenant(createdTenantId, store.token).catch(() => {});
+                await users.delete_tenant(createdTenantId, store.token).catch(() => { });
             }
             swal({ title: "ERROR", text: error.message, icon: "error" });
         }
@@ -166,14 +166,26 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
                         <input type="date" className="form-control mb-2"
                             onChange={(e) => dispatch({ type: "addstart_date", value: e.target.value })} />
                         <label>Renta mensual</label>
-                        <input type="number" step="0.01" min="0" className="form-control mb-2"
-                            value={renta || ''} onChange={(e) => {
-                                const value = parseFloat(e.target.value);
-                                setRenta(isNaN(value) ? '' : value.toFixed(2));
-                            }} onBlur={(e) => {
-                                if (e.target.value) setRenta(parseFloat(e.target.value).toFixed(2));
-                            }} />
-
+                        <input
+                            type="text"
+                            inputMode="decimal"
+                            className="form-control mb-2"
+                            value={renta}
+                            onChange={(e) => {
+                                const raw = e.target.value.replace(',', '.');
+                                // permite vacío o número válido
+                                if (/^\d*\.?\d{0,2}$/.test(raw) || raw === '') {
+                                    setRenta(raw);
+                                }
+                            }}
+                            onBlur={(e) => {
+                                const raw = e.target.value.replace(',', '.');
+                                const value = parseFloat(raw);
+                                if (!isNaN(value)) {
+                                    setRenta(value.toFixed(2));
+                                }
+                            }}
+                        />
                         <label>Tipo IVA</label>
                         <select className="form-select mb-2" value={taxTypeId || ''} onChange={(e) => setTaxTypeId(parseInt(e.target.value))}>
                             <option value="">Selecciona IVA</option>

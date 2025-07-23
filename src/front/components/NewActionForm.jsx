@@ -8,12 +8,15 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { expenses } from "../fecht_expenses.js";
 import { categories } from "../fecht_categories.js";
 import { Urlexport } from "../urls.js";
+import NewContractorForm from "./NewContractorForm";
+
  
 const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
   const { store, dispatch } = useGlobalReducer();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categoriesList, setCategoriesList] = useState([]);
+  const [showContractorForm, setShowContractorForm] = useState(false);
 
    const fetchData = async () => {
     
@@ -97,7 +100,7 @@ const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
         issue_id: issueId,
       };
 
-      const res = await fetch(`${Urlexport}/create`
+      const res = await fetch(`${Urlexport}/actions/create`
     
     , {
         method: "POST",
@@ -133,7 +136,7 @@ const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
         docForm.append("file", formData.file);
         
        
-        const docRes = await fetch( `${Urlexport}/upload`
+        const docRes = await fetch( `${Urlexport}/documents/upload`
       
        , {
           method: "POST",
@@ -193,23 +196,31 @@ const NewActionForm = ({ issueId, apartmentId, token, onSuccess, onClose }) => {
 
 
 return(
+  <>
   <form onSubmit={handleSubmit} className="p-3 border rounded bg-white mt-2">
   <div className="row g-3"> 
     <div className="col-md-6">
       <input name="action_name" placeholder="Nombre de actuación" className="form-control mb-3" onChange={handleChange} required />
 
-      <select
-        className="form-select mb-3"
-        value={formData.contractor_id}
-        name="contractor_id"
-        onChange={handleChange}
-        required
-      >
-        <option value="">Seleccione un contratista</option>
-        {store.contractor?.map(cont => (
-          <option key={cont.id} value={cont.id}>{cont.name}</option>
-        ))}
-      </select>
+   <select
+  className="form-select mb-3"
+  value={formData.contractor_id}
+  name="contractor_id"
+  onChange={(e) => {
+    if (e.target.value === "__new__") {
+      setShowContractorForm(true);
+      return;
+    }
+    handleChange(e);
+  }}
+  required
+>
+  <option value="">Seleccione un contratista</option>
+  {store.contractor?.map(cont => (
+    <option key={cont.id} value={cont.id}>{cont.name}</option>
+  ))}
+  <option value="__new__">+ Crear nuevo contratista</option>
+</select>
 
       <input name="start_date" type="date" className="form-control mb-3" onChange={handleChange} required />
     </div>
@@ -256,6 +267,35 @@ return(
   </div>
 </form>
 
+
+
+{showContractorForm && (
+  <div className="modal show d-block" tabIndex="-1" role="dialog">
+    <div className="modal-dialog" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Nuevo contratista</h5>
+          <button type="button" className="btn-close" onClick={() => setShowContractorForm(false)}></button>
+        </div>
+        <div className="modal-body">
+          <NewContractorForm
+            onSuccess={(newContractor) => {
+              fetchData(); // actualiza la lista de contractors
+              setFormData(prev => ({
+                ...prev,
+                contractor_id: newContractor.id // selecciona automáticamente
+              }));
+              setShowContractorForm(false);
+            }}
+            onCancel={() => setShowContractorForm(false)}
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+</>
 )
  }
 

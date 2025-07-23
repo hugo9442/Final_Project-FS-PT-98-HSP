@@ -95,7 +95,7 @@ const NewApartmentForm = ({ onSuccess, onCancel}) => {
           >
             <option value=""></option>
             <option value="VIVIENDA">VIVIENDA</option>
-            <option value="BAJO">BAJO</option>
+            <option value="BAJO">LOCAL COMERCIAL</option>
             <option value="TRASTERO">TRASTERO</option>
             <option value="ALMACEN">ALMACEN</option>
             
