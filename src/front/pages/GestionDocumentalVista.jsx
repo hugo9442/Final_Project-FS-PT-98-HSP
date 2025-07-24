@@ -11,6 +11,7 @@ const GestionDocumentalVista = () => {
   const { store, dispatch } = useGlobalReducer();
   const [searchTerm, setSearchTerm] = useState("");
   const [itdoc, setItdoc] = useState();
+  const [apartamentoActivo, setApartamentoActivo] = useState(null); // ✅ cambio
 
   const fetchApartments = async () => {
     try {
@@ -31,30 +32,25 @@ const GestionDocumentalVista = () => {
     }
   };
 
-const handleDownload=async()=>{
-  try {
-    const data = await files.downloadFile(itdoc, store.token)
-  } catch (error) {
-    console.error("Error al descargar documerto:", error);
-  }
-}
+  const handleDownload = async () => {
+    try {
+      const data = await files.downloadFile(itdoc, store.token);
+    } catch (error) {
+      console.error("Error al descargar documento:", error);
+    }
+  };
+
   useEffect(() => {
     fetchApartments();
   }, []);
-
-
-
-
 
   return (
     <div className="container-fluid mt-4">
       <div className="row">
         <div className="col-md-12">
           <div className="p-4 border rounded bg-light">
-            <h2>Gestión Documental por Viviendas</h2>
-            <p>
-              Aquí Puedes Visualizar, Cargar o Gestionar Tus Documentos.
-            </p>
+            <h2>Gestión Documental</h2>
+            <h3> 📄Aquí Descargar Tus Documentos.</h3>
 
             <input
               type="text"
@@ -72,38 +68,45 @@ const handleDownload=async()=>{
                     return fullText.includes(searchTerm.toLowerCase());
                   })
                   .map((apartment) => (
-                    <li key={apartment.id} className="list-group-item mb-3">
+                    <li
+                      key={apartment.id}
+                      className="list-group-item mb-3"
+                      style={{ cursor: "pointer", textTransform: "capitalize" }}
+                      onClick={() => setApartamentoActivo((prev) => (prev === apartment.id ? null : apartment.id)) }// ✅ click para activar
+                
+                    >
                       <div>
-                        <h5>
-                          <strong>Dirección:</strong> {apartment.address}, <strong>Ciudad:</strong> {apartment.city}
-                        </h5>
+                        <h7>
+                          <strong>Dirección:</strong> {apartment.address},  <strong>Ciudad:</strong> {apartment.city}, <strong>CP:</strong> {apartment.postal_code}, <strong>Parking:</strong>{" "}
+                          {apartment.parking_slot}, <strong>Tipo:</strong> {apartment.type}
+                        </h7>
                         <p>
-                          <strong>CP:</strong> {apartment.postal_code}, <strong>Parking:</strong> {apartment.parking_slot},{" "}
-                          <strong>Tipo:</strong> {apartment.type}
+
                         </p>
-                        {apartment.documents && apartment.documents.length > 0 ? (
+
+                        {apartamentoActivo === apartment.id && apartment.documents?.length > 0 ? (
                           <ul className="list-group mt-2">
                             {apartment.documents.map((doc) => (
-                              <li key={doc.id} className="list-group-item d-flex contenedor">
-                                <div className="mi-div p-3 mb-2 bg-info text-dark"><input className="form-check-input" type="checkbox" value=""
-                            id="checkDefault" onClick={() => { setItdoc(doc.id)}} /></div>
-                          <div className="contratitem">
-                                <span><strong>{doc.description}</strong></span>
-                            </div>
+                              <li
+                                key={doc.id}
+                                className="list-group-item d-flex contenedor"
+                                onClick={(e) => {
+                                  e.stopPropagation(); // ✅ evita que se cierre al hacer click en un documento
+                                  setItdoc(doc.id);
+                                  handleDownload();
+                                }}
+                              >
+                                <div className="contratitemdoc">
+                                  <span><strong>{doc.description}</strong></span>
+                                </div>
                               </li>
                             ))}
                           </ul>
-                        ) : (
+                        ) : null}
+
+                        {apartamentoActivo === apartment.id && (!apartment.documents || apartment.documents.length === 0) && (
                           <p className="text-muted mt-2">Este apartamento no tiene documentos.</p>
                         )}
-
-                        <button
-                          className="btn btn-success mt-3"
-                          style={{ backgroundColor: 'rgba(138, 223, 251, 0.8)', color: 'black' }}
-                          onClick={handleDownload}
-                        >
-                          ver Documento
-                        </button>
                       </div>
                     </li>
                   ))

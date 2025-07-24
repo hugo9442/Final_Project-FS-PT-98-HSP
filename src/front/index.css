@@ -46,7 +46,10 @@
   display: flex;
   flex-direction: row;
 }
-
+.contratitemdoc:hover {
+  background-color: #f8d7da;
+  cursor: pointer;
+}
 
 .sidebar-private {
   background-color: rgba(100, 200, 255, 0.9);

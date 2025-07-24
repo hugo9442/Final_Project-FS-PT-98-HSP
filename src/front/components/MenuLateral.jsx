@@ -92,7 +92,7 @@ const MenuLateral = ({ setActiveOption }) => {
           <li className="nav-item mb-2">
             <button
               className={`btn w-100 text-start ${dropdownDoc ? 'bg-primary text-white' : 'text-dark'}`}
-              onClick={() => setDropdownDoc(!dropdownDoc)}>
+              onClick={() => {setDropdownDoc(!dropdownDoc);setDropdownFact(false);setDropdownProv(false)}}>
               <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
               Gestión Documental
             </button>
@@ -117,7 +117,7 @@ const MenuLateral = ({ setActiveOption }) => {
           <li className="nav-item mb-2">
             <button
               className={`btn w-100 text-start ${dropdownFact ? 'bg-primary text-white' : 'text-dark'}`}
-              onClick={() => setDropdownFact(!dropdownFact)}>
+              onClick={() =>{ setDropdownFact(!dropdownFact); setDropdownDoc(false);setDropdownProv(false)}}>
               <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
               Facturación
             </button>
@@ -142,7 +142,7 @@ const MenuLateral = ({ setActiveOption }) => {
           <li className="nav-item mb-2">
             <button
               className={`btn w-100 text-start ${dropdownProv ? 'bg-primary text-white' : 'text-dark'}`}
-              onClick={() => setDropdownProv(!dropdownProv)}>
+              onClick={() => {setDropdownProv(!dropdownProv);setDropdownDoc(false);setDropdownFact(false)}}>
               <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
               Proveedores y Gastos
             </button>

@@ -48,93 +48,140 @@ const GestionDocumental = () => {
     return "bg-success text-white";
   };
 
-  const renderApartmentItem = (item) => {
-    const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
-
-    return (
-      <li
-        key={item.id}
-        className="list-group-item d-flex contenedor" >
-        <div className="mi-div p-3 mb-2 bg-info text-dark">
-          <input className="form-check-input" type="checkbox" value=""
-          id="checkDefault" onClick={() => { setItapartment(item.id) }} />
-          </div>
-        <div className="contratitem">
-          <p>
-            <strong>Dirección:</strong> {item.address}, <strong>CP:</strong>{" "}
-            {item.postal_code}, <strong>Ciudad:</strong> {item.city},{" "}
-            <strong>Parking:</strong> {item.parking_slot}, <strong>Propietario:</strong> {item.owner_name}, <strong>Tipo:</strong> {item.type} <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
-              {alquilado}
-            </span>
-          </p>
-        </div>
-      </li>
-    );
-  };
 
   return (
-    <div className="container-fluid mt-4">
-      <div className="row">
-        <div className="col-md-12">
-          <div className="p-4 border rounded bg-light">
-            <h2>Gestión Documental por Viviendas</h2>
-            <p>
-              Aquí Puedes Visualizar, Cargar o Gestionar Tus Documentos.
-            </p>
-            <input
-              type="text"
-              className="form-control mb-3"
-              placeholder="Buscar por dirección, ciudad o código postal"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+    <div className="mt-4 p-4 border rounded bg-light">
+                <h2>Gestión Documental</h2>
+      <h3> 📄Aquí Puedes Cargar o Gestionar Tus Documentos.</h3>
 
-            <ul className="list-group">
-              {store?.apartments?.length > 0 ? (
-                store && store.apartments
-                  .filter((item) => {
-                    const fullText = `${item.address} ${item.city} ${item.postal_code}`.toLowerCase();
-                    return fullText.includes(searchTerm.toLowerCase());
-                  }).map((item) => renderApartmentItem(item))
-              ) : (
-                <h5 className="mt-3 text-muted">
+      <input
+        type="text"
+        className="form-control mb-3"
+        placeholder="Buscar por dirección, ciudad o código postal"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
+      <div className="table-responsive">
+        <table className="table table-striped table-hover">
+          <thead className="table-dark">
+            <tr>
+              <th>Dirección</th>
+              <th>CP</th>
+              <th>Ciudad</th>
+              <th>Parking</th>
+              <th>Propietario</th>
+              <th>Tipo</th>
+              <th>Estado</th>
+              <th>Alertas</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {store?.apartments?.length > 0 ? (
+              store.apartments
+                .filter((item) => {
+                  const fullText = `${item.address} ${item.city} ${item.postal_code}`.toLowerCase();
+                  return fullText.includes(searchTerm.toLowerCase());
+                })
+                .map((item) => {
+                  const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";
+                  const bgColor = itpartment === item.id ? "#f8d7da" : "#f2f3f2ff"; // rojo claro / verde claro
+
+
+                  return (
+                    <tr
+                      key={item.id}
+                      className=" border-b"
+                      onClick={() => { setItapartment(item.id) }}
+                      style={{ cursor: "pointer", textTransform: "capitalize" }}
+                    >
+                      <td style={{ backgroundColor: bgColor }}>{item.address}</td>
+                      <td style={{ backgroundColor: bgColor }}>{item.postal_code}</td>
+                      <td style={{ backgroundColor: bgColor }}>{item.city}</td>
+                      <td style={{ backgroundColor: bgColor }}>{item.parking_slot}</td>
+                      <td style={{ backgroundColor: bgColor }}>{item.owner_name}</td>
+                      <td style={{ backgroundColor: bgColor }}>{item.type}</td>
+                      <td style={{ backgroundColor: bgColor }}>
+                        <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
+                          {alquilado}
+                        </span>
+                      </td>
+
+
+                    </tr>
+                  );
+                })
+            ) : (
+              <tr>
+                <td colSpan="7" className="text-center text-muted">
                   Todavía no has registrado ninguna vivienda.
-                </h5>
-              )}
-            </ul>
-
-            {showForm && (
-              <NewDocumentsForm
-               apartmentId={itpartment}
-                token={store.token}
-                onSuccess={() => {
-                  setShowForm(false);
-                  fetchApartments();
-                  setShowbotton(true);
-                }}
-                onCancel={() => { setShowForm(false), setShowbotton(true) }}
-              />
+                </td>
+              </tr>
             )}
+          </tbody>
+        </table>
+      </div>
 
-            {showBotton && (
-              <button
-                className="btn btn-success mt-3 "
-                style={{
-                  color: "black",
-                  backgroundColor: 'rgba(138, 223, 251, 0.8)',
-                  textDecoration: "strong",
-                  marginLeft: "10px", display: showBotton ? "inline-block" : "none"
-                }}
 
-                onClick={() => { setShowForm(true), setShowbotton(false) }}
-              >
-                Añadir Documento
-              </button>)}
-          </div>
+     {showBotton && (
+  <button
+    className="btn btn-success mt-3"
+    style={{
+      color: "black",
+      backgroundColor: 'rgba(138, 223, 251, 0.8)',
+      marginLeft: "10px",
+    }}
+    onClick={() => {
+      setShowForm(true);
+      setShowbotton(false);
+    }}
+  >
+    Añadir Documento
+  </button>
+)}
+
+{/* Modal con formulario */}
+{showForm && (
+  <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1">
+    <div className="modal-dialog modal-lg">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title">Nuevo Documento</h5>
+          <button
+            type="button"
+            className="btn-close"
+            onClick={() => {
+              setShowForm(false);
+              setShowbotton(true);
+            }}
+          ></button>
+        </div>
+        <div className="modal-body">
+          <NewDocumentsForm
+            apartmentId={itpartment}
+            token={store.token}
+            onSuccess={() => {
+              setShowForm(false);
+              fetchApartments();
+              setShowbotton(true);
+            }}
+            onCancel={() => {
+              setShowForm(false);
+              setShowbotton(true);
+            }}
+          />
         </div>
       </div>
     </div>
+
+    {/* Fondo oscuro del modal */}
+
+  </div>
+)}
+    </div >
   );
+
 };
 
 export default GestionDocumental;
