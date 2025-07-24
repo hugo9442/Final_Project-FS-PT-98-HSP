@@ -93,7 +93,8 @@ const GestionDocumental = () => {
                     <tr
                       key={item.id}
                       className=" border-b"
-                      onClick={() => { setItapartment(item.id) }}
+                      onClick={() => { setItapartment(item.id); setShowForm(true);
+    setShowbotton(false); }}
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
                     >
                       <td style={{ backgroundColor: bgColor }}>{item.address}</td>
@@ -124,7 +125,7 @@ const GestionDocumental = () => {
       </div>
 
 
-     {showBotton && (
+     {/*showBotton && (
   <button
     className="btn btn-success mt-3"
     style={{
@@ -139,7 +140,7 @@ const GestionDocumental = () => {
   >
     Añadir Documento
   </button>
-)}
+)*/}
 
 {/* Modal con formulario */}
 {showForm && (
@@ -175,7 +176,7 @@ const GestionDocumental = () => {
       </div>
     </div>
 
-    {/* Fondo oscuro del modal */}
+ 
 
   </div>
 )}

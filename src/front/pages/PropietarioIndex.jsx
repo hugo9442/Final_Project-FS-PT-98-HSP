@@ -8,7 +8,7 @@ import { users } from "../fecht_user.js";
 import { Issues } from "../fecht_issues.js";
 import { dashboard } from "../fecht_dashboard.js";
 import { expenses } from "../fecht_expenses.js"; // <-- Import para gastos
-
+import { useMediaQuery } from 'react-responsive';
 import {
   BarChart,
   Bar,
@@ -80,31 +80,42 @@ const PropietarioIndex = () => {
   }, [store.token, store.todos.id]);
 
   // Combinar facturación y gastos para calcular rentabilidad mensual
-  useEffect(() => {
-  // Obtener todos los meses (puede ser el listado de meses del año completo)
+ useEffect(() => {
   const meses = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", 
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
   ];
 
   let acumulado = 0;
-  let facturadoanual = 0
+  let facturadoanual = 0;
+
   const combinado = meses.map(mes => {
     const ingreso = facturacionMensual.find(f => f.month === mes)?.amount || 0;
     const pendiente = facturacionMensual.find(f => f.month === mes)?.pending || 0;
     const gasto = gastosMensuales.find(g => g.month === mes)?.gastos || 0;
-    const rentabilidad = ingreso.toFixed(2) - gasto.toFixed(2);
-    acumulado += rentabilidad;
-    facturadoanual +=ingreso
-
-    return { month: mes, ingresos: ingreso, gastos: gasto, pendientes: pendiente, rentabilidad };
+    const rentabilidad = ingreso - gasto;
+    return { month: mes, ingresos: ingreso, pendientes: pendiente, gastos: gasto, rentabilidad };
   });
 
-  setDataCombinada(combinado);
+  // Eliminar los meses vacíos al principio (donde ingresos, gastos y pendientes son 0)
+  const primerMesConDatos = combinado.findIndex(
+    item => item.ingresos > 0 || item.gastos > 0 || item.pendientes > 0
+  );
+
+  const combinadoFiltrado = combinado.slice(primerMesConDatos);
+
+  // Calcular acumulados sobre el filtrado
+  combinadoFiltrado.forEach(item => {
+    acumulado += item.rentabilidad;
+    facturadoanual += item.ingresos;
+  });
+
+  setDataCombinada(combinadoFiltrado);
   setRentabilidadAnual(acumulado);
   setTotalanual(facturadoanual);
-
 }, [facturacionMensual, gastosMensuales]);
+
+const isMobile = useMediaQuery({ query: '(max-width: 768px)' });
 console.log("facturacion", facturacionMensual)
   return (
     <div className="container-fluid mt-4">
@@ -142,25 +153,34 @@ console.log("facturacion", facturacionMensual)
 
         {/* Gráfico combinado de facturación, gastos y rentabilidad */}
         <div className="mt-5">
-          <h4>📊 Rentabilidad mensual</h4>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dataCombinada}>
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend verticalAlign="top" height={36} />
-              <Bar dataKey="ingresos" fill="#4e73df" name="Ingresos">
-                <LabelList dataKey="ingresos" position="top" />
-              </Bar>
-               <Bar dataKey="pendientes" fill="#e74a3b" name="Pendientes">
-                <LabelList dataKey="ingresos" position="top" />
-              </Bar>
-              <Bar dataKey="gastos" fill="#e7d33bff" name="Gastos">
-                <LabelList dataKey="gastos" position="top" />
-              </Bar>
-              <Line type="monotone" dataKey="rentabilidad" stroke="#2e59d9" name="Rentabilidad" />
-            </BarChart>
-          </ResponsiveContainer>
+        <h4>📊 Rentabilidad mensual</h4>
+  <ResponsiveContainer width="100%" height={isMobile ? 250 : 300}>
+    <BarChart
+      data={dataCombinada}
+      margin={{ top: 20, right: 10, left: -10, bottom: 40 }}
+    >
+      <XAxis
+        dataKey="month"
+        tick={{ fontSize: 12 }}
+        angle={isMobile ? -45 : 0}
+        textAnchor={isMobile ? "end" : "middle"}
+        interval={0}
+      />
+      <YAxis />
+      <Tooltip />
+      <Legend verticalAlign={isMobile ? "bottom" : "top"} height={36} />
+      <Bar dataKey="ingresos" fill="#4e73df" name="Ingresos">
+        <LabelList dataKey="ingresos" position="top" />
+      </Bar>
+      <Bar dataKey="pendientes" fill="#e74a3b" name="Pendientes">
+        <LabelList dataKey="pendientes" position="top" />
+      </Bar>
+      <Bar dataKey="gastos" fill="#e7d33bff" name="Gastos">
+        <LabelList dataKey="gastos" position="top" />
+      </Bar>
+      <Line type="monotone" dataKey="rentabilidad" stroke="#2e59d9" name="Rentabilidad" />
+    </BarChart>
+  </ResponsiveContainer>
           
           <h5 className="mt-3">
             Total Acumulado Facturado : <strong>{totalanual.toFixed(2)} €</strong>

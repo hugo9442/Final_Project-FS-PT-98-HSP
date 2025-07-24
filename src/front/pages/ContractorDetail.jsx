@@ -6,6 +6,7 @@ import NewPaymentForm from "../components/NewPaymentForm";
 import NewExpenseFromContractor from "../components/NewExpenseFromContractor"; // 👉 nuevo import
 import * as XLSX from "xlsx";
 import { useReactToPrint } from 'react-to-print';
+import { contractor } from "../fecht_contractor";
 
 const ContractorDetail = () => {
     const { contractorId } = useParams();
@@ -52,12 +53,17 @@ const ContractorDetail = () => {
 
     if (loading) return <div>Cargando...</div>;
     if (error) return <div>{error}</div>;
-
+    const name = () => {
+        const contractor = store.contractor.find(e => e.id === parseInt(contractorId));
+        return contractor ? contractor.name : "";
+    };
+    const nombre=name()
+    console.log("nombre",nombre)
     let acumulado = 0;
-
+    console.log(store.contractor)
     return (
         <div className="container mt-4">
-            <h2>Detalle del Contractor #{contractorId}</h2>
+            <h2>Detalle del Proveedor {nombre}</h2>
 
             <div className="d-flex gap-2 flex-wrap mb-3">
                 <button className="btn btn-outline-primary" onClick={exportTableToExcel}>
@@ -76,8 +82,8 @@ const ContractorDetail = () => {
 
             {/* Contenido a imprimir */}
             <div ref={componentRef}>
-                <table id="expenses-table" className="table table-bordered mt-3">
-                    <thead>
+                <table id="expenses-table" className="table table-striped table-hover">
+                    <thead className="table-dark">
                         <tr>
                             <th>Fecha</th>
                             <th>Descripción</th>
