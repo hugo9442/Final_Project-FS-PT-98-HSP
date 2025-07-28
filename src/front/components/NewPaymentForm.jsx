@@ -3,11 +3,18 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { Urlexport } from "../urls.js";
 //import { itemAxisPredicate } from "recharts/types/state/selectors/axisSelectors.js";
 
-const NewPaymentForm = ({ token, onSubmit, onSuccess, onClose }) => {
-  const [formData, setFormData] = useState({ expense_id: "", amount: "", date: ""});
+const NewPaymentForm = ({ id, token, onSuccess, onClose }) => {
+  console.log(id)
+  const [formData, setFormData] = useState({ expense_id: id, amount: "", date: ""});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { store } = useGlobalReducer();
+ const expense=(id)=>{
+   return store.contractorexpenses?.find(e => e.id===parseInt(id))
+  }
+const formExpense=expense(id)
+
+
 
   const handleChange = (e) =>
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -16,7 +23,7 @@ const NewPaymentForm = ({ token, onSubmit, onSuccess, onClose }) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
+ 
     try {
       const res = await fetch(`${Urlexport}/expensespayments/create`,
 
@@ -27,7 +34,7 @@ const NewPaymentForm = ({ token, onSubmit, onSuccess, onClose }) => {
             Authorization: "Bearer " + token,
           },
           body: JSON.stringify({
-           expense_id: parseInt(formData.expense_id),
+           expense_id: parseInt(id),
            amount: parseFloat(formData.amount),
            payment_date: formData.date,       
           }),
@@ -50,26 +57,8 @@ const NewPaymentForm = ({ token, onSubmit, onSuccess, onClose }) => {
 console.log(store.contractorexpenses)
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mb-3">
-        <label className="form-label">Gasto</label>
-        <select
-          className="form-select"
-          name="expense_id"
-          value={formData.expense_id}
-          onChange={handleChange}
-          required
-        >
-          <option value="">-- Selecciona un gasto --</option>
-          {store.contractorexpenses
-            ?.filter(e => ((e.received_invoices - (e.payed_invoice || 0)).toFixed(2))> 0)
-            .map(e => (
-              <option key={e.id} value={e.id}>
-                {new Date(e.date).toLocaleDateString("es-ES")} - {e.description} ({(e.received_invoices - (e.payed_invoice || 0)).toFixed(2)} € pendiente)
-              </option>
-            ))
-          
-          }
-        </select>
+      <div className="justify-items-center mb-3">
+        <label className="form-label"> {new Date(formExpense.date).toLocaleDateString("es-ES")} - {formExpense.description} ({formExpense.balance.toFixed(2)} € pendiente)</label>
       </div>
       <div className="mb-3">
         <label className="form-label">Importe del pago</label>

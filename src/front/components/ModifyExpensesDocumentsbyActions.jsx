@@ -9,7 +9,7 @@ import { expenses } from "../fecht_expenses.js";
 import { categories } from "../fecht_categories.js";
 import { Urlexport } from "../urls.js";
  
-const ModifyExpensesDocumentsbyAction = ({ apartmentId, issueId, actionId,  token, onSuccess, onClose }) => {
+const ModifyExpensesDocumentsbyAction = ({ apartmentId, contractorId, issueId, actionId,  token, onSuccess, onClose }) => {
   const { store, dispatch } = useGlobalReducer();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState({});
@@ -49,7 +49,7 @@ const ModifyExpensesDocumentsbyAction = ({ apartmentId, issueId, actionId,  toke
     start_date: "",
     description: "",
     bill_amount: "",
-    contractor_id: "",
+    contractor_id: contractorId,
     category_id:"",
     file: null,
   });
@@ -154,7 +154,7 @@ const handleChange = (e) => {
     console.error("Error general:", err);
   }
 };
-
+console.log("contractor", contractorId)
 
 return(
   <form onSubmit={handleSubmit} className="p-3 border rounded bg-white mt-2">
@@ -162,14 +162,14 @@ return(
     <div className="col-md-6">
     
 
-      <select
+      <select 
         className="form-select mb-3"
         value={formData.contractor_id}
         name="contractor_id"
         onChange={handleChange}
         required
       >
-        <option value="">Seleccione un contratista</option>
+        <option value=""   >Seleccione un contratista</option>
         {store.contractor?.map(cont => (
           <option key={cont.id} value={cont.id}>{cont.name}</option>
         ))}

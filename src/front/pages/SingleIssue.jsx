@@ -88,10 +88,14 @@ export const SingleIssue = props => {
                           <ul className="list-group">
                             {item.actions && item.actions.map((action) => {
                                const splitBill = action.documents[0]?.file_url ? action.documents[0].file_url.split("/").pop() : 'Sin documento';
-                              return (
+                                const start = splitBill.length - 20;
+                              const result = splitBill !== "Sin documento"
+                                ? splitBill.slice(0, start) + splitBill.slice(start + 16)
+                                : splitBill;
+                               return (
                                 <li key={action.action_id} className="list-group-item">
                                   <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor.name}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")} {''}
-                                    <strong>Importe:</strong> {action.expenses[0]?.received_invoices || "No tiene coste"}, <strong>Ver Factura</strong> {splitBill}  </p>
+                                    <strong>Importe:</strong> {action.expenses[0]?.received_invoices || "No tiene coste"}, <strong>Ver Factura</strong> {result}  </p>
                                   <p><strong>Descripcion:</strong> {action.description}  </p>
                                    <button className="btn btn-sm btn-outline-primary mt-2" 
                                    onClick={() => setShowFormExp(action.action_id)} 
@@ -101,7 +105,7 @@ export const SingleIssue = props => {
                               <ModifyExpensesDocumentsbyAction
                                 issueId={item.issue_id}
                                 actionId={action.action_id}
-                              
+                                contractorId={action.contractor?.id}
                                 apartmentId={store.singleIssues.id}
                                 token={store.token}
                                 onSuccess={() => {

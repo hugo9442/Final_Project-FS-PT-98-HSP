@@ -208,7 +208,6 @@ def delete_contract(contract_id):
 @contracts_api.route('/by_apartment/<int:apartment_id>', methods=["GET"])
 @jwt_required()
 def get_contracts_by_apartment(apartment_id):
-    # Buscar asociaciones con joinedload para acceder a tenant, apartment, contract y contract.owner
     asociaciones = AssocTenantApartmentContract.query.options(
         joinedload(AssocTenantApartmentContract.contract).joinedload(Contract.owner),
         joinedload(AssocTenantApartmentContract.tenant),
@@ -218,28 +217,19 @@ def get_contracts_by_apartment(apartment_id):
     if not asociaciones:
         return jsonify({"error": "No hay asociaciones para este apartamento"}), 404
 
-    contratos_dict = {}
+    resultado = []
 
     for assoc in asociaciones:
-        contrato = assoc.contract
-        contrato_id = contrato.id
-
-        # Si aún no hemos agregado este contrato, lo inicializamos
-        if contrato_id not in contratos_dict:
-            contratos_dict[contrato_id] = contrato.serialize()
-            contratos_dict[contrato_id]["owner"] = contrato.owner.serialize() if contrato.owner else None
-            contratos_dict[contrato_id]["asociaciones"] = []
-
-        # Agregamos cada asociación válida (con inquilino)
         if assoc.tenant and assoc.tenant.role == Role.INQUILINO:
-            contratos_dict[contrato_id]["asociaciones"].append({
-                "assoc_id": assoc.id,
-                "tenant": assoc.tenant.serialize(),
-                "apartment": assoc.apartment.serialize() if assoc.apartment else None,
-                "contract": contrato.serialize()
+            resultado.append({
+                "assoc": assoc.serialize(),
+               # "tenant": assoc.tenant.serialize(),
+               # "apartment": assoc.apartment.serialize() if assoc.apartment else None,
+                #"contract": assoc.contract.serialize() if assoc.contract else None,
+                #"owner": assoc.contract.owner.serialize() if assoc.contract and assoc.contract.owner else None
             })
 
-    return jsonify(list(contratos_dict.values())), 200
+    return jsonify(resultado), 200
 
 @contracts_api.route('/<int:tenant_id>/contracts/assoc/tenant', methods=["GET"])
 @jwt_required()

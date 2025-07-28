@@ -187,4 +187,33 @@ def update_expense(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"msg": "error", "details": str(e)}), 400
+    
+@expenses_api.route('/by-contractor/grouped-by-issues/<int:contractor_id>', methods=["GET"])
+@jwt_required()
+def get_expenses_grouped_by_issues(contractor_id):
+    # Obtener todos los gastos del contratista
+    expenses = Expense.query.filter_by(contractor_id=contractor_id).all()
+
+    # Crear un diccionario para agrupar por issue_id
+    grouped_by_issue = {}
+
+    for expense in expenses:
+        apartment = expense.apartment
+        if not apartment:
+            continue  # Si por alguna razón no hay apartment, saltar
+
+        for issue in apartment.issues:  # Suponiendo que la relación es apartment.issues
+            issue_id = issue.id
+            if issue_id not in grouped_by_issue:
+                grouped_by_issue[issue_id] = {
+                    "issue": issue.serialize(),  # o los campos que quieras mostrar
+                    "expenses": []
+                }
+            grouped_by_issue[issue_id]["expenses"].append(expense.serialize_with_relations())
+
+    return jsonify({
+        "success": True,
+        "grouped_expenses": list(grouped_by_issue.values()),
+        "group_count": len(grouped_by_issue)
+    })
 

@@ -6,7 +6,7 @@ import NewPaymentForm from "../components/NewPaymentForm";
 import NewExpenseFromContractor from "../components/NewExpenseFromContractor"; // 👉 nuevo import
 import * as XLSX from "xlsx";
 import { useReactToPrint } from 'react-to-print';
-import { contractor } from "../fecht_contractor";
+
 
 const ContractorDetail = () => {
     const { contractorId } = useParams();
@@ -14,6 +14,7 @@ const ContractorDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showModal, setShowModal] = useState(false);
+    const [expenseid, setExpenseid] = useState();
     const [showExpenseModal, setShowExpenseModal] = useState(false); // 👉 nuevo estado
     const componentRef = useRef();
 
@@ -57,13 +58,13 @@ const ContractorDetail = () => {
         const contractor = store.contractor.find(e => e.id === parseInt(contractorId));
         return contractor ? contractor.name : "";
     };
-    const nombre=name()
-    console.log("nombre",nombre)
+   
+   
     let acumulado = 0;
-    console.log(store.contractor)
+    console.log(store)
     return (
         <div className="container mt-4">
-            <h2>Detalle del Proveedor {nombre}</h2>
+            <h2>Detalle del Proveedor {name()}</h2>
 
             <div className="d-flex gap-2 flex-wrap mb-3">
                 <button className="btn btn-outline-primary" onClick={exportTableToExcel}>
@@ -81,7 +82,8 @@ const ContractorDetail = () => {
             </div>
 
             {/* Contenido a imprimir */}
-            <div ref={componentRef}>
+
+            <div className="table-responsive" ref={componentRef}>
                 <table id="expenses-table" className="table table-striped table-hover">
                     <thead className="table-dark">
                         <tr>
@@ -94,12 +96,13 @@ const ContractorDetail = () => {
 
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody  style={{ cursor: "pointer", textTransform: "capitalize" }}>
                         {store.contractorexpenses?.sort((b, a) => new Date(b.date) - new Date(a.date))
                             .map((item) => {
+                                
                                 acumulado += item.balance;
                                 return (
-                                    <tr key={item.id}>
+                                    <tr key={item.id} onClick={() =>{ item.balance<0 && openModal();  setExpenseid(item.id) }} style={{ cursor: "pointer", textTransform: "capitalize" }}>
                                         <td>{new Date(item.date).toLocaleDateString("es-ES")}</td>
                                         <td>{item.description}</td>
                                         <td>
@@ -140,7 +143,7 @@ const ContractorDetail = () => {
                             </div>
                             <div className="modal-body">
                                 <NewPaymentForm
-                                    contractorId={contractorId}
+                                    id={expenseid}
                                     token={store.token}
                                     expenses={store.contractorexpenses}
                                     onSuccess={() => {

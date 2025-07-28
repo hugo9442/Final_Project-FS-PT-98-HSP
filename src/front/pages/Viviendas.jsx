@@ -103,7 +103,7 @@ const Viviendas = () => {
                       onClick={() => navigate("/Viviendasassoc/" + item.id)}
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
                     >
-                      <td>{item.address}</td>
+                      <td style={{ backgroundColor: {getRowColor} }}>{item.address}</td>
                       <td>{item.postal_code}</td>
                       <td>{item.city}</td>
                       <td>{item.parking_slot}</td>

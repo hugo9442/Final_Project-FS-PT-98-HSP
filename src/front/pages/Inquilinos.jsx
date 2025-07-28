@@ -126,7 +126,7 @@ const Inquilinos = () => {
                 )}
 
                 <div className="map" >
-                  <h3>CONTRATOS PENDIENTES DE ASIGNAR VIVIENDA</h3>
+                  <h3>Contratos pendientes de Asignar</h3>
 
                   <ul className="list-group">
                     {store && store.assocnoapartments ? (
@@ -170,7 +170,7 @@ const Inquilinos = () => {
 
                 </div>
                 <div className="map" >
-                  <h3>VIVIENDAS</h3>
+                  <h3>Viviedas Pendientes de Alquilar</h3>
                   <ul className="list-group">
                     {store && store.apartments?.map((item) => {
                       const alquilado = !item.is_rent ? "Pendiente de Alquilar" : "Alquilado";

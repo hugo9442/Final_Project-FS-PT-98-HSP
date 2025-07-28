@@ -93,8 +93,8 @@ const GestionDocumental = () => {
                     <tr
                       key={item.id}
                       className=" border-b"
-                      onClick={() => { setItapartment(item.id); setShowForm(true);
-    setShowbotton(false); }}
+                      onClick={() => { setItapartment(item.id); setShowForm(true); setShowbotton(false); }}
+   
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
                     >
                       <td style={{ backgroundColor: bgColor }}>{item.address}</td>

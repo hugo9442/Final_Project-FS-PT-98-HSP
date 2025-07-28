@@ -83,30 +83,34 @@ export const Single = props => {
 
                           <ul className="list-group">
                             {item.actions && item.actions.map((action) => {
-                               const splitBill = action.documents[0]?.file_url ? action.documents[0].file_url.split("/").pop() : 'Sin documento';
+                              const splitBill = action.documents[0]?.file_url ? action.documents[0].file_url.split("/").pop() : 'Sin documento';
+                              const start = splitBill.length - 20;
+                              const result = splitBill !== "Sin documento"
+                                ? splitBill.slice(0, start) + splitBill.slice(start + 16)
+                                : splitBill;
                               return (
                                 <li key={action.action_id} className="list-group-item">
-                                  <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor.name}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")} {''}
+                                  <p><strong>Titulo:</strong> {action.action_name}, <strong>Contratista:</strong> {action.contractor.id},{action.contractor.name}, <strong>Fecha:</strong> {new Date(action.start_date).toLocaleDateString("es-ES")} {''}
                                     <strong>Importe:</strong> {action.expenses[0]?.received_invoices || "No tiene coste"}, <strong>Ver Factura</strong> {splitBill}  </p>
                                   <p><strong>Descripcion:</strong> {action.description}  </p>
-                                   <button className="btn btn-sm btn-outline-primary mt-2" 
-                                   onClick={() => setShowFormExp(action.action_id)} 
-                                   style={{display: !action.expenses[0]?.received_invoices && splitBill? "block":"none"}}     
-                                   disabled={item.status === 'cerrado'}>Añadir Factura e Importe</button>
-                               {showFormExp === action.action_id && (
-                              <ModifyExpensesDocumentsbyAction
-                                issueId={item.issue_id}
-                                actionId={action.action_id}
-                              
-                                apartmentId={store.singleIssues.id}
-                                token={store.token}
-                                onSuccess={() => {
-                                  setShowForm(null);
-                                  handlegetIssuesActionsByapartmetId();
-                                }}
-                                onClose={() => setShowFormExp(false)}
-                              />
-                            )}
+                                  <button className="btn btn-sm btn-outline-primary mt-2"
+                                    onClick={() => setShowFormExp(action.action_id)}
+                                    style={{ display: !action.expenses[0]?.received_invoices && splitBill ? "block" : "none" }}
+                                    disabled={item.status === 'cerrado'}>Añadir Factura e Importe</button>
+                                  {showFormExp === action.action_id && (
+                                    <ModifyExpensesDocumentsbyAction
+                                      issueId={item.issue_id}
+                                      contractorId={action.contractor?.id}
+                                      actionId={contractor}
+                                      apartmentId={store.singleIssues.id}
+                                      token={store.token}
+                                      onSuccess={() => {
+                                        setShowForm(null);
+                                        handlegetIssuesActionsByapartmetId();
+                                      }}
+                                      onClose={() => setShowFormExp(false)}
+                                    />
+                                  )}
                                 </li>
                               )
                             })}

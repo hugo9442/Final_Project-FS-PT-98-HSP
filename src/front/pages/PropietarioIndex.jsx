@@ -93,8 +93,10 @@ const PropietarioIndex = () => {
     const ingreso = facturacionMensual.find(f => f.month === mes)?.amount || 0;
     const pendiente = facturacionMensual.find(f => f.month === mes)?.pending || 0;
     const gasto = gastosMensuales.find(g => g.month === mes)?.gastos || 0;
-    const rentabilidad = ingreso - gasto;
-    return { month: mes, ingresos: ingreso, pendientes: pendiente, gastos: gasto, rentabilidad };
+    const rentabilidad =ingreso - gasto;
+  
+    const rent=rentabilidad.toFixed(2)
+    return { month: mes, ingresos: ingreso, pendientes: pendiente, gastos: gasto, rent };
   });
 
   // Eliminar los meses vacíos al principio (donde ingresos, gastos y pendientes son 0)
@@ -104,14 +106,14 @@ const PropietarioIndex = () => {
 
   const combinadoFiltrado = combinado.slice(primerMesConDatos);
 
-  // Calcular acumulados sobre el filtrado
+ 
   combinadoFiltrado.forEach(item => {
-    acumulado += item.rentabilidad;
+    acumulado += parseFloat(item.rent);
     facturadoanual += item.ingresos;
   });
 
   setDataCombinada(combinadoFiltrado);
-  setRentabilidadAnual(acumulado);
+  setRentabilidadAnual(acumulado.toFixed(2));
   setTotalanual(facturadoanual);
 }, [facturacionMensual, gastosMensuales]);
 
@@ -178,7 +180,7 @@ console.log("facturacion", facturacionMensual)
       <Bar dataKey="gastos" fill="#e7d33bff" name="Gastos">
         <LabelList dataKey="gastos" position="top" />
       </Bar>
-      <Line type="monotone" dataKey="rentabilidad" stroke="#2e59d9" name="Rentabilidad" />
+      <Line type="monotone" dataKey="rent" stroke="#2e59d9" name="Rentabilidad" />
     </BarChart>
   </ResponsiveContainer>
           
@@ -186,7 +188,7 @@ console.log("facturacion", facturacionMensual)
             Total Acumulado Facturado : <strong>{totalanual.toFixed(2)} €</strong>
           </h5>
            <h5 className="mt-3">
-            Rentabilidad anual acumulada: <strong>{rentabilidadAnual.toFixed(2)} €</strong>
+            Rentabilidad anual acumulada: <strong>{rentabilidadAnual} €</strong>
           </h5>
         </div>
 
