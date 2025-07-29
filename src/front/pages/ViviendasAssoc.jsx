@@ -266,6 +266,7 @@ const ViviendasAssoc = () => {
                       Cerrar
                     </button>
                     </div>
+                    <div className="table-responsive">
                     <table className="table table-striped table-bordered align-middle">
                       <thead className="table-dark">
                         <tr>
@@ -331,7 +332,7 @@ const ViviendasAssoc = () => {
                         })}
                       </tbody>
                     </table>
-                  
+                  </div>
                   </div>
                 </div>
               )}
@@ -339,7 +340,8 @@ const ViviendasAssoc = () => {
               <div className="col mi_alquiler">
                 <div className="card h-100 shadow-sm border">
                   <div className="card-body d-flex flex-column">
-                    <div className="d-flex justify-content-between align-items-center mb-2">
+                    
+                    <div className="d-flex gap-5 flex-wrap mb-3">
                       <h5 className="card-title mb-0">Detalle del Contrato:</h5>
                       <button
                         className="badge bg-success text-white"
@@ -521,11 +523,11 @@ const ViviendasAssoc = () => {
                         <td>{item.balance}</td>
                         <td>{item.contractor?.name} </td>
                         <td>{result}</td>
-                        <td style={{ whiteSpace: "nowrap", display: splitDocumentExpense === "Sin documento" ? "none" : "block" }}>
+                        <td >
                           <button
                             className="btn btn-sm btn-primary me-1"
                             onClick={() => showDocument(item.document.id)}
-                            disabled={item.status === 'cerrado'}
+                            style={{ whiteSpace: "nowrap", display: splitDocumentExpense === "Sin documento" ? "none" : "block" }}
                           >
                             Ver Factura
                           </button>

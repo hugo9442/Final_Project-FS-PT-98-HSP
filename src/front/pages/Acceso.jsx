@@ -282,13 +282,13 @@ const LoginSection = () => {
 
 console.log(store)
   return (
-    <div>
+    <div >
       <section
-        className="vh-100"
-        style={{ backgroundColor: "#ebf5fb", display: `${store.visibility2}` }}
+        className="min-vh-100"
+        style={{ backgroundColor: "#ebf5fb", display: `${store.visibility2}`  }}
       >
-        <div className="container py-5 h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
+        <div className="container py-5">
+          <div className="row d-flex justify-content-center align-items-center">
             <div className="col col-xl-10">
               <div className="card" style={{ borderRadius: "1rem" }}>
                 <div className="row g-0">
@@ -301,7 +301,7 @@ console.log(store)
                     />
                   </div>
                   <div className="col-md-6 col-lg-7 d-flex align-items-center">
-                    <div className="card-body p-4 p-lg-5 text-black">
+                    <div className="card-body p-lg-5 text-black">
                       <form>
                         <div className="d-flex align-items-center mb-3 pb-1">
                           <img
@@ -395,11 +395,11 @@ console.log(store)
       </section>
 
       <section
-        className="vh-100"
+        className="min-vh-100"
         style={{ backgroundColor: "#ebf5fb", display: `${store.visibility}` }}
       >
-        <div className="container py-5 h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
+        <div className="container py-5">
+          <div className="row d-flex justify-content-center align-items-center">
             <div className="col col-xl-10">
               <div className="card" style={{ borderRadius: "1rem" }}>
                 <div className="row g-0">
@@ -407,7 +407,7 @@ console.log(store)
                     <img
                       src={ImgEdificio}
                       alt="registration form"
-                      className="img-fluid h-100 object-fit-cover"
+                      className="img-fluid  object-fit-cover"
                       style={{ borderRadius: "1rem 0 0 1rem" }}
                     />
                   </div>
@@ -558,7 +558,7 @@ console.log(store)
       </section>
       <section
         className="vh-100"
-        style={{ backgroundColor: "#ebf5fb", display: `${store.forgotPasswordVisibility}` }}
+        style={{ backgroundColor: "#ebf5fb", display: `${store.forgotPasswordVisibility}`}}
       >
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -737,11 +737,11 @@ console.log(store)
         </div>
       </section>
       <section
-        className="vh-100"
+        className="min-vh-100"
         style={{ backgroundColor: "#ebf5fb", display: `${store.tenantSetPasswordVisibility}` }}
       >
-        <div className="container py-5 h-100">
-          <div className="row d-flex justify-content-center align-items-center h-100">
+        <div className="container py-5">
+          <div className="row d-flex justify-content-center align-items-center">
             <div className="col col-xl-10">
               <div className="card" style={{ borderRadius: "1rem" }}>
                 <div className="row g-0">

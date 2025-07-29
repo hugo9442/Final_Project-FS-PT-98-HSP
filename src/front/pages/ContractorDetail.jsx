@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 import { expenses } from "../fecht_expenses";
 import useGlobalReducer from "../hooks/useGlobalReducer";
 import NewPaymentForm from "../components/NewPaymentForm";
-import NewExpenseFromContractor from "../components/NewExpenseFromContractor"; 
+import NewExpenseFromContractor from "../components/NewExpenseFromContractor";
 import * as XLSX from "xlsx";
 import ReactToprint from "react-to-print";
 import { useReactToPrint } from 'react-to-print';
-
+import { files } from "../fetch_documents.js";
 const ContractorDetail = () => {
 
-   const { contractorId } = useParams();
+    const { contractorId } = useParams();
     const { store, dispatch } = useGlobalReducer();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -30,13 +30,22 @@ const ContractorDetail = () => {
         } catch (err) {
             setError("Error cargando datos del contractor.");
         } finally {
-          //  setLoading(false);
+            //  setLoading(false);
         }
     };
 
     useEffect(() => {
         fetchContractorExpenses();
     }, [contractorId]);
+    const showDocument = async (item) => {
+        try {
+            const data = await files.downloadFile(item, store.token);
+            console.log(data);
+
+        } catch (error) {
+            console.log("error");
+        }
+    };
 
     const openModal = () => setShowModal(true);
     const closeModal = () => setShowModal(false);
@@ -51,23 +60,23 @@ const ContractorDetail = () => {
     };
 
     const handlePrint = useReactToPrint({
-    contentRef: componentRef, // ✅ versión 3 requiere esto
-    documentTitle: `Gastos del contractor #${contractorId}`,
-    onBeforeGetContent: () => {
-      console.log("Preparando para imprimir...");
-    },
-    onAfterPrint: () => {
-      console.log("Impresión finalizada");
-    },
-    onPrintError: (err) => {
-      console.error("Error en impresión:", err);
-    },
-  });
+        contentRef: componentRef, // ✅ versión 3 requiere esto
+        documentTitle: `Gastos del contractor #${contractorId}`,
+        onBeforeGetContent: () => {
+            console.log("Preparando para imprimir...");
+        },
+        onAfterPrint: () => {
+            console.log("Impresión finalizada");
+        },
+        onPrintError: (err) => {
+            console.error("Error en impresión:", err);
+        },
+    });
 
 
 
-  //  if (loading) return <div>Cargando...</div>;
-  //  if (error) return <div>{error}</div>;
+    //  if (loading) return <div>Cargando...</div>;
+    //  if (error) return <div>{error}</div>;
     const name = () => {
         const contractor = store.contractor.find(e => e.id === parseInt(contractorId));
         return contractor ? contractor.name : "";
@@ -77,78 +86,107 @@ const ContractorDetail = () => {
     let acumulado = 0;
     console.log(store)
     console.log("componentRef:", componentRef);
-console.log("componentRef.current:", componentRef.current);
+    console.log("componentRef.current:", componentRef.current);
     return (
-   
+
         <div className="container mt-4">
-       
 
-        <h2>Detalle del Proveedor {name()}</h2>
 
-        <div className="d-flex gap-2 flex-wrap mb-3 ">
-            <button className="btn btn-outline-primary" onClick={exportTableToExcel}>
-                Exportar gastos a Excel
-            </button>
-            <button className="btn btn-outline-primary" onClick={handlePrint}>Imprimir tabla</button>
-            <button className="btn btn-outline-primary" onClick={openModal}>
-                Registrar nuevo pago
-            </button>
-            <button className="btn btn-outline-success" onClick={openExpenseModal}>
-                Añadir gasto
-            </button>
-        </div>
+            <h2>Detalle del Proveedor {name()}</h2>
 
-    
-        <div ref={componentRef} >
-            <div className="table-responsive">
-                <table id="expenses-table" className="table table-striped table-hover">
-                    <thead className="table-dark">
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Descripción</th>
-                            <th>Pagos</th>
-                            <th>Fra. recibida</th>
-                            <th>Pendiente</th>
-                            <th>Balance</th>
-                        </tr>
-                    </thead>
-                    <tbody style={{ cursor: "pointer", textTransform: "capitalize" }}>
-                        {store.contractorexpenses?.sort((b, a) => new Date(b.date) - new Date(a.date))
-                            .map((item) => {
-                                acumulado += item.balance;
-                                return (
-                                    <tr key={item.id} onClick={() => { item.balance < 0 && openModal(); setExpenseid(item.id); }}>
-                                        <td>{new Date(item.date).toLocaleDateString("es-ES")}</td>
-                                        <td>{item.description}</td>
-                                        <td>
-                                            {item.payments?.length > 0 ? (
-                                                <ul>
-                                                    {item.payments
-                                                        .sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date))
-                                                        .map((p) => (
-                                                            <li key={p.id}>{p.payment_date}: {p.amount} €</li>
-                                                        ))}
-                                                </ul>
-                                            ) : (
-                                                "Sin pagos"
-                                            )}
-                                        </td>
-                                        <td>{item.received_invoices} €</td>
-                                        <td style={{ color: item.balance > 0 ? "black" : "red" }}>
-                                            {item.balance.toFixed(2)}
-                                        </td>
-                                        <td style={{ color: acumulado > 0 ? "black" : "red" }}>
-                                            {acumulado.toFixed(2)}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                    </tbody>
-                </table>
+            <div className="d-flex gap-2 flex-wrap mb-3 ">
+                <button className="btn btn-outline-primary" onClick={exportTableToExcel}>
+                    Exportar gastos a Excel
+                </button>
+                <button className="btn btn-outline-primary" onClick={handlePrint}>Imprimir tabla</button>
+                <button className="btn btn-outline-success" onClick={openExpenseModal}>
+                    Añadir gasto
+                </button>
             </div>
-        </div>
-      
-            
+
+
+            <div ref={componentRef} >
+                <div className="table-responsive">
+                    <table id="expenses-table" className="table table-striped table-hover">
+                        <thead className="table-dark">
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Descripción</th>
+                                <th>Pagos</th>
+                                <th>Fra. recibida</th>
+                                <th>Pendiente</th>
+                                <th>Balance</th>
+                                <th>Accion</th>
+
+                            </tr>
+                        </thead>
+                        <tbody style={{ cursor: "pointer", textTransform: "capitalize" }}>
+                            {store.contractorexpenses?.sort((b, a) => new Date(b.date) - new Date(a.date))
+                                .map((item) => {
+                                    acumulado += item.balance;
+                                    const splitDocumentExpense = item.document?.file_url
+                                        ? item.document.file_url.split("/").pop()
+                                        : "Sin documento";
+
+                                    const start = splitDocumentExpense.length - 20;
+
+                                    const cleanFileName = () => {
+                                        if (splitDocumentExpense !== "Sin documento") {
+                                            return (
+                                                splitDocumentExpense.slice(0, start) +
+                                                splitDocumentExpense.slice(start + 16)
+                                            );
+                                        } else {
+                                            return splitDocumentExpense;
+                                        }
+                                    };
+
+                                    const result = cleanFileName();
+                                    return (
+                                        <tr key={item.id} onClick={() => { item.balance < 0 && openModal(); setExpenseid(item.id); }}>
+                                            <td>{new Date(item.date).toLocaleDateString("es-ES")}</td>
+                                            <td>{item.description}</td>
+                                            <td>
+                                                {item.payments?.length > 0 ? (
+                                                    <ul>
+                                                        {item.payments
+                                                            .sort((a, b) => new Date(a.payment_date) - new Date(b.payment_date))
+                                                            .map((p) => (
+                                                                <li key={p.id}>{p.payment_date}: {p.amount} €</li>
+                                                            ))}
+                                                    </ul>
+                                                ) : (
+                                                    "Sin pagos"
+                                                )}
+                                            </td>
+                                            <td>{item.received_invoices} €</td>
+                                            <td style={{ color: item.balance > 0 ? "black" : "red" }}>
+                                                {item.balance.toFixed(2)}
+                                            </td>
+                                            <td style={{ color: acumulado > 0 ? "black" : "red" }}>
+                                                {acumulado.toFixed(2)}
+                                            </td>
+                                            
+                                            <td >
+                                                <button style={{ display: splitDocumentExpense === "Sin documento" ? "none" : "inline-block" }}
+                                                    className="btn btn-sm btn-primary me-1"
+                                                    onClick={() => showDocument(item.document.id)}
+                                                    
+                                                >
+                                                    Ver Factura: {result}
+                                                </button>
+                                                <p style={{ visibility: splitDocumentExpense === "Sin documento" ? "visible" : "hidden" }}>sin documento</p>
+                                            </td>
+                                        </tr>
+
+                                    );
+                                })}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
             {showModal && (
                 <div className="modal show d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
                     <div className="modal-dialog">
@@ -174,7 +212,7 @@ console.log("componentRef.current:", componentRef.current);
                 </div>
             )}
 
-          
+
             {showExpenseModal && (
                 <div className="modal show d-block" tabIndex="-1" style={{ background: "rgba(0,0,0,0.5)" }}>
                     <div className="modal-dialog modal-lg">

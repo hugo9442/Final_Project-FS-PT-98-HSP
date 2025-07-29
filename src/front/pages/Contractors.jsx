@@ -64,14 +64,13 @@ const Contractors = () => {
       />
 
       <div className="table-responsive">
-        <table className="table table-striped custom-hover">
-          <thead className="table-dark">
+        <table className="table table-striped custom-hover" >
+          <thead className="table-dark" >
             <tr>
               <th>Nombre</th>
               <th>CIF/NIF</th>
               <th>Teléfono</th>
               <th>Email</th>
-              <th>Acción</th>
             </tr>
           </thead>
           <tbody>
@@ -82,19 +81,13 @@ const Contractors = () => {
                   return fullText.includes(searchTerm.toLowerCase());
                 })
                 .map((item) => (
-                  <tr key={item.id}>
+                  <tr key={item.id}
+                  style={{ cursor: "pointer" }} 
+                  onClick={() => navigate(`/contractor/${item.id}`)}>
                     <td>{item.name}</td>
                     <td>{item.nif}</td>
                     <td>{item.phone}</td>
                     <td>{item.email}</td>
-                    <td>
-                      <button
-                        className="btn btn-sm btn-primary"
-                        onClick={() => navigate(`/contractor/${item.id}`)}
-                      >
-                        Ver
-                      </button>
-                    </td>
                   </tr>
                 ))
             ) : (
