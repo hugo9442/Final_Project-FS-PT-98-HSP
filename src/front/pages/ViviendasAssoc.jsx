@@ -107,45 +107,43 @@ const ViviendasAssoc = () => {
   if (error) return <div>Error: {error}</div>;
   if (!store.AssocByApertmentId?.length) return <div>No hay datos disponibles</div>;
 
+
   const getassoc = () => {
     const assoc = store.AssocByApertmentId?.find(a => a.assoc.is_active === true)
     return assoc
   }
   const getassocinac = () => {
-  const associnac = store.AssocByApertmentId?.filter(a => a.assoc.is_active === false)
-  return associnac || []  // aseguramos array aunque sea undefined
-}
+    const associnac = store.AssocByApertmentId?.filter(a => a.assoc.is_active === false)
+    return associnac || []  // aseguramos array aunque sea undefined
+  }
   const inac = getassocinac()
   const newassoc = getassoc()
-  console.log(inac)
-  console.log(store)
-  const startDate = newassoc.assoc.contract.start_date
-    ? new Date(newassoc.assoc.contract.start_date).toLocaleDateString("es-ES", {
+
+
+
+  const startDate = newassoc?.assoc?.contract?.start_date
+    ? new Date(newassoc?.assoc?.contract?.start_date).toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "long",
       year: "numeric"
     })
     : 'Fecha no disponible';
-  const endDate = newassoc.assoc.contract.end_date
-    ? new Date(newassoc.assoc.contract.end_date).toLocaleDateString("es-ES", {
+  const endDate = newassoc?.assoc?.contract?.end_date
+    ? new Date(newassoc?.assoc?.contract?.end_date).toLocaleDateString("es-ES", {
       day: "2-digit",
       month: "long",
       year: "numeric"
     })
     : 'Fecha no Disponible';
 
-  const splitDocument = newassoc.assoc.contract.document ? newassoc.assoc.contract.document.split("/").pop() : 'Sin documento';
+  const splitDocument = newassoc?.assoc?.contract?.document ? newassoc?.assoc?.contract?.document.split("/").pop() : 'Sin documento';
   const start = splitDocument.length - 20;
   const result = splitDocument !== "Sin documento"
     ? splitDocument.slice(0, start) + splitDocument.slice(start + 16)
     : splitDocument;
-  const lengthIssues = () => {
 
-    return store.singleIssues?.issues?.length || 0;
-  }
-  const issueslength = lengthIssues()
   const today = new Date();
-  const contractEndDateObj = new Date(newassoc.assoc.contract.end_date);
+  const contractEndDateObj = new Date(newassoc?.assoc?.contract?.end_date);
   const diffDays = differenceInDays(contractEndDateObj, today);
 
   const getDaysBadgeClass = (days) => {
@@ -161,10 +159,11 @@ const ViviendasAssoc = () => {
     return `Faltan ${days} días`;
   };
 
-  const alquilado = !newassoc.assoc.apartment.is_rent
+  const alquilado = !newassoc?.assoc?.apartment?.is_rent
     ? "Pendiente de Alquilar"
     : "Alquilado";
-   const getDaysDiff = (start, end) => {
+
+  const getDaysDiff = (start, end) => {
     const now = new Date();
     const endDate = new Date(end);
     const diffTime = endDate - now;
@@ -176,7 +175,11 @@ const ViviendasAssoc = () => {
     if (alquilado === "Alquilado") return 'bg-info text-black';
     return 'bg-success text-white';
   };
+  const lengthIssues = () => {
 
+    return store.singleIssues?.issues?.length || 0;
+  }
+  const issueslength = lengthIssues()
   const CloseIsusses = async (item) => {
     try {
       const data = await Issues.CloseIssues(item, store.token);
@@ -203,7 +206,8 @@ const ViviendasAssoc = () => {
 
   // Limite de caracteres antes de mostrar "ver más"
   const DESC_LIMIT = 120;
-
+console.log(store)
+console.log("inac",inac)
   return (
     <>
       <div className="container-fluid mt-4">
@@ -215,12 +219,13 @@ const ViviendasAssoc = () => {
 
 
                 <p>
-                  <strong>Dirección:</strong> {newassoc.assoc.apartment.address},{" "}
-                  <strong>CP:</strong> {newassoc.assoc.apartment.postal_code},{" "}
-                  <strong>Ciudad:</strong> {newassoc.assoc.apartment.city},{" "}
-                  <strong>Parking:</strong> {newassoc.assoc.apartment.parking_slot}{" "}
+                  <strong>Dirección:</strong> {store.AssocByApertmentId[0]?.assoc?.apartment?.address || "No disponible"},{" "}
+                  <strong>CP:</strong> {store.AssocByApertmentId[0]?.assoc?.apartment?.postal_code || "No disponible"},{" "}
+                  <strong>Ciudad:</strong> {store.AssocByApertmentId[0]?.assoc?.apartment?.city || "No disponible"},{" "}
+                  <strong>Parking:</strong> {store.AssocByApertmentId[0]?.assoc?.apartment?.parking_slot || "No disponible"}{" "}
                   <span className={`badge ${getalquilado(alquilado)}`}>{alquilado}</span>
                 </p>
+
               </div>
             </li>
 
@@ -231,26 +236,42 @@ const ViviendasAssoc = () => {
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <h5 className="card-title mb-0">Datos del Inquilino</h5>
                     </div>
-                    <p className="card-text mb-1">
-                      <strong>Nombre</strong> {newassoc.assoc.tenant.first_name}, {newassoc.assoc.tenant.last_name}{" "}
-                      <strong>Email:</strong> {newassoc.assoc.tenant.email}
-                    </p>
-                    <p className="card-text mb-1">
-                      <strong>DNI</strong> {newassoc.assoc.tenant.national_id}{" "}
-                      <strong>Telefono:</strong>{newassoc.assoc.tenant.phone}
-                    </p>
-                    <p className="card-text mb-3">
-                      <strong>Numero de Cuenta:</strong> {newassoc.assoc.tenant.account_number}
-                    </p>
-                    <p className="card-text mb-3" style={{ display: store.AssocByApertmentId.length > 1 ? "block" : "none" }}>
-                      <strong>Existen antiguos Inquilinos:</strong> <button
-                        className="badge bg-success text-white"
-                        onClick={() => setShowModal(true)}
-                      >
-                        <Eye className="w-5 h-5 text-gray-700" />
-                      </button>
-                    </p>
 
+                    {newassoc ? (
+                      <>
+                        <p className="card-text mb-1">
+                          <strong>Nombre:</strong> {newassoc.assoc.tenant.first_name}, {newassoc.assoc.tenant.last_name}{" "}
+                          <strong>Email:</strong> {newassoc.assoc.tenant.email}
+                        </p>
+                        <p className="card-text mb-1">
+                          <strong>DNI:</strong> {newassoc.assoc.tenant.national_id}{" "}
+                          <strong>Teléfono:</strong> {newassoc.assoc.tenant.phone}
+                        </p>
+                        <p className="card-text mb-3">
+                          <strong>Numero de Cuenta:</strong> {newassoc.assoc.tenant.account_number}
+                        </p>
+                        <p className="card-text mb-3" style={{ display: !inac ? "block" : "none" }}>
+                          <strong>Existen antiguos Inquilinos:</strong>{" "}
+                          <button
+                            className="badge bg-success text-white"
+                            onClick={() => setShowModal(true)}
+                          >
+                            <Eye className="w-5 h-5 text-gray-700" />
+                          </button>
+                        </p>
+                      </>
+                    ) : (
+                      <div className="alert alert-warning">No hay inquilino activo en esta vivienda.
+                      <p className="card-text mb-3" style={{ display: inac ? "block" : "none" }}>
+                          <strong>Existen antiguos Inquilinos:</strong>{" "}
+                          <button
+                            className="badge bg-success text-white"
+                            onClick={() => setShowModal(true)}
+                          >
+                            <Eye className="w-5 h-5 text-gray-700" />
+                          </button>
+                        </p></div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -258,81 +279,81 @@ const ViviendasAssoc = () => {
                 <div className="col mi_alquiler">
                   <div className="p-4 card h-100 shadow-sm border">
                     <div className="d-flex justify-content-between align-items-center mb-2">
-                    <h2 className="text-lg font-bold mb-4">Antiguos Inquilinos</h2> 
-                    <button
-                      onClick={() => setShowModal(false)}
-                      className="btn btn-sm btn-outline-primary"
-                    >
-                      Cerrar
-                    </button>
+                      <h2 className="text-lg font-bold mb-4">Antiguos Inquilinos</h2>
+                      <button
+                        onClick={() => setShowModal(false)}
+                        className="btn btn-sm btn-outline-primary"
+                      >
+                        Cerrar
+                      </button>
                     </div>
                     <div className="table-responsive">
-                    <table className="table table-striped table-bordered align-middle">
-                      <thead className="table-dark">
-                        <tr>
-                          <th>Estado</th>
-                          <th>Inquilino</th>
-                          <th>Email</th>
-                          <th>Inicio</th>
-                          <th>Fin</th>
-                          <th>Dirección</th>
-                          <th className="d-none d-md-table-cell">CP</th>
-                          <th className="d-none d-md-table-cell">Ciudad</th>
-                          <th>Renta</th>
-                          <th className="d-none d-md-table-cell">Documento</th>
-                          <th>Acciones</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {inac?.map(item => {
-                          const startDate = new Date(item.assoc.contract.start_date).toLocaleDateString("es-ES", {
-                            day: "2-digit", month: "long", year: "numeric"
-                          });
-                          const endDate = new Date(item.assoc.contract.end_date).toLocaleDateString("es-ES", {
-                            day: "2-digit", month: "long", year: "numeric"
-                          });
-                          const today = new Date();
-                          const contractEndDate = new Date(item.assoc.contract.end_date);
-                          const diffDays = getDaysDiff(item.assoc.contract.start_date, item.assoc.contract.end_date);
-                          //const diffDays = differenceInDays(contractEndDate, today);
-                          const splitDocument = item.assoc.contract.document ? item.assoc.contract.document.split("/").pop() : 'Sin documento';
-                          const start = splitDocument.length - 20;
-                          const result = splitDocument !== "Sin documento"
-                            ? splitDocument.slice(0, start) + splitDocument.slice(start + 16)
-                            : splitDocument;
+                      <table className="table table-striped table-bordered align-middle">
+                        <thead className="table-dark">
+                          <tr>
+                            <th>Estado</th>
+                            <th>Inquilino</th>
+                            <th>Email</th>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Dirección</th>
+                            <th className="d-none d-md-table-cell">CP</th>
+                            <th className="d-none d-md-table-cell">Ciudad</th>
+                            <th>Renta</th>
+                            <th className="d-none d-md-table-cell">Documento</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {inac?.map(item => {
+                            const startDate = new Date(item.assoc.contract.start_date).toLocaleDateString("es-ES", {
+                              day: "2-digit", month: "long", year: "numeric"
+                            });
+                            const endDate = new Date(item.assoc.contract.end_date).toLocaleDateString("es-ES", {
+                              day: "2-digit", month: "long", year: "numeric"
+                            });
+                            const today = new Date();
+                            const contractEndDate = new Date(item.assoc.contract.end_date);
+                            const diffDays = getDaysDiff(item.assoc.contract.start_date, item.assoc.contract.end_date);
+                            //const diffDays = differenceInDays(contractEndDate, today);
+                            const splitDocument = item.assoc.contract.document ? item.assoc.contract.document.split("/").pop() : 'Sin documento';
+                            const start = splitDocument.length - 20;
+                            const result = splitDocument !== "Sin documento"
+                              ? splitDocument.slice(0, start) + splitDocument.slice(start + 16)
+                              : splitDocument;
 
-                          return (
-                            <tr key={item.assoc.id}>
-                              <td>
-                                <span className="badge bg-danger text-white">
-                                   "INACTIVO"
-                                </span>
-                              </td>
-                              <td>{item.assoc.tenant.first_name} {item.assoc.tenant.last_name}</td>
-                              <td>{item.assoc.tenant.email}</td>
-                              <td>{startDate}</td>
-                              <td>{endDate}</td>
-                              <td>{item.assoc.apartment?.address}</td>
-                              <td className="d-none d-md-table-cell">{item.assoc.apartment?.postal_code}</td>
-                              <td className="d-none d-md-table-cell">{item.assoc.apartment?.city}</td>
-                              <td>{item.assoc.renta} €</td>
-                              <td className="d-none d-md-table-cell">{result}</td>
-                              <td>
-                                <div className="d-flex flex-column flex-md-row gap-1">
-                                  <button
-                                    className="btn btn-sm btn-outline-primary"
-                                    onClick={() => handleDownloadContract(item.contract.id)}
-                                  >
-                                    Ver contrato
-                                  </button>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
+                            return (
+                              <tr key={item.assoc.id}>
+                                <td>
+                                  <span className="badge bg-danger text-white">
+                                    "INACTIVO"
+                                  </span>
+                                </td>
+                                <td>{item.assoc.tenant.first_name} {item.assoc.tenant.last_name}</td>
+                                <td>{item.assoc.tenant.email}</td>
+                                <td>{startDate}</td>
+                                <td>{endDate}</td>
+                                <td>{item.assoc.apartment?.address}</td>
+                                <td className="d-none d-md-table-cell">{item.assoc.apartment?.postal_code}</td>
+                                <td className="d-none d-md-table-cell">{item.assoc.apartment?.city}</td>
+                                <td>{item.assoc.renta} €</td>
+                                <td className="d-none d-md-table-cell">{result}</td>
+                                <td>
+                                  <div className="d-flex flex-column flex-md-row gap-1">
+                                    <button
+                                      className="btn btn-sm btn-outline-primary"
+                                      onClick={() => handleDownloadContract(item.contract.id)}
+                                    >
+                                      Ver contrato
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               )}
@@ -340,7 +361,7 @@ const ViviendasAssoc = () => {
               <div className="col mi_alquiler">
                 <div className="card h-100 shadow-sm border">
                   <div className="card-body d-flex flex-column">
-                    
+
                     <div className="d-flex gap-5 flex-wrap mb-3">
                       <h5 className="card-title mb-0">Detalle del Contrato:</h5>
                       <button
