@@ -73,7 +73,7 @@ const GestionDocumental = () => {
               <th>Propietario</th>
               <th>Tipo</th>
               <th>Estado</th>
-              <th>Alertas</th>
+              
 
             </tr>
           </thead>
@@ -97,13 +97,13 @@ const GestionDocumental = () => {
    
                       style={{ cursor: "pointer", textTransform: "capitalize" }}
                     >
-                      <td style={{ backgroundColor: bgColor }}>{item.address}</td>
-                      <td style={{ backgroundColor: bgColor }}>{item.postal_code}</td>
-                      <td style={{ backgroundColor: bgColor }}>{item.city}</td>
-                      <td style={{ backgroundColor: bgColor }}>{item.parking_slot}</td>
-                      <td style={{ backgroundColor: bgColor }}>{item.owner_name}</td>
-                      <td style={{ backgroundColor: bgColor }}>{item.type}</td>
-                      <td style={{ backgroundColor: bgColor }}>
+                      <td >{item.address}</td>
+                      <td >{item.postal_code}</td>
+                      <td >{item.city}</td>
+                      <td>{item.parking_slot}</td>
+                      <td >{item.owner_name}</td>
+                      <td >{item.type}</td>
+                      <td >
                         <span className={`badge ${getDaysBadgeClass(alquilado)}`}>
                           {alquilado}
                         </span>

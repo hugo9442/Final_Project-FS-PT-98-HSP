@@ -50,7 +50,14 @@
   background-color: #f8d7da;
   cursor: pointer;
 }
-
+.custom-hover tbody tr:hover td{
+  background-color: #ffd966 !important; /* Color amarillo suave */
+  color: #000 !important; /* Texto negro (opcional) */
+}
+.table-hover tbody tr:hover td{
+  background-color: #f0ad4e; /* Ejemplo: color naranja claro */
+  color: white; /* Opcional: cambiar el color del texto */
+}
 .sidebar-private {
   background-color: rgba(100, 200, 255, 0.9);
 }

@@ -96,7 +96,7 @@ const Alquileres = () => {
     return (
       <div className="table-responsive">
         <table className="table table-striped table-bordered align-middle">
-          <thead className="table-light">
+          <thead className="table-dark">
             <tr>
               <th>Estado</th>
               <th>Inquilino</th>

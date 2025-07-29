@@ -13,19 +13,19 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 const Main = () => {
 
     if (! import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL == "") return (
-        <React.StrictMode>
+       // <React.StrictMode>
             <BackendURL />
-        </React.StrictMode>
+       // </React.StrictMode>
     );
     return (
-        <React.StrictMode>
-            {/* Provide global state to all components */}
+       //<React.StrictMode>
+           
             <StoreProvider>
-                {/* Set up routing for the application */}
+               
                 <RouterProvider router={router}>
                 </RouterProvider>
             </StoreProvider>
-        </React.StrictMode>
+       // </React.StrictMode>
     );
 }
 

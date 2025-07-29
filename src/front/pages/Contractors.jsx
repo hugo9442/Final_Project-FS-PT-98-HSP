@@ -64,7 +64,7 @@ const Contractors = () => {
       />
 
       <div className="table-responsive">
-        <table className="table table-striped table-hover">
+        <table className="table table-striped custom-hover">
           <thead className="table-dark">
             <tr>
               <th>Nombre</th>

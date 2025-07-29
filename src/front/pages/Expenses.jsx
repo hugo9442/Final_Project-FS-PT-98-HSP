@@ -6,7 +6,7 @@ import { action } from "../fetch_actions.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
 const ExpenseWizardForm = ({ onSubmit }) => {
-  const { store, dispatch } = useGlobalReducer();
+ const { store, dispatch } = useGlobalReducer();
   const [step, setStep] = useState(1);
   const [categoriesList, setCategoriesList] = useState([]);
   const [actionList, setActionList] = useState([]);
@@ -84,7 +84,7 @@ const ExpenseWizardForm = ({ onSubmit }) => {
     <form onSubmit={handleSubmit} className="p-4 border rounded shadow bg-white">
       <h4 className="mb-4">Nuevo Gasto</h4>
 
-      {/* Paso 1 */}
+
       {step === 1 && (
         <>
           <div className="mb-3">
@@ -125,7 +125,7 @@ const ExpenseWizardForm = ({ onSubmit }) => {
         </>
       )}
 
-      {/* Paso 2 */}
+     
       {step === 2 && (
         <>
           <div className="mb-3">
@@ -155,7 +155,7 @@ const ExpenseWizardForm = ({ onSubmit }) => {
         </>
       )}
 
-      {/* Paso 3 */}
+   
       {step === 3 && (
         <>
           <div className="mb-3">
