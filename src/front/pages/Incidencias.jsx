@@ -295,7 +295,7 @@ const Incidencias = () => {
                           key={item.issue_id}
                           className="list-group-item d-flex  contenedor">
 
-                          <div className="contratitem">
+                          <div className="contra">
                             <p><strong>Dirección: </strong>{item.apartment.address}, <strong>CP:</strong> {item.apartment.postal_code}, <strong>Ciudad:</strong> {item.apartment.city}, <span className={`badge ${getDaysBadgeClass(alquilado)}`}>{alquilado}</span></p>
                             <p><strong>Incidencia: </strong>{item.title} <strong>Fecha de apertura: </strong>{startDate}, <strong>Estado:</strong> <span className={`badge ${getStatusBadgeClass(status)}`}>{status}</span></p>
                             <p><strong>Descripcion: </strong>{item.description} </p>

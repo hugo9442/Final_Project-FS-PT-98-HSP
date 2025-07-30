@@ -120,7 +120,11 @@ export const SingleIssue = props => {
                             })}
                           </ul>
                           <div className="row">
-                            <button className="btn btn-sm btn-outline-primary mt-2" onClick={() => setShowForm(item.issue_id)} disabled={item.status === 'cerrado'}>Añadir actuación</button>
+                            <button className="btn btn-sm btn-outline-primary mt-2" 
+                            onClick={() => setShowForm(item.issue_id)} 
+                            disabled={item.status === 'cerrado'}>
+                              Añadir actuación
+                              </button>
                             <button className="btn btn-sm btn-outline-primary mt-2"
                               onClick={() => { CloseIsusses(item.issue_id) }} disabled={item.status === 'cerrado'}>
                               <strong>Cerrar Incidencia</strong>

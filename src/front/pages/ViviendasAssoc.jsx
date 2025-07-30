@@ -206,8 +206,8 @@ const ViviendasAssoc = () => {
 
   // Limite de caracteres antes de mostrar "ver más"
   const DESC_LIMIT = 120;
-console.log(store)
-console.log("inac",inac)
+  console.log(store)
+  console.log("inac", inac)
   return (
     <>
       <div className="container-fluid mt-4">
@@ -261,8 +261,8 @@ console.log("inac",inac)
                         </p>
                       </>
                     ) : (
-                      <div className="alert alert-warning">No hay inquilino activo en esta vivienda.
-                      <p className="card-text mb-3" style={{ display: inac ? "block" : "none" }}>
+                      <div className="alert alert-warning"><p>No hay inquilino activo en esta vivienda</p>.
+                        <p className="card-text mb-3" style={{ display: inac ? "block" : "none" }}>
                           <strong>Existen antiguos Inquilinos:</strong>{" "}
                           <button
                             className="badge bg-success text-white"
@@ -271,6 +271,7 @@ console.log("inac",inac)
                             <Eye className="w-5 h-5 text-gray-700" />
                           </button>
                         </p></div>
+
                     )}
                   </div>
                 </div>
@@ -361,28 +362,16 @@ console.log("inac",inac)
               <div className="col mi_alquiler">
                 <div className="card h-100 shadow-sm border">
                   <div className="card-body d-flex flex-column">
-
-                    <div className="d-flex gap-5 flex-wrap mb-3">
-                      <h5 className="card-title mb-0">Detalle del Contrato:</h5>
-                      <button
-                        className="badge bg-success text-white"
-                        onClick={() => handleDownloadContract(newassoc.assoc.id)}
-                      >
-                        Ver Documento
-                      </button>
-                      <span className={`badge ${getDaysBadgeClass(diffDays)}`}>
-                        {getDaysStatusText(diffDays)}
-                      </span>
-                    </div>
-                    <p className="card-text mb-1">
-                      <strong>Inicio:</strong> {startDate}
-                    </p>
-                    <p className="card-text mb-1">
-                      <strong>Fin:</strong> {endDate}
-                    </p>
-                    <p className="card-text mb-3">
-                      <strong>Documento:</strong> {result}
-                    </p>
+                    <h5 className="card-title mb-0">Detalle del Contrato:</h5>
+                    {newassoc ? (
+                      <div className="d-flex gap-5 flex-wrap mb-3">
+                        <p className="card-text mb-1"><strong>Inicio:</strong> {startDate}</p>
+                        <p className="card-text mb-1"><strong>Fin:</strong> {endDate}</p>
+                        <p className="card-text mb-3"><strong>Documento:</strong> {result}</p>
+                      </div>
+                    ) : (
+                      <div className="alert alert-warning"> <p>No hay Contrato activo en esta vivienda.</p></div>
+                    )}
                   </div>
                 </div>
               </div>
