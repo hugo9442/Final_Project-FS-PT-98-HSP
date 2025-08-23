@@ -7,6 +7,7 @@ export const initialStore = () => {
   return {
     message: null,
     title:"",
+    rol:"",
     type:"",
     description:"",
     status:"",
@@ -68,6 +69,11 @@ export default function storeReducer(store, action = {}) {
       return {
         ...store,
         contractorexpenses: action.value,
+      };
+      case "addrol":
+      return {
+        ...store,
+        rol: action.value,
       };
       case "add_contractor":
       return {

@@ -5,8 +5,9 @@ from typing import List, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from. expenses import Expense
-    from. assoc_tenants_apartments_contracts import AssocTenantApartmentContract
+    from .expenses import Expense
+    from .assoc_tenants_apartments_contracts import AssocTenantApartmentContract
+    from .docusing import Docusing 
 
 
 class Withholding(db.Model):
@@ -18,7 +19,7 @@ class Withholding(db.Model):
 
   
     association: Mapped[List["AssocTenantApartmentContract"]] = relationship('AssocTenantApartmentContract', back_populates="withholdings")
-
+    docusings: Mapped[List["Docusing"]] = relationship('Docusing', back_populates="retencion")
 
     def serialize(self):
         return{

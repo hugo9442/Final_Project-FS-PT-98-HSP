@@ -32,8 +32,14 @@ const MenuLateral = ({ setActiveOption }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownDoc, setDropdownDoc] = useState(false);
   const [dropdownFact, setDropdownFact] = useState(false);
-  const [dropdownProv, setDropdownProv] = useState(false); 
-
+  const [dropdownProv, setDropdownProv] = useState(false);
+  const [dropdownUtil, setDropdownUtil] = useState(false);
+const resetDropdowns = () => {
+  setDropdownUtil(false);
+  setDropdownDoc(false);
+  setDropdownFact(false);
+  setDropdownProv(false);
+};
   const navItems = [
     { name: "Inicio", path: "/propietarioindex", icon: "gauge-high", internalOption: "Propietarioindex" },
     { name: "Viviendas", path: "/Viviendas", icon: "house-chimney", internalOption: "viviendas" },
@@ -44,7 +50,7 @@ const MenuLateral = ({ setActiveOption }) => {
 
   return (
     <>
-      <div className="d-md-none bg-info p-2 d-flex justify-content-between align-items-center shadow">
+      <div className="d-md-none bg-info p-2 d-flex justify-content-between align-items-center shadow" >
         <img src={logo} alt="Logo" style={{ width: 40, height: 40 }} />
         <button className="btn btn-outline-dark" onClick={() => setIsOpen(!isOpen)}>
           <FontAwesomeIcon icon={iconMap["bars"]} />
@@ -60,6 +66,7 @@ const MenuLateral = ({ setActiveOption }) => {
           left: 0,
           zIndex: 1050,
           paddingTop: '80px',
+          
         }}>
         <div className="text-center mb-4">
           <img src={logo} alt="Logo"
@@ -80,6 +87,7 @@ const MenuLateral = ({ setActiveOption }) => {
                   if (item.path === location.pathname && item.path !== "/acceso") e.preventDefault();
                   setActiveOption(item.internalOption);
                   navigate(item.path);
+                  resetDropdowns();
                   setIsOpen(false);
                 }}>
                 <FontAwesomeIcon icon={iconMap[item.icon]} className="me-3" />
@@ -92,7 +100,7 @@ const MenuLateral = ({ setActiveOption }) => {
           <li className="nav-item mb-2">
             <button
               className={`btn w-100 text-start ${dropdownDoc ? 'bg-primary text-white' : 'text-dark'}`}
-              onClick={() => {setDropdownDoc(!dropdownDoc);setDropdownFact(false);setDropdownProv(false)}}>
+              onClick={() => { setDropdownDoc(!dropdownDoc); setDropdownFact(false); setDropdownProv(false) }}>
               <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
               Gestión Documental
             </button>
@@ -100,10 +108,15 @@ const MenuLateral = ({ setActiveOption }) => {
               <ul className="list-group position-relative" style={{
                 zIndex: 2000,
                 width: '100%',
-                backgroundColor: 'white',
+                backgroundColor: 'bg-primary',
                 boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
               }}>
-                <li className="list-group-item list-group-item-action" onClick={() => { navigate('/Gestiondocumental'); setDropdownDoc(false); setIsOpen(false); }}>
+                <li className="list-group-item list-group-item-action" style={{
+                zIndex: 2000,
+                width: '100%',
+                backgroundColor: 'bg-primary',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
+              }}onClick={() => { navigate('/Gestiondocumental'); setDropdownDoc(false); setIsOpen(false); }}>
                   Añadir
                 </li>
                 <li className="list-group-item list-group-item-action" onClick={() => { navigate('/Gestiondocumentalvista'); setDropdownDoc(false); setIsOpen(false); }}>
@@ -117,7 +130,7 @@ const MenuLateral = ({ setActiveOption }) => {
           <li className="nav-item mb-2">
             <button
               className={`btn w-100 text-start ${dropdownFact ? 'bg-primary text-white' : 'text-dark'}`}
-              onClick={() =>{ setDropdownFact(!dropdownFact); setDropdownDoc(false);setDropdownProv(false)}}>
+              onClick={() => { setDropdownFact(!dropdownFact); setDropdownDoc(false); setDropdownProv(false) }}>
               <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
               Facturación
             </button>
@@ -142,7 +155,7 @@ const MenuLateral = ({ setActiveOption }) => {
           <li className="nav-item mb-2">
             <button
               className={`btn w-100 text-start ${dropdownProv ? 'bg-primary text-white' : 'text-dark'}`}
-              onClick={() => {setDropdownProv(!dropdownProv);setDropdownDoc(false);setDropdownFact(false)}}>
+              onClick={() => { setDropdownProv(!dropdownProv); setDropdownDoc(false); setDropdownFact(false) }}>
               <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
               Proveedores y Gastos
             </button>
@@ -162,6 +175,37 @@ const MenuLateral = ({ setActiveOption }) => {
               </ul>
             )}
           </li>
+           {/* Utilidades */}
+          <li className="nav-item mb-2">
+            <button
+              className={`btn w-100 text-start ${dropdownUtil ? 'bg-primary text-white' : 'text-dark'}`}
+              onClick={() => {
+                setDropdownUtil(!dropdownUtil);
+                setDropdownDoc(false);
+                setDropdownFact(false);
+                setDropdownProv(false);
+              }}>
+              <FontAwesomeIcon icon={iconMap["folderOpen"]} className="me-3" />
+              Utilidades
+            </button>
+            {dropdownUtil && (
+              <ul className="list-group position-relative" style={{
+                zIndex: 2000,
+                width: '100%',
+                backgroundColor: 'white',
+                boxShadow: '0 2px 5px rgba(0,0,0,0.15)'
+              }}>
+                <li className="list-group-item list-group-item-action"
+                  onClick={() => {
+                    navigate('/GeneradorContrato');
+                    setDropdownUtil(false);
+                    setIsOpen(false);
+                  }}>
+                  Generador de Contratos
+                </li>
+              </ul>
+            )}
+          </li>
 
           <li className="nav-item mb-2">
             <Link to="/" className="nav-link d-flex align-items-center rounded py-2 px-3 text-dark"
@@ -174,6 +218,8 @@ const MenuLateral = ({ setActiveOption }) => {
               Salir
             </Link>
           </li>
+         
+
         </ul>
       </div>
     </>

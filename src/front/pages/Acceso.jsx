@@ -5,12 +5,14 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { users } from "../fecht_user.js";
 import swal from "sweetalert";
 import logo from "../assets/img/LogoTrabajoFinal.png";
+import GoogleAuth from "../components/Googlebotton.jsx";
+
 const LoginSection = () => {
 
   const { store, dispatch } = useGlobalReducer();
   const navigate = useNavigate();
   const handleNavigate = () => navigate("/propietarioindex");
-  const handleNavigateAcceso=()=>navigate("/Acceso")
+  const handleNavigateAcceso = () => navigate("/Acceso")
 
   const [forgotEmail, setForgotEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -53,13 +55,13 @@ const LoginSection = () => {
   const handleCreatUser = async () => {
     try {
       const data = await users.createuser(store.firstname, store.lastname, store.email, store.password, store.phone, store.national_id, store.aacc);
-     
+
       if ((typeof data.token === "string" && data.token.length > 0)) {
-        await dispatch({ type: "addToken", value: data.token });
-        await dispatch({ type: "add_user", value: data.user });
-         handleNavigate()  
+         dispatch({ type: "addToken", value: data.token });
+         dispatch({ type: "add_user", value: data.user });
+         handleNavigate()
       }
-              
+
       if (data.error === "El email ya está registrado") {
         swal({
           title: "ERROR",
@@ -93,7 +95,7 @@ const LoginSection = () => {
   const handleLogingUser = async () => {
     try {
       const data = await users.loginguser(store.email, store.password);
-      if (data.error==="El email o la contraseña es incorrecto") {
+      if (data.error) {
         swal({
           title: "ERROR",
           text: `${data.error}`,
@@ -104,20 +106,20 @@ const LoginSection = () => {
       }
 
       if ((typeof data.token === "string" && data.token.length > 0)) {
-         dispatch({ type: "addToken", value: data.token });
-         dispatch({ type: "add_user", value: data.user }); 
-         dispatch({ type: "addEmail", value: "" })
-         dispatch({ type: "addPassword", value: "" })
+        dispatch({ type: "addToken", value: data.token });
+        dispatch({ type: "add_user", value: data.user });
+        dispatch({ type: "addEmail", value: "" })
+        dispatch({ type: "addPassword", value: "" })
 
-      } if (data.user.role==="ADMIN"){
-        handleNavigate() 
-      }if(data.user.role==="INQUILINO"){
+      } if (data.user.role === "ADMIN" || data.user.role === "PROPIETARIO") {
+        handleNavigate()
+      } if (data.user.role === "INQUILINO") {
         navigate("/InquilinoIndex")
       }
       else {
         swal({
-          title: "EXITO",
-          text: "LOGEADO CON EXITO",
+          title: "LOGEADO CON EXITO",
+          text: "ACCESO COMPLETO",
           icon: "success",
           buttons: true,
         });
@@ -127,8 +129,8 @@ const LoginSection = () => {
 
   const createContact = async () => {
     if (store.email !== "" && store.password !== "") {
-      
-       await  handleCreatUser();
+
+      await handleCreatUser();
 
     }
   };
@@ -152,7 +154,7 @@ const LoginSection = () => {
     const result = await users.forgotPassword(forgotEmail);
 
     if (result.message) {
-        
+
       swal({
         title: "Correo enviado",
         text: result.message,
@@ -190,30 +192,30 @@ const LoginSection = () => {
 
     const result = await users.resetPassword(store.resetToken, newPassword);
 
-    console.log("resul",result)
+    console.log("resul", result)
     if (result.message) {
-         dispatch({ type: "addToken", value: result.token });
-         dispatch({ type: "add_user", value: result.user }); 
+      dispatch({ type: "addToken", value: result.token });
+      dispatch({ type: "add_user", value: result.user });
       swal({
         title: "Contraseña restablecida",
         text: result.message,
         icon: "success",
         buttons: "ok",
-       
+
       }).then((willDelete) => {
-  if (willDelete) {
-    
-   if (result.user.role==="ADMIN"){
-        handleNavigate() 
-      }if(result.user.role==="INQUILINO"){
-        navigate("/InquilinoIndex")
-      }
-  } 
-  
-});
-        
-       
-        
+        if (willDelete) {
+
+          if (result.user.role === "ADMIN" || result.user.role === "PROPIETARIO") {
+            handleNavigate()
+          } if (result.user.role === "INQUILINO") {
+            navigate("/InquilinoIndex")
+          }
+        }
+
+      });
+
+
+
       setMessageFeedback(result.message);
 
     } else {
@@ -280,13 +282,12 @@ const LoginSection = () => {
     }
   };
 
-console.log(store)
+  console.log(store)
   return (
     <div >
       <section
-        className="min-vh-100"
-        style={{ backgroundColor: "#ebf5fb", display: `${store.visibility2}`  }}
-      >
+        className="min-vh-80"
+        style={{ backgroundColor: "#ebf5fb", display: `${store.visibility2}` }} >
         <div className="container py-5">
           <div className="row d-flex justify-content-center align-items-center">
             <div className="col col-xl-10">
@@ -296,7 +297,7 @@ console.log(store)
                     <img
                       src={ImgEdificio}
                       alt="login form"
-                      className="img-fluid"
+                      className="img-fluid object-fit-cover"
                       style={{ borderRadius: "1rem 0 0 1rem" }}
                     />
                   </div>
@@ -345,15 +346,15 @@ console.log(store)
                           <label className="form-label" htmlFor="pass">Contraseña</label>
                         </div>
 
-                        <div className="pt-1 mb-4">
-                          <button
-                            className="btn btn-dark btn-lg btn-block"
+                        <div className="d-flex flex-row mb-4 justify-content-between gap-2 ">
+                          <button 
+                            className="btn btn-dark btn-sm btn-block w-100 "
                             type="button"
                             onClick={logingUser}
                           >
                             Acceder
                           </button>
-                        { /* <button
+                          {/*<button
                             className="btn btn-dark btn-lg btn-block"
                             style={{ margin: 5 }}
                             type="button"
@@ -364,6 +365,7 @@ console.log(store)
                           >
                             Crear Cuenta
                           </button>*/}
+                          <GoogleAuth />
                         </div>
 
                         <a
@@ -395,7 +397,7 @@ console.log(store)
       </section>
 
       <section
-        className="min-vh-100"
+        className="min-vh-90"
         style={{ backgroundColor: "#ebf5fb", display: `${store.visibility}` }}
       >
         <div className="container py-5">
@@ -558,7 +560,7 @@ console.log(store)
       </section>
       <section
         className="vh-100"
-        style={{ backgroundColor: "#ebf5fb", display: `${store.forgotPasswordVisibility}`}}
+        style={{ backgroundColor: "#ebf5fb", display: `${store.forgotPasswordVisibility}` }}
       >
         <div className="container py-5 h-100">
           <div className="row d-flex justify-content-center align-items-center h-100">
@@ -737,7 +739,7 @@ console.log(store)
         </div>
       </section>
       <section
-        className="min-vh-100"
+        className="min-vh-90"
         style={{ backgroundColor: "#ebf5fb", display: `${store.tenantSetPasswordVisibility}` }}
       >
         <div className="container py-5">

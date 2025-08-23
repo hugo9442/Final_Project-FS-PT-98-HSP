@@ -12,7 +12,7 @@ from api.routes import (
     apartments_api, users_api, contracts_api, issues_api,
     actions_api, asociates_api, documents_api, invoices_api,
     contact_api, dashboard_api, taxhold_api, iva_api, expense_category_api,contractor_api, expenses_api,
-    expensespayments_api
+    expensespayments_api, docusing_api, adminowner_api, auth_api, subscriptions_bp
 )
 from api.admin import setup_admin
 from api.commands import setup_commands
@@ -26,6 +26,8 @@ from flask_bcrypt import generate_password_hash
 from api.extensions import mail
 
 
+
+
 env_path = Path(__file__).resolve().parent.parent / '.env'  # Sube dos niveles desde src/
 load_dotenv(env_path)
 
@@ -33,6 +35,8 @@ load_dotenv(env_path)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
 ALLOWED_EXTENSIONS = {'pdf'}  # Solo permitir PDFs
+
+
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -45,7 +49,7 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
-
+CORS(app, supports_credentials=True)
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
@@ -70,6 +74,15 @@ app.config["FRONTEND_URL"] = os.getenv("FRONTEND_URL", "http://localhost:3000")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=24)
 jwt=JWTManager(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.config['DOCUSIGN_CONFIG'] = {
+    "INTEGRATION_KEY": os.getenv("DOCUSIGN_INTEGRATION_KEY"),
+    "USER_ID": os.getenv("DOCUSIGN_USER_ID"),
+    "ACCOUNT_ID": os.getenv("DOCUSIGN_ACCOUNT_ID"),
+    "BASE_PATH": "https://demo.docusign.net/restapi",
+    "AUTH_SERVER": "https://account-d.docusign.com",
+    "PRIVATE_KEY_PATH": "/workspaces/Final_Project-FS-PT-98-HSP/src/docusign_private_key.pem"
+}   
 
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
@@ -96,6 +109,10 @@ app.register_blueprint(expense_category_api)
 app.register_blueprint(contractor_api)
 app.register_blueprint(expenses_api)
 app.register_blueprint(expensespayments_api)
+app.register_blueprint(docusing_api)
+app.register_blueprint(adminowner_api)
+app.register_blueprint(auth_api)
+app.register_blueprint(subscriptions_bp)
 
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER') 
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT'))
@@ -143,6 +160,7 @@ def initialize_admin_user():
                 first_name="Admin",
                 last_name="General",
                 email="montoria@montoria.es",
+                status="active",
                 password=generate_password_hash("M0nt0r14@2025").decode('utf-8'),
                 phone="000000000",
                 national_id="00000000X",

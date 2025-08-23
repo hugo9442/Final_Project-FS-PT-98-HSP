@@ -33,7 +33,7 @@ const Navbar = () => {
        handleNavigateAcceso();
     }
   };
-console.log(store.todos)
+
   return (
     <nav
       className="navbar navbar-expand-lg sticky-top shadow"

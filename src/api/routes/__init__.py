@@ -1,7 +1,7 @@
 from .user_routes import users_api
 from .apartment_routes import apartments_api
 from .issue_routes import issues_api
-from .contract_routes import contracts_api
+from .contract_routes import contracts_api, get_r2_client
 from .action_routes import actions_api
 from .asociates_routes import asociates_api
 from .documents_rourtes import documents_api
@@ -14,3 +14,7 @@ from .tax_route import iva_api
 from .categories_route import expense_category_api
 from .expenses_route import expenses_api
 from .expensespayments_route import expensespayments_api
+from .docusing_routes import docusing_api
+from .admin_owners_route import adminowner_api
+from .google_auth import auth_api
+from .stripe_routes import subscriptions_bp

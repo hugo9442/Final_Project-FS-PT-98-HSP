@@ -1,66 +1,82 @@
 import React from "react";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { users } from "../fecht_user.js";
+import { admin } from "../fetch_admin.js";
 
-const NewuserForm = ({ onSuccess, onCancel }) => {
+const NewuserForm = ({ onSuccess, onCancel, admin_id }) => {
 
     const { store, dispatch } = useGlobalReducer();
 
     const handleCreatUser = async () => {
-        try {
-            const data = await users.createuser(
-                store.firstname,
-                store.lastname,
-                store.email,
-                store.password,
-                store.phone,
-                store.national_id,
-                store.aacc);
+    try {
+        // 1️⃣ Crear usuario
+        const data = await users.createuser(
+            store.firstname,
+            store.lastname,
+            store.email,
+            store.password,
+            store.phone,
+            store.national_id,
+            store.aacc
+        );
 
-            if (data.msg) {
-                dispatch({ type: "add_owner", value: data.user });
-                dispatch({ type: "addFirtsname", value: "" });
-                dispatch({ type: "addLastname", value: "" });
-                dispatch({ type: "addEmail", value: "" });
-                dispatch({ type: "addPassword", value: "" });
-                dispatch({ type: "addPhone", value: "" })
-                dispatch({ type: "addNid", value: "" })
-                dispatch({ type: "Aaccadd", value: "" })
-                onSuccess();
+        if (data.msg) {
+            const newOwner = data.user;
+
+            // 2️⃣ Crear relación owner-admin
+            if (admin_id && newOwner?.id) {
+                try {
+                    await admin.createOwnerRelation(newOwner.id, admin_id, store.token);
+                } catch (error) {
+                    console.error("Error creando relación owner-admin:", error);
+                }
             }
 
-
-
-            if (data.error === "El email ya está registrado") {
-                swal({
-                    title: "ERROR",
-                    text: `${data.error}`,
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                });
-
-            }
-            if (data.error) {
-                swal({
-                    title: "ERROR",
-                    text: `${data.error}`,
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                });
-            }
-            else {
-                swal({
-                    title: "USUARIO CREADO",
-                    text: `${data.msg}`,
-                    icon: "success",
-                    buttons: true,
-                });
+            // 3️⃣ Traer todos los owners de este admin
+            try {
+                const ownersResponse = await admin.getOwnersByAdmin(admin_id, store.token);
+                if (ownersResponse?.owners) {
+                    dispatch({ type: "add_owner", value: ownersResponse.owners });
+                }
+            } catch (error) {
+                console.error("Error obteniendo owners del admin:", error);
             }
 
-        } catch (error) { }
+            // 4️⃣ Limpiar campos
+            ["firstname","lastname","email","password","phone","national_id","aacc"].forEach(field => {
+                dispatch({ type: `add${field.charAt(0).toUpperCase() + field.slice(1)}`, value: "" });
+            });
+
+            onSuccess();
+
+            swal({
+                title: "USUARIO CREADO",
+                text: data.msg,
+                icon: "success",
+                buttons: true,
+            });
+        }
+
+        if (data.error) {
+            swal({
+                title: "ERROR",
+                text: data.error,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            });
+        }
+
+    } catch (error) {
+        console.error("Error handleCreatUser:", error);
+        swal({
+            title: "ERROR",
+            text: "Ha ocurrido un error al crear el usuario o la relación",
+            icon: "error",
+            buttons: true,
+        });
     }
+};
 
     const createContact = async () => {
         if (store.email !== "" && store.password !== "") {
@@ -75,7 +91,7 @@ const NewuserForm = ({ onSuccess, onCancel }) => {
             <form className="form mt-2" onSubmit={(e) => { e.preventDefault(); createContact(); }}>
                 <div className="row">
                     <div className="col-md-6 mb-3">
-                        <input 
+                        <input
                             type="text"
                             id="firstName"
                             className="form-control form-control-lg mb-3" placeholder="Nombre"
@@ -113,7 +129,7 @@ const NewuserForm = ({ onSuccess, onCancel }) => {
                             onChange={(e) => dispatch({ type: "addLastname", value: e.target.value })}
                             value={store.lastname || ''} required
                         />
-                       
+
                         <input
                             type="text"
                             id="phone"
@@ -131,23 +147,23 @@ const NewuserForm = ({ onSuccess, onCancel }) => {
                         />
                     </div>
                 </div>
-            <div className="pt-1 mb-4">
-                <button
-                    className="btn btn-success me-2"
-                    type="submit"
-                >
-                    Crear Propietario
-                </button>
-                <button
-                    className="btn btn-secondary"
-                    style={{ margin: 5 }}
-                    type="button"
-                    onClick={onCancel}
-                >
-                    Cancelar
-                </button>
-            </div>
-        </form >
+                <div className="pt-1 mb-4">
+                    <button
+                        className="btn btn-success me-2"
+                        type="submit"
+                    >
+                        Crear Propietario
+                    </button>
+                    <button
+                        className="btn btn-secondary"
+                        style={{ margin: 5 }}
+                        type="button"
+                        onClick={onCancel}
+                    >
+                        Cancelar
+                    </button>
+                </div>
+            </form >
         </>
     );
 }

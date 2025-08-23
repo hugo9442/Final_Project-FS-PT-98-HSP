@@ -1,12 +1,86 @@
 from flask import request, jsonify, Blueprint
-from api.models import db, Apartment
+from api.models import db, Apartment, User, AdminOwnerProperty
+from api.models.users import Role
 from flask_cors import CORS
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from sqlalchemy import func
 
 apartments_api = Blueprint('apartments_api', __name__, url_prefix='/apartments')
 
 CORS(apartments_api)
+
+
+@apartments_api.route('/admin', methods=['GET'])
+@jwt_required()
+def get_apartments_by_admin():
+    try:
+        # Obtener usuario actual desde token
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # ADMIN → mostrar apartamentos de todos los propietarios asociados
+        if user.role == Role.ADMIN:
+            relations = AdminOwnerProperty.query.filter_by(admin_id=user.id, active=True).all()
+            owner_ids = [rel.owner_id for rel in relations]
+            apartments = Apartment.query.filter(Apartment.owner_id.in_(owner_ids)).all()
+
+        # PROPIETARIO → mostrar solo sus apartamentos
+        elif user.role == Role.PROPIETARIO:
+            apartments = Apartment.query.filter_by(owner_id=user.id).all()
+
+        else:
+            return jsonify({"error": "No autorizado"}), 403
+
+        return jsonify({
+            "msg": "ok",
+            "apartments": [apartment.serialize_with_owner_name() for apartment in apartments]
+        }), 200
+
+    except Exception as e:
+        print("Error al obtener apartamentos por admin:", e)
+        return jsonify({"msg": "Error en el servidor"}), 500
+
+
+
+
+@apartments_api.route('/notrented', methods=['GET'])
+@jwt_required()
+def get_apartments_not_rented_admin():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # ADMIN → apartamentos de todos sus propietarios que no están arrendados
+        if user.role == Role.ADMIN:
+            relations = AdminOwnerProperty.query.filter_by(admin_id=user.id, active=True).all()
+            owner_ids = [rel.owner_id for rel in relations]
+            apartments = Apartment.query.filter(
+                Apartment.owner_id.in_(owner_ids),
+                Apartment.is_rent == False
+            ).all()
+
+        # PROPIETARIO → sus apartamentos que no están arrendados
+        elif user.role == Role.PROPIETARIO:
+            apartments = Apartment.query.filter_by(
+                owner_id=user.id,
+                is_rent=False
+            ).all()
+
+        else:
+            return jsonify({"error": "No autorizado"}), 403
+
+        return jsonify({
+            "msg": "ok",
+            "apartments": [apartment.serialize_with_owner_name() for apartment in apartments]
+        }), 200
+
+    except Exception as e:
+        return jsonify({"msg": str(e)}), 500
+
 
 @apartments_api.route('/<int:id>/issues-actions', methods=['GET'])
 @jwt_required()
@@ -114,7 +188,7 @@ def get_apartments_not_rented():
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
     
-@apartments_api.route('/count', methods=['GET'])
+@apartments_api.route('/count_all', methods=['GET'])
 @jwt_required()
 def get_apartmentscount():
    try:
@@ -127,6 +201,40 @@ def get_apartmentscount():
    except Exception as e:
         print("Error al obtener apartamentos:", e)
         return jsonify({"msg": "Error en el servidor"}), 500
+   
+@apartments_api.route('/count', methods=['GET'])
+@jwt_required()
+def get_apartments_count():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # ADMIN → contar apartamentos de todos sus propietarios
+        if user.role == Role.ADMIN:
+            relations = AdminOwnerProperty.query.filter_by(admin_id=user.id, active=True).all()
+            owner_ids = [rel.owner.id for rel in relations]
+            total_apartments = db.session.query(func.count(Apartment.id))\
+                                         .filter(Apartment.owner_id.in_(owner_ids))\
+                                         .scalar()
+        # PROPIETARIO → contar solo sus apartamentos
+        elif user.role == Role.PROPIETARIO:
+            total_apartments = db.session.query(func.count(Apartment.id))\
+                                         .filter_by(owner_id=user.id)\
+                                         .scalar()
+        else:
+            return jsonify({"error": "No autorizado"}), 403
+
+        return jsonify({
+            "msg": "ok",
+            "total": total_apartments
+        }), 200
+
+    except Exception as e:
+        print("Error al obtener apartamentos:", e)
+        return jsonify({"msg": "Error en el servidor"}), 500
+
     
 @apartments_api.route('/<int:id>', methods=['PUT'])
 @jwt_required()

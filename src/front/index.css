@@ -51,11 +51,11 @@
   cursor: pointer;
 }
 .custom-hover tbody tr:hover td{
-  background-color: #ffd966 !important; /* Color amarillo suave */
+  background-color: #A47864 !important; /* Color amarillo suave */
   color: #000 !important; /* Texto negro (opcional) */
 }
 .table-hover tbody tr:hover td{
-  background-color: #f0ad4e; /* Ejemplo: color naranja claro */
+  background-color: #A47864; /* Ejemplo: color naranja claro */
   color: white; /* Opcional: cambiar el color del texto */
 }
 .sidebar-private {
@@ -101,3 +101,22 @@
     margin-left: 250px; /* mismo ancho que el sidebar fijo */
   }
 }
+
+/* Spinner estilo bootstrap simple */
+.spinner-border {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+

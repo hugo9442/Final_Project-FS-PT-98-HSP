@@ -1,8 +1,9 @@
   
 import os
 from flask_admin import Admin
-from api.models import db, User, Contract, Action,Issue,Apartment,AssocTenantApartmentContract
-from api.models import Invoice,ContactRequest,Expense,ExpenseCategory,Contractor,TaxType,Withholding
+from api.models import( db, User, Contract, Action,Issue,Apartment,AssocTenantApartmentContract,
+                       Invoice,ContactRequest,Expense,
+                       ExpenseCategory,Contractor,TaxType,Withholding, Docusing, AdminOwnerProperty, Subscription)
 from flask_admin.contrib.sqla import ModelView
 
 def setup_admin(app):
@@ -25,4 +26,7 @@ def setup_admin(app):
     admin.add_view(ModelView(ExpenseCategory, db.session))
     admin.add_view(ModelView(TaxType, db.session))
     admin.add_view(ModelView(Withholding, db.session))
+    admin.add_view(ModelView(Docusing, db.session))
+    admin.add_view(ModelView(AdminOwnerProperty, db.session))
+    admin.add_view(ModelView(Subscription, db.session))
  

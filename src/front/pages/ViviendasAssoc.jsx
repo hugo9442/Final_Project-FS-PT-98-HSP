@@ -105,7 +105,7 @@ const ViviendasAssoc = () => {
 
   if (loading) return <div>Cargando...</div>;
   if (error) return <div>Error: {error}</div>;
-  if (!store.AssocByApertmentId?.length) return <div>No hay datos disponibles</div>;
+  if (!store.AssocByApertmentId?.length) return <div className="alert alert-warning"> <p>No hay Contrato  ni Inquilino activo en esta vivienda.</p></div>;
 
 
   const getassoc = () => {
@@ -163,12 +163,39 @@ const ViviendasAssoc = () => {
     ? "Pendiente de Alquilar"
     : "Alquilado";
 
-  const getDaysDiff = (start, end) => {
-    const now = new Date();
+  const Diff = (start, end) => {
+    const now = new Date(start);
     const endDate = new Date(end);
     const diffTime = endDate - now;
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
+  const getDaysDiff = (start, end) => {
+  const startDate = new Date(start);
+  const endDate = new Date(end);
+
+  let years = endDate.getFullYear() - startDate.getFullYear();
+  let months = endDate.getMonth() - startDate.getMonth();
+  let days = endDate.getDate() - startDate.getDate();
+
+  if (days < 0) {
+    months -= 1;
+    const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+
+  if (months < 0) {
+    years -= 1;
+    months += 12;
+  }
+
+  const parts = [];
+  if (years > 0) parts.push(`${years} año${years > 1 ? "s" : ""}`);
+  if (months > 0) parts.push(`${months} mes${months > 1 ? "es" : ""}`);
+  if (days > 0) parts.push(`${days} día${days > 1 ? "s" : ""}`);
+
+  return parts.length > 0 ? parts.join(", ") : "0 días";
+};
+
 
   const getalquilado = (alquilado) => {
     if (alquilado === "Pendiente de Alquilar") return 'bg-danger text-white';
@@ -362,12 +389,29 @@ const ViviendasAssoc = () => {
               <div className="col mi_alquiler">
                 <div className="card h-100 shadow-sm border">
                   <div className="card-body d-flex flex-column">
-                    <h5 className="card-title mb-0">Detalle del Contrato:</h5>
+                    <div className="d-flex justify-content-between  mb-2">
+                      <h5 className="card-title  mb-0">Detalle del Contrato:
+                      </h5><p className="card-text mb-1"><span className={`badge ${getDaysBadgeClass(diffDays)}`}>
+                        {getDaysStatusText(diffDays)}
+                      </span></p></div>
+
                     {newassoc ? (
-                      <div className="d-flex gap-5 flex-wrap mb-3">
+                      <div className="d-flex gap-1 flex-wrap mb-3">
                         <p className="card-text mb-1"><strong>Inicio:</strong> {startDate}</p>
                         <p className="card-text mb-1"><strong>Fin:</strong> {endDate}</p>
-                        <p className="card-text mb-3"><strong>Documento:</strong> {result}</p>
+                        <div className="d-flex w-100 justify-content-between align-items-center mb-2">
+                          <span className="card-text">
+                            <strong>Documento:</strong> {result}
+                          </span>
+
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            onClick={() => handleDownloadContract(newassoc?.assoc?.contract?.id)}
+                          >
+                            Ver contrato
+                          </button>
+                        </div>
+
                       </div>
                     ) : (
                       <div className="alert alert-warning"> <p>No hay Contrato activo en esta vivienda.</p></div>

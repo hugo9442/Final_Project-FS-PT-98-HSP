@@ -1,5 +1,6 @@
 import React from "react";
 import { users } from "../fecht_user.js";
+import { apartments } from "../fecht_apartment.js";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { useEffect, useState } from "react";
 import { differenceInDays } from 'date-fns';
@@ -31,7 +32,7 @@ const Inquilinos = () => {
     }
     try {
 
-      const data = await users.getApartmentsNotRented(store.token);
+      const data = await apartments.getApartmentsNotRented(store.token);
       console.log
       dispatch({ type: "add_apartments", value: data.apartments });
 
@@ -103,9 +104,7 @@ const Inquilinos = () => {
     }
 
   };
-  console.log("owner_id", ownerid)
-  console.log(itpartment)
-  console.log(store)
+
   return (
     <>
       <div className="container-fluid mt-4">
@@ -191,6 +190,7 @@ const Inquilinos = () => {
                   </ul>
                   {showForm && (
                     <NewTenantContractForm
+                      owner_id={ownerid}
                       onSuccess={() => {
                         fetchData();
                         setShowForm(false);
@@ -206,6 +206,7 @@ const Inquilinos = () => {
                     color: "black",
                     backgroundColor: 'rgba(138, 223, 251, 0.8)',
                     textDecoration: "strong",
+                    visibility: !store.apartments || store.apartments.length === 0 ? "hidden" : "visible",
 
                   }}
                     onClick={() => { setShowForm(true); setShowbotton(false); }}>Añadir Inquilino y Contrato</button>
@@ -215,7 +216,8 @@ const Inquilinos = () => {
                   color: "black",
                   backgroundColor: 'rgba(138, 223, 251, 0.8)',
                   textDecoration: "strong",
-                  marginLeft: "10px", display: showBotton ? "inline-block" : "none"
+                  marginLeft: "10px", display: showBotton ? "inline-block" : "none",
+                  visibility: !store.apartments || store.apartments.length === 0 ? "hidden" : "visible"
                 }}
 
                   onClick={Crent}>Crear Alquiler</button>

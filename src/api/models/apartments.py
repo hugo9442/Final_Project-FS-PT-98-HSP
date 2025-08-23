@@ -9,6 +9,7 @@ if TYPE_CHECKING:
     from .issues import Issue
     from .documents import Document
     from .expenses import Expense
+    from .docusing import Docusing
 
 class Apartment(db.Model):
     __tablename__ = 'apartments'
@@ -29,7 +30,10 @@ class Apartment(db.Model):
     association: Mapped[List["AssocTenantApartmentContract"]] = relationship(back_populates='apartment')
     documents: Mapped[List['Document']] = relationship(back_populates='apartment')
     expenses: Mapped[List["Expense"]] = relationship(back_populates="apartment")
-
+    docusings: Mapped[List["Docusing"]] = relationship(
+        "Docusing", back_populates="apartment", cascade="all, delete-orphan"
+    )
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -75,6 +79,10 @@ class Apartment(db.Model):
             "is_rent": self.is_rent,
             "owner_id": self.owner_id,
             "owner_name": self.owner.first_name if self.owner else None,
+            "owner_last_name": self.owner.last_name if self.owner else None,
+            "owner_email": self.owner.email if self.owner else None,
+            "owner_phone": self.owner.phone if self.owner else None,
+            "onwer_national_id": self.owner.national_id if self.owner else None,
             "has_unpaid_invoices": has_unpaid_invoices,
             "has_open_issues": has_open_issues
         }

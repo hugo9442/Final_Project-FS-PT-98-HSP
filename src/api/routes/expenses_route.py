@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from api.models import Expense, db,Apartment
+from api.models import Expense, db, Apartment, AdminOwnerProperty
+from api.models.users import User, Role
 from flask_cors import CORS
 from datetime import datetime
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -11,9 +12,9 @@ expenses_api = Blueprint("expenses", __name__,url_prefix='/expenses')
 
 CORS(expenses_api)
 
-@expenses_api.route('/monthly-summary', methods=['GET'])
+@expenses_api.route('/', methods=['GET'])
 @jwt_required()
-def get_monthly_expenses_summary():
+def get_monthly_expenses_summary_all():
     current_year = datetime.now().year
 
     results = (
@@ -52,6 +53,71 @@ def get_monthly_expenses_summary():
         })
 
     return jsonify({"gastos_mensuales": full_summary}), 200
+
+@expenses_api.route('/monthly-summary', methods=['GET'])
+@jwt_required()
+def get_monthly_expenses_summary():
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+
+    if not user:
+        return jsonify({"error": "Usuario no encontrado"}), 404
+
+    current_year = datetime.now().year
+
+    # Query base
+    query = db.session.query(
+        extract('month', Expense.date).label('month'),
+        func.sum(Expense.received_invoices).label('total_gastos')
+    ).join(Apartment, Expense.apartment_id == Apartment.id)\
+     .filter(extract('year', Expense.date) == current_year)
+
+    if user.role == Role.ADMIN:
+        # Obtener propietarios de este admin
+        relations = AdminOwnerProperty.query.filter_by(admin_id=user.id, active=True).all()
+        owner_ids = [rel.owner_id for rel in relations]
+
+        if not owner_ids:
+            return jsonify({"gastos_mensuales": []}), 200
+
+        # Filtrar por apartments de esos owners
+        query = query.filter(Apartment.owner_id.in_(owner_ids))
+
+    elif user.role == Role.PROPIETARIO:
+        # Filtrar por apartments de este propietario
+        query = query.filter(Apartment.owner_id == user.id)
+    else:
+        return jsonify({"error": "No autorizado"}), 403
+
+    # Ejecutamos el query agrupado por mes
+    results = query.group_by('month').order_by('month').all()
+
+    MESES_ES = [
+        "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ]
+
+    summary = []
+    for month_num, total in results:
+        month_name = MESES_ES[int(month_num)]
+        summary.append({
+            "month": month_name,
+            "gastos": float(total) if total else 0
+        })
+
+    # Generar los 12 meses completos
+    full_summary = []
+    for m in range(1, 13):
+        month_name = MESES_ES[m]
+        found = next((item for item in summary if item["month"] == month_name), None)
+        full_summary.append({
+            "month": month_name,
+            "gastos": found["gastos"] if found else 0
+        })
+
+    return jsonify({"gastos_mensuales": full_summary}), 200
+
+
 
 @expenses_api.route('/by-apartment/<int:apartment_id>', methods=["GET"])
 @jwt_required()

@@ -27,6 +27,7 @@ import Contractors from "./pages/Contractors";
 import ExpenseWizardForm from "./pages/Expenses";
 import { SingleIssue } from "./pages/SingleIssue";
 import ContractorDetail from "./pages/ContractorDetail";
+import ContratoAlquilerEditable from "./pages/ContratoAlquilerEditable";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -49,6 +50,7 @@ export const router = createBrowserRouter(
         <Route path="/Facturacion" element={<Facturacion />} />
         <Route path="/Facturacionvista" element={<Facturacionvista />} />
         <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
+        <Route path="/GeneradorContrato" element={<ContratoAlquilerEditable/>} />
         <Route path="/single/:theId" element={<Single />} />
         <Route path="/contractor/:contractorId" element={<ContractorDetail />} />
         <Route path="//singleissue/:apartment_id/:issue_id" element={<SingleIssue />} />

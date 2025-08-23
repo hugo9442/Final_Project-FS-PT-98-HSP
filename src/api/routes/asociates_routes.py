@@ -1,8 +1,9 @@
 from flask import request, jsonify, Blueprint
-from api.models import db, AssocTenantApartmentContract,Apartment,TaxType, Withholding
+from api.models import db, AssocTenantApartmentContract,Apartment,TaxType, Withholding, User, Contract
 from flask_cors import CORS
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from decimal import Decimal
+from api.services.helper_adminowner import get_accessible_owner_ids
 
 asociates_api = Blueprint('asociates_api', __name__, url_prefix='/asociates')
 
@@ -23,14 +24,34 @@ def get_asociations():
 @jwt_required()
 def get_full_asociations():
     try:
-        asociaciones = AssocTenantApartmentContract.query.all()
+        # Usuario autenticado
+        user_id = get_jwt_identity()
+        user = db.session.get(User, user_id)
+        if not user:
+            return jsonify({"msg": "Usuario no encontrado"}), 404
+
+        # Obtener owners accesibles según rol
+        owner_ids = get_accessible_owner_ids(user)
+        if not owner_ids:
+            return jsonify([]), 200
+
+        # Filtrar asociaciones por esos owners
+        asociaciones = (
+            AssocTenantApartmentContract.query
+            .join(Apartment, Apartment.id == AssocTenantApartmentContract.apartment_id)
+            .filter(Apartment.owner_id.in_(owner_ids))
+            .all()
+        )
+
         return jsonify([a.serialize() for a in asociaciones]), 200
+
     except Exception as e:
         return jsonify({"msg": str(e)}), 500
+
     
-@asociates_api.route('/no-apartment', methods=['GET'])
+@asociates_api.route('/no-apartment_no', methods=['GET'])
 @jwt_required()
-def get_associations_without_apartment():
+def get_associations_without_apartment_no():
     try:
         asociaciones = AssocTenantApartmentContract.query.filter(
             AssocTenantApartmentContract.apartment_id == None, AssocTenantApartmentContract.is_active == True
@@ -38,6 +59,30 @@ def get_associations_without_apartment():
         return jsonify([a.serialize() for a in asociaciones]), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    
+@asociates_api.route('/no-apartment', methods=['GET'])
+@jwt_required()
+def get_associations_without_apartment():
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        print("Useract:", user)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        owner_ids = get_accessible_owner_ids(user)
+        print("Owner IDs:", owner_ids)
+        asociaciones = AssocTenantApartmentContract.query.join(Contract).filter(
+            AssocTenantApartmentContract.apartment_id == None,
+            AssocTenantApartmentContract.is_active == True,
+            Contract.owner_id.in_(owner_ids)
+        ).all()
+
+        return jsonify([a.serialize() for a in asociaciones]), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 @asociates_api.route('/create', methods=['POST'])

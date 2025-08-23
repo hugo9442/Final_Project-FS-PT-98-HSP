@@ -93,7 +93,7 @@ const Contractors = () => {
             ) : (
               <tr>
                 <td colSpan="5" className="text-center text-muted">
-                  Todavía no has registrado ningún contractor.
+                  Todavía no has registrado ningún Proveedor.
                 </td>
               </tr>
             )}

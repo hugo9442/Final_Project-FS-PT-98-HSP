@@ -177,7 +177,7 @@ const fetchInquilinoData = async () => {
                         <div className="card-header bg-primary text-white text-center">
                             <h5 className="mb-0">Mi Contrato</h5>
                         </div>
-                        <div className="card-body text-left">
+                        <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead className="table-dark">
                                     <tr>
@@ -223,7 +223,7 @@ const fetchInquilinoData = async () => {
                         <div className="card-header bg-success text-white text-center">
                             <h5 className="mb-0">Mi Vivienda</h5>
                         </div>
-                        <div className="card-body">
+                        <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead className="table-dark">
                                     <tr>
@@ -231,9 +231,7 @@ const fetchInquilinoData = async () => {
                                         <th>CP</th>
                                         <th>Ciudad</th>
                                         <th>Parking</th>
-
                                         <th>Tipo</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -258,7 +256,7 @@ const fetchInquilinoData = async () => {
                         <div className="card-header bg-info text-white text-center">
                             <h5 className="mb-0">Mis Facturas</h5>
                         </div>
-                        <div className="card-body">
+                        <div className="table-responsive">
                             <table className="table table-striped table-hover">
                                 <thead className="table-dark">
                                     <tr>

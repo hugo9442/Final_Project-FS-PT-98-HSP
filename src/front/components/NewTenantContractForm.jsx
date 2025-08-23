@@ -6,7 +6,7 @@ import { users } from "../fecht_user.js"
 import { taxholding } from "../fecht_taxholding.js";
 import { tax } from "../fecht_tax.js";
 
-const NewTenantContractForm = ({ onSuccess, onCancel }) => {
+const NewTenantContractForm = ({ onSuccess, onCancel, owner_id }) => {
 
     const { store, dispatch } = useGlobalReducer();
     const [isLoading, setIsLoading] = useState(false);
@@ -71,7 +71,7 @@ const NewTenantContractForm = ({ onSuccess, onCancel }) => {
                 store.contract_start_date,
                 store.contract_end_date,
                 store.contract,
-                store.todos.id,
+                owner_id,
                 store.token
             );
             if (contractResult.error) throw new Error(contractResult.error);

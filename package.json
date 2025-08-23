@@ -11,7 +11,8 @@
 		"start": "vite",
 		"build": "vite build",
 		"lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-		"preview": "vite preview"
+		"preview": "vite preview",
+		"tailwind:init": "tailwindcss init -p"
 	},
 	"author": {
 		"name": "Alejandro Sanchez",
@@ -37,8 +38,8 @@
 		"eslint-plugin-react": "^7.33.1",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"eslint-plugin-react-refresh": "^0.4.3",
-		"postcss": "^8.5.3",
-		"tailwindcss": "^4.1.7",
+		"postcss": "^8.5.6",
+		"tailwindcss": "^4.1.12",
 		"vite": "^4.4.8"
 	},
 	"babel": {
@@ -61,7 +62,11 @@
 		"@fortawesome/free-brands-svg-icons": "^6.7.2",
 		"@fortawesome/free-solid-svg-icons": "^6.7.2",
 		"@fortawesome/react-fontawesome": "^0.2.2",
+		"@react-oauth/google": "^0.12.2",
+		"@stripe/react-stripe-js": "^3.9.1",
+		"@stripe/stripe-js": "^7.8.0",
 		"animate.css": "^4.1.1",
+		"axios": "^1.11.0",
 		"bootstrap": "^5.3.6",
 		"chart.js": "^4.4.9",
 		"date-fns": "^4.1.0",
@@ -70,6 +75,7 @@
 		"jwt-decode": "^4.0.0",
 		"lucide-react": "^0.526.0",
 		"mysql2": "^3.14.1",
+		"pdf-lib": "^1.17.1",
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",
 		"react-chartjs-2": "^5.3.0",

@@ -1,9 +1,9 @@
 from .database import db
 from .contracts import Contract
+from .admin_owner_property import AdminOwnerProperty
 from .users import User
 from .actions import Action
 from .apartments import Apartment
-from .assoc_tenants_apartments_contracts import AssocTenantApartmentContract
 from .issues import Issue
 from .documents import Document
 from .invoice import Invoice
@@ -14,3 +14,6 @@ from .expenses_category import ExpenseCategory
 from .taxtype import TaxType
 from .withholder import Withholding
 from .expenses_payments import ExpensePayment
+from .docusing import Docusing
+from .assoc_tenants_apartments_contracts import AssocTenantApartmentContract
+from .stripe import Subscription

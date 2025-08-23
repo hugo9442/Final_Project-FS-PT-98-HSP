@@ -1,9 +1,10 @@
 
-from api.models import db, User, Apartment, Contract,AssocTenantApartmentContract, Issue
+from api.models import db, User, Apartment, Contract,AssocTenantApartmentContract, Issue, AdminOwnerProperty
 from api.models.users import Role
 from sqlalchemy.orm import joinedload
 import os
 import uuid
+import requests
 from flask import request, jsonify, Blueprint, render_template, current_app
 from flask_cors import CORS
 from flask_bcrypt import Bcrypt
@@ -11,6 +12,8 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from datetime import timedelta, datetime
 from api.extensions import mail
 from flask_mail import Message
+from sqlalchemy import func, extract, case
+
 
 users_api = Blueprint('users_api', __name__, url_prefix='/users')
 
@@ -120,7 +123,7 @@ def create_user():
         phone=data_request.get("phone"),
         national_id=data_request.get("national_id"),
         account_number=data_request.get("account_number"),
-        role=Role.PROPIETARIO
+        role=Role[data_request.get("role")] 
     )
 
     try:
@@ -262,19 +265,45 @@ def get_user_apartments_count(user_id):
 """CONTRACTS ENDPOINT"""
 
 
-@users_api.route('/<int:user_id>/contracts/count', methods=["GET"])
+
+
+from sqlalchemy.orm import joinedload
+
+@users_api.route('/contracts/count', methods=["GET"])
 @jwt_required()
-def get_user_contracts_count(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "Usuario no encontrado"}), 404
+def get_user_contracts_count():
+    try:
+        current_user_id = get_jwt_identity()
+        user = User.query.get(current_user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
 
-    contracts = user.contracts
-    count = len(contracts)
+        # ADMIN → contratos de todos los propietarios que gestiona
+        if user.role == Role.ADMIN:
+            relations = AdminOwnerProperty.query.filter_by(admin_id=user.id, active=True).all()
+            owner_ids = [rel.owner_id for rel in relations]
+            total_contracts = db.session.query(func.count(Contract.id))\
+                                        .filter(Contract.owner_id.in_(owner_ids))\
+                                        .join(Contract.association)\
+                                        .filter(AssocTenantApartmentContract.is_active == True)\
+                                        .scalar()
+        # PROPIETARIO → contratos propios
+        elif user.role == Role.PROPIETARIO:
+            total_contracts = db.session.query(func.count(Contract.id))\
+                                        .filter(Contract.owner_id == user.id)\
+                                        .join(Contract.association)\
+                                        .filter(AssocTenantApartmentContract.is_active == True)\
+                                        .scalar()
+        else:
+            return jsonify({"error": "No autorizado"}), 403
 
-    if not contracts:
-        return jsonify({"error": "No hay contratos para este usuario"}), 404
-    return jsonify({"total": count}), 200
+        return jsonify({"total": total_contracts}), 200
+
+    except Exception as e:
+        print("Error al obtener contratos:", e)
+        return jsonify({"msg": "Error en el servidor"}), 500
+
+
 
 
 @users_api.route('/<int:user_id>/contracts', methods=["GET"])
@@ -431,7 +460,6 @@ def private_route():
 
 """LOGIN ENDPOINT"""
 
-
 @users_api.route('/login', methods=["POST"])
 def sing_in():
     data_request = request.get_json()
@@ -444,17 +472,48 @@ def sing_in():
     if not user or not bcrypt.check_password_hash(user.password, data_request["password"]):
         return jsonify({"error": "El email o la contraseña es incorrecto"}), 401
 
-    try:
+    # Verificamos el status de Stripe
+    status = user.status
 
+    if status in ["active", "trialing"]:
+       
+        # Generamos el token
         access_token = create_access_token(identity=str(user.id))
+        if isinstance(access_token, bytes):
+            access_token = access_token.decode('utf-8')
+
         return jsonify({
+            "message": "Login exitoso",
+            "access": "full",
             "user": user.serialize(),
             "token": access_token
         }), 200
-    except Exception as e:
-        print(e)
-        db.session.rollback()
-        return jsonify({"error": "Error en el servidor"}), 500
+
+    elif status == "past_due":
+        return jsonify({
+            "error": "Tu suscripción está pendiente de pago",
+            "access": "limited"
+        }), 403
+
+    elif status in ["canceled", "unpaid"]:
+        return jsonify({
+            "error": "Tu suscripción ha sido cancelada",
+            "access": "blocked"
+        }), 403
+
+    elif status in ["incomplete", "incomplete_expired"]:
+        return jsonify({
+            "error": "Pago inicial incompleto, no puedes acceder",
+            "access": "blocked"
+        }), 403
+
+    else:
+        return jsonify({
+            "error": "Estado de suscripción desconocido",
+            "access": "blocked"
+        }), 403
+    
+
 
 """RESET PASSWORD END POINT"""
 

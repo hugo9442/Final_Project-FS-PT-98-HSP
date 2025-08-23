@@ -3,19 +3,19 @@ const Url =`${Urlexport}/users`;
 
   export const users = {
 
-    createuser: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
+    createuser: async (first_name, last_name, role, email, password, phone, national_id, account_number) => {
         let user = {
-             "first_name":`${firstname}`,
-             "last_name":`${lastname}`,
-             "email": `${email}`, 
-             "password": `${pass}`,
-             "phone":`${phone}`,
-             "national_id":`${national_id}`,
-             "account_number":`${aacc}`
+             first_name,
+             last_name,
+             email, 
+             password,
+             phone,
+             national_id,
+             account_number,
+             role
              
         };
         
-      
         try {
             const request = await fetch(`${Url}/create`, {
                 method: "POST",
@@ -33,6 +33,7 @@ const Url =`${Urlexport}/users`;
 
         }
     },
+    
 
 
     createtenant: async (firstname, lastname, email, pass, phone, national_id, aacc) => {
@@ -154,9 +155,9 @@ const Url =`${Urlexport}/users`;
         }
     },
 
-    getUserContractsCount: async (id, token) => {
+    getUserContractsCount: async (token) => {
         try {
-            const request = await fetch(`${Url}/${id}/contracts/count`, {
+            const request = await fetch(`${Url}/contracts/count`, {
                   method: "GET", 
                  headers: {
                     "Authorization": `Bearer  ${token}`

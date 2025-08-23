@@ -5,8 +5,9 @@ from typing import List, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
-    from. expenses import Expense
+    from .expenses import Expense
     from .assoc_tenants_apartments_contracts import AssocTenantApartmentContract
+    from .docusing import Docusing
 
 class TaxType(db.Model):
     __tablename__ = "tax_types"
@@ -16,7 +17,8 @@ class TaxType(db.Model):
     percentage: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False)
 
     association: Mapped[List["AssocTenantApartmentContract"]] = relationship('AssocTenantApartmentContract', back_populates="taxtype")
-
+    docusings: Mapped[List["Docusing"]] = relationship('Docusing', back_populates="iva")
+    
     def serialize(self):
         return{
             "id": self.id,

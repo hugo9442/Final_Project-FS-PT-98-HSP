@@ -1,7 +1,8 @@
 from flask import request, jsonify, Blueprint,current_app
-from api.models import db, Issue
+from api.models import db, Issue, User, Apartment, AdminOwnerProperty
+from api.models.users import Role
 from flask_cors import CORS
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from datetime import datetime, timezone
 import smtplib
 from email.mime.text import MIMEText
@@ -23,10 +24,37 @@ def get_all_issues():
 @issues_api.route('/opened', methods=["GET"])
 @jwt_required()
 def get_opened_issues():
-    opened = opened = db.session.query(func.count(Issue.id))\
-                   .filter(Issue.status == "ABIERTA")\
-                   .scalar()
-    return jsonify({"msg":"ok", "total":opened}), 200
+    try:
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        # ADMIN → incidencias de apartamentos de sus propietarios
+        if user.role == Role.ADMIN:
+            relations = AdminOwnerProperty.query.filter_by(admin_id=user.id, active=True).all()
+            owner_ids = [rel.owner_id for rel in relations]
+            apartments = Apartment.query.filter(Apartment.owner_id.in_(owner_ids)).all()
+            apartment_ids = [ap.id for ap in apartments]
+            total_opened = db.session.query(func.count(Issue.id))\
+                                     .filter(Issue.status == "ABIERTA", Issue.apartment_id.in_(apartment_ids))\
+                                     .scalar()
+        # PROPIETARIO → incidencias de sus apartamentos
+        elif user.role == Role.PROPIETARIO:
+            apartments = Apartment.query.filter_by(owner_id=user.id).all()
+            apartment_ids = [ap.id for ap in apartments]
+            total_opened = db.session.query(func.count(Issue.id))\
+                                     .filter(Issue.status == "ABIERTA", Issue.apartment_id.in_(apartment_ids))\
+                                     .scalar()
+        else:
+            return jsonify({"error": "No autorizado"}), 403
+
+        return jsonify({"msg": "ok", "total": total_opened}), 200
+
+    except Exception as e:
+        print("Error al obtener incidencias abiertas:", e)
+        return jsonify({"msg": "Error en el servidor"}), 500
+
 
 @issues_api.route('/<int:issue_id>', methods=["GET"])
 @jwt_required()
