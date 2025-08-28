@@ -6,58 +6,59 @@ import { Urlexport } from "../urls";
 import { useNavigate } from "react-router-dom";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 
-const GoogleAuth = ({priceId}) => {
+const GoogleAuth = ({ priceId }) => {
   const [showModal, setShowModal] = useState(false);
   const [role, setRole] = useState(null);
   const navigate = useNavigate();
   const { store, dispatch } = useGlobalReducer();
 
-  const handleLogin = async (credentialResponse ) => {
-  if (!role) {
-    alert("Por favor selecciona un rol antes de continuar.");
-    return;
-  }
-
-  try {
-    const res = await axios.post(`${Urlexport}/auth/login/google`, {
-
-      token: credentialResponse.credential,
-      role,
-    });
-   
-    const { token, user, created } = res.data;
-    
-    dispatch({ type: "addToken", value: token });
-    dispatch({ type: "add_user", value: user });
-    localStorage.setItem("access_token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    
-    alert(`Bienvenido ${user.first_name}, rol: ${user.role}`);
-    
-    console.log("created", created)
-   
-    
-    if (created) {
-      continueWithStripe(user.id);
-    }else{
-      navigate("/propietarioindex")
+  const handleLogin = async (credentialResponse) => {
+    if (!role) {
+      alert("Por favor selecciona un rol antes de continuar.");
+      return;
     }
 
-    // Navegar solo si quieres
-    
-  } catch (error) {
-    console.error("Error en login:", error.response.data);
-    
-    swal({
-          title: "ERROR",
-          text: `${error.response.data.error}`,
-          icon: "warning",
-          buttons: true,
-          dangerMode: true,
-        });
-  }
-};
-const continueWithStripe = async (newUserId) => {
+    try {
+      const res = await axios.post(`${Urlexport}/auth/login/google`, {
+
+        token: credentialResponse.credential,
+        role,
+      });
+
+      const { token, user, created } = res.data;
+
+      dispatch({ type: "addToken", value: token });
+      dispatch({ type: "add_user", value: user });
+      localStorage.setItem("access_token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      alert(`Bienvenido ${user.first_name}, rol: ${user.role}`);
+
+      console.log("created", created)
+
+
+      if (created) {
+        continueWithStripe(user.id);
+        navigate("/propietarioindex")
+      } else {
+        navigate("/propietarioindex")
+      }
+
+      // Navegar solo si quieres
+
+    } catch (error) {
+      console.error("Error en login:", error.response.data);
+
+      swal({
+        title: "ERROR",
+        text: `${error.response.data.error}`,
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+      });
+    }
+  };
+  const continueWithStripe = async (newUserId) => {
     try {
       const res = await axios.post(`${Urlexport}/subscriptions/create-subscription`, {
         priceId,
@@ -75,13 +76,13 @@ const continueWithStripe = async (newUserId) => {
     }
   };
 
-console.log(store)
+  console.log(store)
   return (
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <div >
         <button
           type="button"
-          className="btn btn-dark btn-sm btn-block w-100 "
+          className="btn btn-orange btn-sm btn-block w-100 "
           onClick={() => setShowModal(true)}
         >
           Continuar con Google

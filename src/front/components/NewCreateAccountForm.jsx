@@ -4,7 +4,8 @@ import ImgEdificio from "../assets/img/ImgEdificio.jpg";
 import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import { users } from "../fecht_user.js";
 import swal from "sweetalert";
-import logo from "../assets/img/LogoTrabajoFinal.png";
+import conforrent from "../assets/img/conforrent.png"
+
 import GoogleAuth from "../components/Googlebotton.jsx";
 
 const CreateaccountUser = ({ setShowRegister, onUserCreated, priceId }) => {
@@ -15,7 +16,7 @@ const CreateaccountUser = ({ setShowRegister, onUserCreated, priceId }) => {
   const handleCreatUser = async () => {
     try {
       const data = await users.createuser(store.firstname, store.lastname, store.rol, store.email, store.password, store.phone, store.national_id, store.aacc);
-        
+
       if ((typeof data.token === "string" && data.token.length > 0)) {
         await dispatch({ type: "addToken", value: data.token });
         await dispatch({ type: "add_user", value: data.user });
@@ -61,7 +62,7 @@ const CreateaccountUser = ({ setShowRegister, onUserCreated, priceId }) => {
 
   return (
     <section
-      style={{ backgroundColor: "#ebf5fb", minHeight: "90vh" }}
+      style={{ backgroundColor: "#FFE8D5", minHeight: "90vh" }}
     >
       <div className="container py-4">
         <div className="row d-flex justify-content-center align-items-center">
@@ -81,11 +82,11 @@ const CreateaccountUser = ({ setShowRegister, onUserCreated, priceId }) => {
                     <form onSubmit={(e) => { e.preventDefault(); createContact(); }}>
                       <div className="d-flex align-items-center mb-3 pb-1">
                         <img
-                          src="src/front/assets/img/LogoTrabajoFinal.png"
+                          src={conforrent}
                           alt="Logo"
-                          style={{ width: "70px", height: "70px" }}
+                          style={{ width: "100px", height: "70px" }}
                         />
-                        <span className="h4 fw-bold mb-0 ms-2">Gestion Immuebles</span>
+                        <span className="h5 fw-bold mb-0 ms-2">Gestion Immuebles</span>
                       </div>
 
                       <h6 className="fw-normal mb-3 pb-2" style={{ letterSpacing: "1px" }}>
@@ -135,7 +136,7 @@ const CreateaccountUser = ({ setShowRegister, onUserCreated, priceId }) => {
                         placeholder="Contraseña"
                       />
                       <select
-                       type="rol"
+                        type="rol"
                         id="registerrol"
                         className="form-control form-control-sm mb-3"
                         autoComplete="rol"
@@ -148,29 +149,29 @@ const CreateaccountUser = ({ setShowRegister, onUserCreated, priceId }) => {
                         <option value="PROPIETARIO">PROPIETARIO</option>
                       </select>
 
-                     
+
                     </form>
-                     <div className="d-flex flex-column gap-2 mb-3">
-                        <button className="btn btn-dark btn-sm w-100 " type="submit">
-                          Crear Cuenta
-                        </button>
-                      <GoogleAuth priceId={priceId}/>
-                        <button
-                          className="btn btn-outline-dark btn-sm w-100"
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setShowRegister(false);
-                          }}
-                        >
-                          Cerrar
-                        </button>
-                      </div>
-                     
-                      <div className="d-flex justify-content-start gap-2">
-                        <a href="#!" className="small text-muted">Terms of use</a>
-                        <a href="#!" className="small text-muted">Privacy policy</a>
-                      </div>
+                    <div className="d-flex flex-column gap-2 mb-3">
+                      <button className="btn btn-orange btn-sm w-100 " type="submit">
+                        Crear Cuenta
+                      </button>
+                      <GoogleAuth priceId={priceId} />
+                      <button
+                        className="btn btn-outline-orange btn-sm w-100"
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowRegister(false);
+                        }}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+
+                    <div className="d-flex justify-content-start gap-2">
+                      <a href="#!" className="small text-muted">Terms of use</a>
+                      <a href="#!" className="small text-muted">Privacy policy</a>
+                    </div>
                   </div>
                 </div>
               </div>

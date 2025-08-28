@@ -28,12 +28,13 @@ import ExpenseWizardForm from "./pages/Expenses";
 import { SingleIssue } from "./pages/SingleIssue";
 import ContractorDetail from "./pages/ContractorDetail";
 import ContratoAlquilerEditable from "./pages/ContratoAlquilerEditable";
+import LandingPage from "./pages/LandingPage";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<Layout />} errorElement={<h1>Not found!</h1>}>
 
-      <Route index element={<Home />} /> {/* Página raíz */}
+      <Route index element={<LandingPage />} /> {/* Página raíz */}
       <Route path="/acceso" element={<Acceso />} />
       <Route path="/reset-password" element={<Acceso />} />
       <Route path="/forgot-password" element={<Acceso />} />
@@ -50,7 +51,7 @@ export const router = createBrowserRouter(
         <Route path="/Facturacion" element={<Facturacion />} />
         <Route path="/Facturacionvista" element={<Facturacionvista />} />
         <Route path="/InquilinoIndex" element={<InquilinoIndex />} />
-        <Route path="/GeneradorContrato" element={<ContratoAlquilerEditable/>} />
+        <Route path="/GeneradorContrato" element={<ContratoAlquilerEditable />} />
         <Route path="/single/:theId" element={<Single />} />
         <Route path="/contractor/:contractorId" element={<ContractorDetail />} />
         <Route path="//singleissue/:apartment_id/:issue_id" element={<SingleIssue />} />
