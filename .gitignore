@@ -62,6 +62,10 @@ Thumbs.db
 # ignore node/grunt dependency directories
 node_modules/
 
+# Ignore private keys
+*.pem
+keys/
+
 # webpack output
 dist/*
 !public/

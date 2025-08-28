@@ -30,7 +30,7 @@ from api.extensions import mail
 
 env_path = Path(__file__).resolve().parent.parent / '.env'  # Sube dos niveles desde src/
 load_dotenv(env_path)
-
+print(">>> DATABASE_URL:", os.getenv("DATABASE_URL"))
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_FOLDER = os.path.join(BASE_DIR, 'uploads')
@@ -81,7 +81,7 @@ app.config['DOCUSIGN_CONFIG'] = {
     "ACCOUNT_ID": os.getenv("DOCUSIGN_ACCOUNT_ID"),
     "BASE_PATH": "https://demo.docusign.net/restapi",
     "AUTH_SERVER": "https://account-d.docusign.com",
-    "PRIVATE_KEY_PATH": "/workspaces/Final_Project-FS-PT-98-HSP/src/docusign_private_key.pem"
+    "PRIVATE_KEY_PATH": "/workspaces/Final_Project-FS-PT-98-HSP/src/keys/docusign_private_key.pem"
 }   
 
 MIGRATE = Migrate(app, db, compare_type=True)
