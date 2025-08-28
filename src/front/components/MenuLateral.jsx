@@ -12,7 +12,7 @@ import {
   faBars,
   faFolderOpen
 } from '@fortawesome/free-solid-svg-icons';
-import logo from "../assets/img/LogoTrabajoFinal.png";
+import conforrent from "../assets/img/conforrent.png"
 
 const iconMap = {
   "gauge-high": faGaugeHigh,
@@ -51,13 +51,13 @@ const resetDropdowns = () => {
   return (
     <>
       <div className="d-md-none bg-info p-2 d-flex justify-content-between align-items-center shadow" >
-        <img src={logo} alt="Logo" style={{ width: 40, height: 40 }} />
+        <img src={conforrent} alt="conforrent" style={{ width: "100px", height: "70px" }} />
         <button className="btn btn-outline-dark" onClick={() => setIsOpen(!isOpen)}>
           <FontAwesomeIcon icon={iconMap["bars"]} />
         </button>
       </div>
 
-      <div className={`sidebar-private bg-info-subtle shadow p-3 ${isOpen ? 'd-block' : 'd-none'} d-md-block`}
+      <div className={`sidebar-private shadow p-3 ${isOpen ? 'd-block' : 'd-none'} d-md-block`}
         style={{
           width: '250px',
           minHeight: '100vh',
@@ -66,11 +66,12 @@ const resetDropdowns = () => {
           left: 0,
           zIndex: 1050,
           paddingTop: '80px',
+          backgroundColor: "#F2F2F2" 
           
         }}>
         <div className="text-center mb-4">
-          <img src={logo} alt="Logo"
-            style={{ width: "80px", height: "80px", objectFit: "cover" }}
+          <img src={conforrent} alt="conforrent"
+            style={{ width: "150px", height: "70px" }}
             className="mb-2"
           />
           <h5 className="fw-bold text-dark">Panel de Propietario</h5>

@@ -30,7 +30,7 @@ const Services = () => {
     return (
         <div className="container mt-5 mb-5">
             <div className="text-center mb-5">
-                <h2 className="display-4 fw-bold mb-3" style={{ color: '#0056b3' }}>Nuestros Servicios</h2>
+                <h2 className="display-4 fw-bold mb-3" style={{ color: '#FF6F00' }}>Nuestros Servicios</h2>
                 <p className="lead text-muted mx-auto" style={{ maxWidth: '800px' }}>
                     En <strong>InmuGestion</strong>, nos dedicamos a resolver el desafío de la gestión de inmuebles y alquileres. Nuestra plataforma te permite centralizar y simplificar la administración de todas las partes relacionadas: propietarios, inquilinos, contratos y, por supuesto, las incidencias. Diseñamos soluciones intuitivas para que tu experiencia sea fluida y eficiente, liberándote del estrés de la gestión manual.
                 </p>
@@ -41,7 +41,7 @@ const Services = () => {
                     <div className="col-md-6 col-lg-6 col-xl-3" key={index}>
                         <div className="card h-100 shadow-sm border-0 transform-on-hover">
                             <div className="card-body text-center p-4">
-                                <div className="service-icon display-4 mb-3" style={{ color: '#0056b3' }}>
+                                <div className="service-icon display-4 mb-3" style={{ color: '#FF6F00' }}>
                                     {service.icon}
                                 </div>
                                 <h5 className="service-title fw-bold mb-2">{service.title}</h5>
@@ -54,7 +54,7 @@ const Services = () => {
             <style>{`
                 .transform-on-hover:hover {
                     transform: translateY(-8px); /* Desplaza la tarjeta ligeramente hacia arriba */
-                    box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important; /* Sombra más pronunciada */
+                    box-shadow: 0 8px 16px hsla(0, 0%, 0%, 0.20) !important; /* Sombra más pronunciada */
                     transition: all 0.3s ease-in-out;
                 }
                 .transform-on-hover {
@@ -62,7 +62,7 @@ const Services = () => {
                 }
                 /* Ajustes de color para iconos si no usas FontAwesome */
                 .service-icon {
-                    color: #007bff; /* Color principal de Bootstrap si no se define en FontAwesome */
+                    color: #FF6F00; /* Color principal de Bootstrap si no se define en FontAwesome */
                 }
             `}</style>
         </div>

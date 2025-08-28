@@ -7,7 +7,7 @@ const Footer = () => (
         >
             © {new Date().getFullYear()} Copyright:
            
-                Montoria SL.
+                ConforRent.es
             
         </div>
     </footer>

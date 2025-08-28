@@ -13,9 +13,9 @@ export const Layout = () => {
     const path = location.pathname;
 
     const privateRoutes = ["/admin", "/Contrato", "/Viviendas", "/Inquilinos", "/Alquileres",
-        "/Incidencias", "/propietarioindex", "/single","/Gestiondocumental",
+        "/Incidencias", "/propietarioindex", "/single", "/Gestiondocumental",
         "/Gestiondocumentalvista", "/Facturacion", "/Facturacionvista",
-         "/Contractors","/Expenses","/singleissue", "/contracto","/GeneradorContrato"];
+        "/Contractors", "/Expenses", "/singleissue", "/contracto", "/GeneradorContrato"];
     const secondaryRoutes = ["/inquilinoindex"];
     const publicRoutes = ["/contact", "/acceso", "/servicios"];
 
@@ -34,7 +34,7 @@ export const Layout = () => {
                 <MenuLateral setActiveOption={setActiveOption} />
             )}
 
-            <div className={`${showPrivateNavbar ? 'main-content' : ''} p-2 mt-2`} >
+            <div className={`${showPrivateNavbar ? 'main-content' : ''} p-2 mt-4`} >
                 <Outlet />
             </div>
 

@@ -71,6 +71,33 @@
   background-color: rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
+.hero img {
+  width: 80px;
+  margin-bottom: 20px;
+}
+.btn-orange {
+  background-color: #FF7A00 !important;
+  border-color: #FF7A00 !important;
+  color: #fff !important;
+}
+.btn-orange:hover {
+  background-color: #e56d00 !important;;
+  color: #fff !important;;
+}
+.btn-outline-orange {
+  color: #FF7A00 !important;
+  border: 1px solid #FF7A00 !important;
+  background-color: transparent !important;
+}
+
+.btn-outline-orange:hover {
+  background-color: #FF7A00 !important;
+  color: #fff !important;
+}
+.feature-icon {
+  font-size: 40px;
+  color: #FF7A00;
+}
 
 .sidebar-private .nav-link.active-sidebar-link {
   background-color: rgba(255, 255, 255, 0.35);
@@ -119,4 +146,7 @@
     transform: rotate(360deg);
   }
 }
+
+
+
 

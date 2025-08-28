@@ -287,7 +287,7 @@ const LoginSection = () => {
     <div >
       <section
         className="min-vh-80"
-        style={{ backgroundColor: "#ebf5fb", display: `${store.visibility2}` }} >
+        style={{ backgroundColor: "#F2F2F2" , display: `${store.visibility2}` }} >
         <div className="container py-5">
           <div className="row d-flex justify-content-center align-items-center">
             <div className="col col-xl-10">
@@ -348,7 +348,7 @@ const LoginSection = () => {
 
                         <div className="d-flex flex-row mb-4 justify-content-between gap-2 ">
                           <button 
-                            className="btn btn-dark btn-sm btn-block w-100 "
+                            className="btn btn-orange btn-sm btn-block w-100 "
                             type="button"
                             onClick={logingUser}
                           >
