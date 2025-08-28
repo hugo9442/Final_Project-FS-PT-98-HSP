@@ -4,6 +4,7 @@ import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
 import Card from "../components/Card.jsx"
 import 'animate.css';
 import logo from "../assets/img/LogoTrabajoFinal.png";
+import conforrent from "../assets/img/conforrent.png";
 import { Link } from "react-router-dom";
 import photoweb from "../assets/img/viviendasm.webp";
 import family from "../assets/img/familia.webp"
@@ -18,7 +19,7 @@ return (
   <div className="font-sans">
     {/* Hero Section */}
     <section className="vh-100 d-flex flex-column justify-content-center align-items-center text-center bg-light">
-      <img src={logo} alt="Logo" className="mb-4" style={{ width: "120px" }} />
+      <img src={conforrent} alt="Logo"  style={{ width: "700px" }} />
       <h1 className="fw-bold display-5 mb-3">
         Gestiona tus propiedades sin complicaciones
       </h1>

@@ -59,6 +59,10 @@ Thumbs.db
 *.tar
 *.zip
 
+# Ignore private keys
+*.pem
+keys/
+
 # ignore node/grunt dependency directories
 node_modules/
 

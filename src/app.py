@@ -81,7 +81,7 @@ app.config['DOCUSIGN_CONFIG'] = {
     "ACCOUNT_ID": os.getenv("DOCUSIGN_ACCOUNT_ID"),
     "BASE_PATH": "https://demo.docusign.net/restapi",
     "AUTH_SERVER": "https://account-d.docusign.com",
-    "PRIVATE_KEY_PATH": "/workspaces/Final_Project-FS-PT-98-HSP/src/docusign_private_key.pem"
+    "PRIVATE_KEY_PATH": "/workspaces/Final_Project-FS-PT-98-HSP/src/keys/docusign_private_key.pem"
 }   
 
 MIGRATE = Migrate(app, db, compare_type=True)
